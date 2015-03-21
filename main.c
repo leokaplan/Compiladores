@@ -1,7 +1,6 @@
 #include "lex.yy.c"
 int main(){
     int token;
-    printf("start\n");
     while(token = yylex()){
         switch(token){
             case TK_ID:
@@ -65,6 +64,5 @@ int main(){
                 printf("%c\n",token);
         }    
     }
-    printf("\nfinish\n");
     return 0;
 }
