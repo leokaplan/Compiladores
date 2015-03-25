@@ -1,0 +1,23 @@
+void main(){
+    int i = 0;
+    if(4>5){
+        print("erro");
+    }
+    if(0<1){
+        print("ok");
+    }
+    else{
+        if(0 == 1){
+            print("é assim que você fala "opa errei?" ")
+        }
+        else{
+            i = i + 3;
+        }
+    }
+    while(i <= 5){
+        if(i >= 0){
+            i = i - 1;
+        }
+        else(i <= 0)
+    }
+}
