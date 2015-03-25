@@ -6,9 +6,12 @@
 
 ID              [a-zA-Z_][a-zA-Z0-9_]*
 LITERALINT      [0-9]+|'0'[xX][0-9a-fA-F]+
-LITERALFLOAT    [0-9]+"."[0-9]+
-LITERALSTRING   \"[^\"]*\"
-WHITESPACE      [\n\t\f\r\ ]+
+DECIMALFLOAT    ((([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+))([eE][+\-]?[0-9]+)?)|([0-9]+[eE][+\-]?[0-9]+)
+HEXAFLOAT       '0'[xX](([0-9a-fA-F]*\.[0-9a-fA-F]+)|([0-9a-fA-F]+\.[0-9a-fA-F]*)|([0-9a-fA-F]+))[pP][+\-]?[0-9]+
+LITERALFLOAT    ({DECIMALFLOAT}|{HEXAFLOAT})[fF]?
+LITERALSTRING   \"([^\\\"]*|\\.)*\"
+WHITESPACE      [\t\f\r\ ]+
+NEWLINE         \n
 COMMENT         "/""*"([^*]|"*"|[^/*])*"*"+"/"
 UNITARY         [][{}(),;+\-*/=<>!]
 
@@ -16,6 +19,7 @@ UNITARY         [][{}(),;+\-*/=<>!]
 
 {COMMENT}       {}
 {WHITESPACE}    {}
+{NEWLINE}       {currentLine++;}
 "char"          {return TK_CHAR;}
 "int"           {return TK_INT;} 
 "float"         {return TK_FLOAT;} 
