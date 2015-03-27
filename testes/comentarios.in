@@ -1,0 +1,20 @@
+/* cabecalho */
+
+void main(){
+    /* funcao de inicio */
+    int i;
+    /* declaracao da variavel idade */
+    char[] nome;
+    /* declaracao da variavel nome: 
+            * nao deve ter acentos
+            * nao deve ter numeros
+            * deve ser legal
+    */
+    i = 0;
+    /*****************/
+    nome = " alb /*isso deve ser string, nao comentario */ bla ";
+    /* *************** */
+
+    
+
+}

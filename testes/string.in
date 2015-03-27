@@ -1,0 +1,14 @@
+void main(){
+   char[] bla = {"oi mamae"};
+   char [] ble = {"tchau\tmamae"};
+   char []bli = {"opa olha eu\naqui de novo"};
+   char[]blo = {"desisti de \"ir\""};
+   char [] blu = new char[5];
+
+   char[] vla = {""};
+   char[] vle = {"\""};
+   char[] vli = {"a\ne\tio\"u"};
+   char[] vlo = {"\n\""};
+   char[] vlu = {"Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra la , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Me faiz elementum girarzis, nisi eros vermeio, in elementis me pra quem eh amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis."};
+
+}

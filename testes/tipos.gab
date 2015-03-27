@@ -1,0 +1,15 @@
+TK_VOID
+ID(main)
+(
+)
+{
+TK_INT
+ID(i)
+;
+TK_CHAR
+ID(j)
+;
+TK_FLOAT
+ID(k)
+;
+}

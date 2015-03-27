@@ -1,0 +1,53 @@
+void main(){
+    int i;
+    float f;
+    char k;
+
+    /* Char */
+    
+    k = 'b';
+    k = 'r';
+    k = 'e';
+    k = '\n';
+    k = 'o';
+    k = 1;
+    k = -1;
+    
+    
+    
+    /* Int base 10 */
+    i = 0;
+    i = 1;
+    i = '1';
+    i = -1;
+    i = 134631;
+    i = -23423;
+   
+    /* Int base 16 */
+   
+    i = 0xffffffff;
+    i = -0x1;
+    i = 0X0;
+
+    /* Float base 10 */
+    f = 1.;
+    f = 1.f;
+    f = 0.;
+    f = 0.f;
+    f = 10e2;
+    f = 10e-2;
+    f = 10e-2F;
+    f = 10.e2;
+    f = .1E2F;
+    f = 1.2e3;
+    f = 0.0e1f;
+    f = 1.0e0;
+
+    /* Float base 16 */
+
+    f = 0x0.p1;
+    f = 0X10.0P-4;
+    f = 0X.1p2;
+    f = 0x1.1p1F;
+
+}

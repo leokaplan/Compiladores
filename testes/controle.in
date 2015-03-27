@@ -1,5 +1,6 @@
 void main(){
     int i = 0;
+    float f = 0.0;
     if(4>5){
         print("erro");
     }
@@ -8,7 +9,7 @@ void main(){
     }
     else{
         if(0 == 1){
-            print("é assim que você fala "opa errei?" ")
+            print("assim que você fala \"opa acertei?\" ")
         }
         else{
             i = i + 3;
@@ -19,5 +20,8 @@ void main(){
             i = i - 1;
         }
         else(i <= 0)
+        {
+            i = i + 1;
+        }
     }
 }

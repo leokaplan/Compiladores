@@ -33,3 +33,4 @@ int currentLine = 1;
 void cpy(char * dst, char * src, size_t len);
 char * dupl(char * s);
 char * escapeddupl(char * s);
+char escape(char a,char b);

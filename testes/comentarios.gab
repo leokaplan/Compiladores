@@ -1,0 +1,22 @@
+TK_VOID
+ID(main)
+(
+)
+{
+TK_INT
+ID(i)
+;
+TK_CHAR
+[
+]
+ID(nome)
+;
+ID(i)
+=
+LITERAL(0)
+;
+ID(nome)
+=
+LITERAL( alb /*isso deve ser string, nao comentario */ bla )
+;
+}

@@ -1,0 +1,16 @@
+int soma(int a, int b){
+    return a+b;
+}
+float _(float a){
+    return a+5;
+}
+
+void main(){
+    int b_la;
+    float re42do;
+    int _ble;
+    float Opa_Opa_365_opa_;
+    float ___;
+    _ble = soma(b_la,re42do);
+    ___ = _(Opa_Opa_365_opa_);
+}
