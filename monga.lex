@@ -19,52 +19,46 @@ NEWLINE         \n
 COMMENT         (\/\*)([^\*])*([\*]+\/)
 UNITARY         [][{}(),;+\-*/=<>!]
 
-%x IN_COMMENT
+%x INSIDE_COMMENT
 %%
 <INITIAL>{
-    "/*"        BEGIN(IN_COMMENT);
+    "/*"        BEGIN(INSIDE_COMMENT);
 }
-<IN_COMMENT>{
-    "*/"      BEGIN(INITIAL);
-    [^*\n]+   {}
-    "*"       {}
-    \n        {currentLine++;}
+<INSIDE_COMMENT>{
+    "*/"        BEGIN(INITIAL);
+    [^*\n]+     { }
+    "*"         { }
+    \n          { currentLine++; }
 }
-{WHITESPACE}    {}
-{NEWLINE}       {currentLine++;}
-"char"          {return TK_CHAR;}
-"int"           {return TK_INT;} 
-"float"         {return TK_FLOAT;} 
-"if"            {return TK_IF;} 
-"else"          {return TK_ELSE;} 
-"while"         {return TK_WHILE;} 
-"void"          {return TK_VOID;} 
-"return"        {return TK_RETURN;} 
-"new"           {return TK_NEW;} 
-"&&"            {return TK_AND;} 
-"||"            {return TK_OR;} 
-"=="            {return TK_EQ;} 
-"!="            {return TK_NEQ;} 
-">="            {return TK_GEQ;} 
-"<="            {return TK_LEQ;} 
-{LITERALCHAR}   {
-                    if(strlen(yytext)==4)
-                        yylval.intval = escape(yytext[1],yytext[2]);
-                    else
-                        yylval.intval = yytext[1];
-                    return TK_LITERALINT;
-                }
-{LITERALINT}    {yylval.intval = strtol(yytext, NULL, 0); return TK_LITERALINT;}
-{LITERALFLOAT}  {yylval.floatval = strtof(yytext, NULL); return TK_LITERALFLOAT;}
-{LITERALSTRING} {yylval.stringval = escapeddupl(yytext);return TK_LITERALSTRING;}
-{ID}            {yylval.name = dupl(yytext); return TK_ID;}
-{UNITARY}       {return yytext[0];} 
-.               {ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n",currentLine);}   
+{WHITESPACE}    { }
+{NEWLINE}       { currentLine++; }
+"char"          { return TK_CHAR; }
+"int"           { return TK_INT; } 
+"float"         { return TK_FLOAT; } 
+"if"            { return TK_IF; } 
+"else"          { return TK_ELSE; } 
+"while"         { return TK_WHILE; } 
+"void"          { return TK_VOID; } 
+"return"        { return TK_RETURN; } 
+"new"           { return TK_NEW; } 
+"&&"            { return TK_AND; } 
+"||"            { return TK_OR; } 
+"=="            { return TK_EQ; } 
+"!="            { return TK_NEQ; } 
+">="            { return TK_GEQ; } 
+"<="            { return TK_LEQ; } 
+{LITERALCHAR}   { yylval.intval = escape(yytext[1],yytext[2]); return TK_LITERALINT; }
+{LITERALINT}    { yylval.intval = strtol(yytext, NULL, 0); return TK_LITERALINT; }
+{LITERALFLOAT}  { yylval.floatval = strtof(yytext, NULL); return TK_LITERALFLOAT; }
+{LITERALSTRING} { yylval.stringval = escapeddupl(yytext);return TK_LITERALSTRING; }
+{ID}            { yylval.name = dupl(yytext); return TK_ID; }
+{UNITARY}       { return yytext[0]; } 
+.               { ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n",currentLine); }   
 
 %%
-char escape(char a,char b){
-    if(a == '\\'){
-        switch(b){
+char escape(char a, char b) {
+    if(a == '\\') {
+        switch(b) {
             case 't':
                 return '\t';
                 break;
@@ -79,11 +73,11 @@ char escape(char a,char b){
                 break;
         }
     }
-    else{
+    else {
         return a;
     }
 }
-void cpy(char * dst, char * src, size_t len){
+void cpy(char * dst, char * src, size_t len) {
     size_t i, j;
 
     // As aspas de src não vão para dst
@@ -91,33 +85,33 @@ void cpy(char * dst, char * src, size_t len){
 
     // i vai de 1 a (len - 1), j vai de 0 a (len - 2)
     // lembrando que as aspas de src não devem ir para dst
-    for(i = 1, j = 0;i < len ;i++, j++){
-        if(src[i]!='\\'){
+    for(i = 1, j = 0;i < len ;i++, j++) {
+        if(src[i]!='\\') {
             dst[j] = src[i];
         }
-        else{
+        else {
             dst[j] = escape(src[i],src[i+1]);
             i++;
         }
     }
 }
 
-char * dupl(char * s){
+char * dupl(char * s) {
     size_t slen = strlen(s);
-    char * d = (char *)malloc(slen + 1);
-    if(d==NULL){ 
+    char * d = (char *) malloc(slen + 1);
+    if(d==NULL) { 
         ERROR("\nERROR > scanner > on line %d > not enough memory to scan ID\n",currentLine);
     }
     memcpy(d,s,slen+1);
     return d;
 }
 
-char * escapeddupl(char * s){
+char * escapeddupl(char * s) {
     size_t slen = strlen(s);
-    char* d = (char *)malloc(slen + 1);
-    if(d==NULL){ 
+    char* d = (char *) malloc(slen + 1);
+    if(d==NULL) { 
         ERROR("\nERROR > scanner > on line %d > not enough memory to scan literal\n",currentLine);
     }
-    cpy(d,s,slen+1);
+    cpy(d, s, slen+1);
     return d;
 }
