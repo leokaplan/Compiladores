@@ -1,2 +1,5 @@
-void main(){
+/* teste simples com tokens */
+void /* aproveitando para testar comentarios em todo lugar */ main /* como aqui */ ( /* e aqui */) /* e aqui */{
+  /* aqui tambem */
 }
+/* ate aqui! */
