@@ -1,19 +1,29 @@
+/*
+----------------------------------
+Trabalho de Compiladores INF1715
+----------------------------------
+Bernardo Pinto de Alkmim - 1210514
+Leonardo Kaplan - 1xxxxxx
+
+Arquivo de testes do analisador léxico
+*/
 #include "lex.yy.c"
-int main(){
+
+int main() {
     int token;
-    while(token = yylex()){
-        switch(token){
+    while(token = yylex()) {
+        switch(token) {
             case TK_ID:
-                printf("ID(%s)\n",yylval.name);
+                printf("ID(%s)\n", yylval.name);
                 break;
             case TK_LITERALINT:
-                printf("LITERAL(%d)\n",yylval.intval);
+                printf("LITERAL(%d)\n", yylval.intval);
                 break;
             case TK_LITERALFLOAT:
-                printf("LITERAL(%f)\n",yylval.floatval);
+                printf("LITERAL(%f)\n", yylval.floatval);
                 break;
             case TK_LITERALSTRING:
-                printf("LITERAL(%s)\n",yylval.stringval);
+                printf("LITERAL(%s)\n", yylval.stringval);
                 break;
             case TK_CHAR: 
                 printf("TK_CHAR\n");
