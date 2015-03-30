@@ -6,7 +6,7 @@ Trabalho de Compiladores INF1715
 Bernardo Pinto de Alkmim - 1210514
 Leonardo Kaplan - 1212509
 
-Arquivo .lex com as expressões regulares e regras de tratamento de tokens
+Arquivo .lex com as expressoes regulares e regras de tratamento de tokens
 */
 #include "y.tab.h"
 #include <stdlib.h>
