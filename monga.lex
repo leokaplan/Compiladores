@@ -78,7 +78,7 @@ char escape(char a, char b) {
                 return '\n';
                 break;
             default:
-                ERROR("\nERROR > scanner > on line %d > invalid literal escape\n",currentLine);
+                ERROR("\nERROR > scanner > on line %d > invalid literal escape\n", currentLine);
                 break;
         }
     }
@@ -89,11 +89,11 @@ char escape(char a, char b) {
 void cpy(char * dst, char * src, size_t len) {
     size_t i, j;
 
-    // As aspas de src não vão para dst
+    // As aspas de src nao vao para dst
     len -= 2;
 
     // i vai de 1 a (len - 1), j vai de 0 a (len - 2)
-    // lembrando que as aspas de src não devem ir para dst
+    // lembrando que as aspas de src nao devem ir para dst
     for(i = 1, j = 0; i < len; i++, j++) {
         if(src[i] != '\\') {
             dst[j] = src[i];
@@ -109,7 +109,7 @@ char * dupl(char * s) {
     size_t slen = strlen(s);
     char * d = (char *) malloc(slen + 1);
     if(d == NULL) { 
-        ERROR("\nERROR > scanner > on line %d > not enough memory to scan ID\n",currentLine);
+        ERROR("\nERROR > scanner > on line %d > not enough memory to scan ID\n", currentLine);
     }
     memcpy(d, s, slen+1);
     return d;
