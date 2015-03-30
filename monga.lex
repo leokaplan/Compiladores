@@ -59,10 +59,10 @@ UNITARY         [][{}(),;+\-*/=<>!]
 {LITERALCHAR}   { yylval.intval = escape(yytext[1],yytext[2]); return TK_LITERALINT; }
 {LITERALINT}    { yylval.intval = strtol(yytext, NULL, 0); return TK_LITERALINT; }
 {LITERALFLOAT}  { yylval.floatval = strtof(yytext, NULL); return TK_LITERALFLOAT; }
-{LITERALSTRING} { yylval.stringval = escapeddupl(yytext);return TK_LITERALSTRING; }
+{LITERALSTRING} { yylval.stringval = escapeddupl(yytext); return TK_LITERALSTRING; }
 {ID}            { yylval.name = dupl(yytext); return TK_ID; }
 {UNITARY}       { return yytext[0]; } 
-.               { ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n",currentLine); }   
+.               { ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n", currentLine); }   
 
 %%
 char escape(char a, char b) {
@@ -94,12 +94,12 @@ void cpy(char * dst, char * src, size_t len) {
 
     // i vai de 1 a (len - 1), j vai de 0 a (len - 2)
     // lembrando que as aspas de src não devem ir para dst
-    for(i = 1, j = 0;i < len ;i++, j++) {
-        if(src[i]!='\\') {
+    for(i = 1, j = 0; i < len; i++, j++) {
+        if(src[i] != '\\') {
             dst[j] = src[i];
         }
         else {
-            dst[j] = escape(src[i],src[i+1]);
+            dst[j] = escape(src[i], src[i+1]);
             i++;
         }
     }
@@ -108,10 +108,10 @@ void cpy(char * dst, char * src, size_t len) {
 char * dupl(char * s) {
     size_t slen = strlen(s);
     char * d = (char *) malloc(slen + 1);
-    if(d==NULL) { 
+    if(d == NULL) { 
         ERROR("\nERROR > scanner > on line %d > not enough memory to scan ID\n",currentLine);
     }
-    memcpy(d,s,slen+1);
+    memcpy(d, s, slen+1);
     return d;
 }
 
