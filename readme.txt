@@ -7,10 +7,22 @@ Leonardo Kaplan - 1212509
 Arquivo README
 --------------
 
+Dependências:
+  gcc
+  flex
+  diff
+  make
+  bash
+  
+
 Como utilizar:
 
-  Basta fazer 
-  $./build
+  Para compilar
+    make 
+  Para limpar os arquivos executaveis e temporarios
+    make clean
+  Para compilar e testar e limpar
+    $./build
 
 
 Decisões tomadas:
