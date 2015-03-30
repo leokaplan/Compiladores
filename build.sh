@@ -10,4 +10,4 @@ do
     echo "=== acabou   $filename"
 
 done
-#make clean
+make clean
