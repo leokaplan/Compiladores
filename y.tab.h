@@ -3,7 +3,7 @@
 Trabalho de Compiladores INF1715
 ----------------------------------
 Bernardo Pinto de Alkmim - 1210514
-Leonardo Kaplan - 1xxxxxx
+Leonardo Kaplan - 1212509
 
 Header do analisador lexico
 */
@@ -56,24 +56,29 @@ union {
 int currentLine = 1;
 
 /*
-
-
-
+    Copia uma string, ignorando aspas e tratando escapes. Chamada por escapeddupl().
+    
+    @param dst String destino
+           src String fonte
+           len Tamanho de src
 */
 void cpy(char * dst, char * src, size_t len);
 
 /*
-
-
-
+    Duplica a string recebida por parametro. Utilizada para IDs.
+    
+    @param s String fonte
+    
+    @return String duplicada
 */
 char * dupl(char * s);
 
 /*
-
-
-
-
+    Duplica a string recebida por parametro, tratando escapes. Utilizada para literais string.
+    
+    @param s String fonte
+    
+    @return String duplicada
 */
 char * escapeddupl(char * s);
 
