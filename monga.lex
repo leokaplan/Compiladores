@@ -8,11 +8,61 @@ Leonardo Kaplan - 1212509
 
 Arquivo .lex com as expressoes regulares e regras de tratamento de tokens
 */
-#include "y.tab.h"
 #include <stdlib.h>
+#include "monga.tab.h"
+
+/*
+    Macro para mensagens de erro
+*/
+#define ERROR(...); fprintf(stderr,__VA_ARGS__);exit(0);
+
+
+/*
+    Variavel para controle da linha atual do arquivo (e' incrementada a cada '\n' lido).
+    Ela permite que as mensagens de erro sejam mais precisas.
+*/
+int currentLine = 1;
+
+/*
+    Copia uma string, ignorando aspas e tratando escapes. Chamada por escapeddupl().
+    
+    @param dst String destino
+           src String fonte
+           len Tamanho de src
+*/
+void cpy(char * dst, char * src, size_t len);
+
+/*
+    Duplica a string recebida por parametro. Utilizada para IDs.
+    
+    @param s String fonte
+    
+    @return String duplicada
+*/
+char * dupl(char * s);
+
+/*
+    Duplica a string recebida por parametro, tratando escapes. Utilizada para literais string.
+    
+    @param s String fonte
+    
+    @return String duplicada
+*/
+char * escapeddupl(char * s);
+
+/*
+    Trata escapes. Se o primeiro caracter for um '\', é retornado o segundo escapado (ex.: '\' 'n' -> '\n').
+    Caso contrário, retorna-se o primeiro caracter.
+    
+    @param a Primeiro caracter
+           b Segundo caracter
+    @return O caractere a ser utilizado
+*/
+char escape(char a,char b);
+
+
 %}
 
-%option noyywrap
 
 ID              [a-zA-Z_][a-zA-Z0-9_]*
 DECIMALINT      [1-9][0-9]*|0
@@ -65,6 +115,11 @@ UNITARY         [][{}(),;+\-*/=<>!]
 .               { ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n", currentLine); }   
 
 %%
+
+int yywrap(void) {
+ return 1;
+}
+
 char escape(char a, char b) {
     if(a == '\\') {
         switch(b) {

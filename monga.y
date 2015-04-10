@@ -3,37 +3,67 @@
 %nonassoc TK_ELSE
 
 %{
+    #include <stdio.h>
     void yyerror(char *);
     int yylex(void);
     int sym[26];
 %}
-
+%union {
+    int intval;
+    float floatval;
+    char * stringval;
+    char * name;
+};
 %%
-programa : programa declaracao | ;
+programa : programa declaracao 
+         | 
+         ;
 
-declaracao : decvariavel | decfuncao ;
+declaracao : decvariavel 
+           | decfuncao 
+           ;
 
-decvariavel : tipo listanomes ';' ;
+decvariavel : tipo listanomes ';' 
+            ;
 
-listanomes : TK_ID | listanomes ',' TK_ID ;
+listanomes : TK_ID 
+           | listanomes ',' TK_ID 
+           ;
 
-tipo : tipobase | tipo '[' ']';
+tipo : tipobase 
+     | tipo '[' ']'
+     ;
 
-tipobase : TK_INT |  TK_FLOAT  | TK_CHAR;
+tipobase : TK_INT 
+         | TK_FLOAT  
+         | TK_CHAR
+         ;
 
-decfuncao : tipo TK_ID '(' listaparametros ')' bloco | TK_VOID TK_ID '(' listaparametros ')' bloco;
+decfuncao : tipo TK_ID '(' listaparametros ')' bloco 
+          | TK_VOID TK_ID '(' listaparametros ')' bloco
+          ;
 
-listaparametros : parametros | ;
+listaparametros : parametros 
+                | 
+                ;
 
-parametros : parametro | parametros ',' parametro ;
+parametros : parametro 
+           | parametros ',' parametro 
+           ;
 
-parametro : tipo TK_ID;
+parametro : tipo TK_ID
+          ;
 
-bloco : '{'  decsvariaveis  comandos  '}';
+bloco : '{'  decsvariaveis  comandos  '}'
+      ;
 
-decsvariaveis: decsvariaveis decvariavel | ;
+decsvariaveis: decsvariaveis decvariavel 
+             | 
+             ;
 
-comandos: comandos comando | ;
+comandos: comandos comando 
+        | 
+        ;
 
 comando : TK_IF '(' exp ')' comando %prec IFX
         | TK_IF '(' exp ')' comando TK_ELSE comando
@@ -44,7 +74,9 @@ comando : TK_IF '(' exp ')' comando %prec IFX
         | bloco
         ;
 
-var : TK_ID | exp '[' exp ']' ;
+var : TK_ID 
+    | exp '[' exp ']' 
+    ;
 
 boolexp: compexp 
        | boolexp TK_AND compexp
@@ -75,7 +107,9 @@ unaryexp: '-' exp
    | exp
    ;
 
-exp : TK_LITERALINT | TK_LITERALFLOAT | TK_LITERALSTRING 
+exp : TK_LITERALINT 
+    | TK_LITERALFLOAT 
+    | TK_LITERALSTRING 
     | var
     | '(' boolexp ')'
     | chamada
@@ -84,7 +118,18 @@ exp : TK_LITERALINT | TK_LITERALFLOAT | TK_LITERALSTRING
 
 chamada : TK_ID '(' listaexp ')';
 
-listaexp : exps | ;
+listaexp : exps 
+         | 
+         ;
 
-exps : exp |exps ',' exp ;
+exps : exp 
+     | exps ',' exp 
+     ;
 %%
+void yyerror(char *s) {
+ fprintf(stderr, "%s\n", s);
+}
+int main(void) {
+ yyparse();
+ return 0;
+}

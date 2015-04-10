@@ -1,11 +1,12 @@
 all: main
 
 lex.yy.c: monga.lex
-	    lex monga.lex
-
-main: lex.yy.c main.c 
-	    gcc -Wall -o main main.c -I.  
+	    flex monga.lex
+monga.tab.c: monga.y
+		bison -d monga.y
+main: lex.yy.c monga.tab.c 
+	    gcc -Wall -o main lex.yy.c monga.tab.c -I.  
 			
 clean:
-		$(RM) main lex.yy.c 
+		$(RM) main lex.yy.c monga.tab.c monga.tab.h 
 		$(RM) testes/*.out
