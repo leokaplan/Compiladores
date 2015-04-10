@@ -42,7 +42,7 @@ comando : TK_IF '(' exp ')' comando parteelse
         ;
 parteelse : TK_ELSE comando | ;
 var : TK_ID | exp '[' exp ']' ;
-exp : TK_LITERALINT 
+exp : TK_LITERALINT | TK_LITERALFLOAT | TK_LITERALSTRING 
     | var
     | '(' exp ')'
     | chamada
