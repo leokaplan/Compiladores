@@ -1,5 +1,5 @@
 %token TK_CHAR TK_INT TK_FLOAT TK_IF  TK_ELSE  TK_WHILE TK_VOID  TK_RETURN TK_NEW  TK_AND  TK_OR  TK_EQ  TK_NEQ  TK_GEQ  TK_LEQ  TK_ID TK_LITERALINT TK_LITERALFLOAT TK_LITERALSTRING
-%nonassoc IFX
+%nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
 
 %{
@@ -8,12 +8,14 @@
     int yylex(void);
     int sym[26];
 %}
+
 %union {
     int intval;
     float floatval;
     char * stringval;
     char * name;
 };
+
 %%
 programa : programa declaracao 
          | 
@@ -65,7 +67,7 @@ comandos: comandos comando
         | 
         ;
 
-comando : TK_IF '(' exp ')' comando %prec IFX
+comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE
         | TK_IF '(' exp ')' comando TK_ELSE comando
         | TK_WHILE '(' exp ')' comando
         | var '=' exp ';'
@@ -116,7 +118,8 @@ exp : TK_LITERALINT
     | TK_NEW tipo '[' boolexp ']'
     ;
 
-chamada : TK_ID '(' listaexp ')';
+chamada : TK_ID '(' listaexp ')'
+        ;
 
 listaexp : exps 
          | 
