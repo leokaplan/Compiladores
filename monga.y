@@ -99,9 +99,9 @@ addexp: multexp
       ;
 
 multexp: unaryexp
-       | unaryexp '*' multexp
-       | unaryexp '/' multexp
-       | unaryexp '%' multexp
+       | multexp '*' unaryexp
+       | multexp '/' unaryexp
+       | multexp '%' unaryexp
        ;
 
 unaryexp: '-' exp 
