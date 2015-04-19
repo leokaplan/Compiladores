@@ -69,17 +69,21 @@ comandos: comandos comando
         | 
         ;
 
-comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE
-        | TK_IF '(' exp ')' comando TK_ELSE comando
-        | TK_WHILE '(' exp ')' comando
-        | var '=' exp ';'
-        | TK_RETURN [ exp ] ';'
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE
+        | TK_IF '(' boolexp ')' comando TK_ELSE comando
+        | TK_WHILE '(' boolexp ')' comando
+        | var '=' boolexp ';'
+        | comandoreturn ';'
         | chamada ';'
         | bloco
         ;
 
+comandoreturn: TK_RETURN
+	     | TK_RETURN boolexp
+	     ;
+
 var : TK_ID 
-    | exp '[' exp ']' 
+    | boolexp '[' boolexp ']' 
     ;
 
 boolexp: compexp 
@@ -106,8 +110,8 @@ multexp: unaryexp
        | multexp '%' unaryexp
        ;
 
-unaryexp: '-' exp 
-   | '!' exp
+unaryexp: '-' unaryexp 
+   | '!' unaryexp
    | exp
    ;
 
@@ -127,8 +131,8 @@ listaexp : exps
          | 
          ;
 
-exps : exp 
-     | exps ',' exp 
+exps : boolexp 
+     | exps ',' boolexp 
      ;
 %%
 void yyerror(char *s) {
