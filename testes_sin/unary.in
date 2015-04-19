@@ -1,0 +1,10 @@
+void main(){
+    int a;
+    if(!(2>5)){
+        a = -(4*2);
+    }
+    else{
+        a = 2;
+    }
+    return;
+}
