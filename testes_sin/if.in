@@ -1,0 +1,38 @@
+/* Testes com if */
+
+void main() {
+	
+	int a;
+
+	a = 1;
+
+	if (a || 2 - 2) {
+		a = 0;
+	}
+	else
+		if (3 > 1)
+			a = 3;
+
+
+	if (a > -3)
+		a = 0;
+
+	if (a > -3)
+		a = 0;
+	else
+		a = 1;
+
+
+	if (a > -42) {
+		a = 3;
+	}
+	else if (a <= -100) {
+		a = 2;
+	}
+	else {
+		a = 1;
+	}
+ 	
+	return;
+
+}
