@@ -32,8 +32,8 @@ floats e inteiros em hexadecimal. Os comentários funcionam como em C também, o
 ser encadeados. Como está dito na definição da linguagem Monga, os únicos escapes válidos em strings
 são \t, \n e \"; os outros, portanto, gerarão erro.
   Tokens de um caracter só têm como valor o próprio caracter (ex.: { é representado por '{').
-
+  As expressões na gramática têm prioridade, da seguinte ordem
+  "atômicas" > unárias > multiplicativas > aditivas > comparativas > booleanas
 
 Observações:
-
 
