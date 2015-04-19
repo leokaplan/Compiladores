@@ -18,43 +18,43 @@
     char * name;
 };
 %%
-programa : programa declaracao {printf("programa\n");} 
-         | {printf("programa vazio\n");} 
+programa : programa declaracao {printf("\n programa");} 
+         | {printf("\n programa vazio");} 
          ;
 
-declaracao : decvariavel {printf("dec var\n");} 
-           | decfuncao {printf("dec func\n");} 
+declaracao : decvariavel {printf("\ndec var");} 
+           | decfuncao {printf("\ndec func");} 
            ;
 
 decvariavel : tipo listanomes ';' 
             ;
 
-listanomes : TK_ID {printf("var id\n");}
-           | listanomes ',' TK_ID {printf(", var id\n");}
+listanomes : TK_ID {printf(" var id ");}
+           | listanomes ',' TK_ID {printf(", var id ");}
            ;
 
 tipo : tipobase 
      | tipo '[' ']'
      ;
 
-tipobase : TK_INT {printf("tipo int\n");} 
-         | TK_FLOAT {printf("tipo float\n");}  
-         | TK_CHAR {printf("tipo char\n");} 
+tipobase : TK_INT {printf(" T(int) ");} 
+         | TK_FLOAT {printf(" T(float ");}  
+         | TK_CHAR {printf(" T(char) ");} 
          ;
 
-decfuncao : tipo TK_ID '(' listaparametros ')' bloco {printf("func tipo\n");} 
-          | TK_VOID TK_ID '(' listaparametros ')' bloco {printf("func void\n");} 
+decfuncao : tipo TK_ID '(' listaparametros ')' bloco {printf("\nfunc tipo");} 
+          | TK_VOID TK_ID '(' listaparametros ')' bloco {printf("\nfunc void");} 
           ;
 
-listaparametros : parametros {printf("parametros\n");} 
-                | {printf("sem parametros\n");} 
+listaparametros : parametros {printf("\nparametros");} 
+                | {printf("\nsem parametros");} 
                 ;
 
 parametros : parametro 
            | parametros ',' parametro 
            ;
 
-parametro : tipo TK_ID {printf("parametro tipo: id:\n");}
+parametro : tipo TK_ID {printf("parametro tipo: id:");}
           ;
 
 bloco : '{'  decsvariaveis  comandos  '}'
@@ -68,17 +68,17 @@ comandos: comandos comando
         | 
         ;
 
-comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
-        | TK_IF '(' boolexp ')' comando TK_ELSE comando {printf("if no else\n");}
-        | TK_WHILE '(' boolexp ')' comando {printf("while\n");}
-        | var '=' boolexp ';' {printf("atribuicao\n");}
-        | comandoreturn ';' {printf("return \n");}
-        | chamada ';' {printf("chamada\n");}
-        | bloco {printf("bloco\n");}
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE  {printf("\nif sem else");}
+        | TK_IF '(' boolexp ')' comando TK_ELSE comando {printf("\nif com else");}
+        | TK_WHILE '(' boolexp ')' comando {printf("\nwhile");}
+        | var '=' boolexp ';' {printf("\natribuicao");}
+        | comandoreturn ';' {printf("\nreturn ");}
+        | chamada ';' {printf("\nchamada");}
+        | bloco {printf("\nbloco");}
         ;
 
-var : TK_ID {printf("id\n");} 
-    | boolexp '[' boolexp ']' {printf("indexavel\n");}
+var : TK_ID {printf(" id ");} 
+    | boolexp '[' boolexp ']' {printf(" indexavel ");}
 
 
 comandoreturn: TK_RETURN 
@@ -87,27 +87,27 @@ comandoreturn: TK_RETURN
 
 
 boolexp: compexp 
-       | boolexp TK_AND compexp
-       | boolexp TK_OR compexp
+       | boolexp TK_AND compexp {printf(" and ");}
+       | boolexp TK_OR compexp {printf(" or ");}
        ;
 
 compexp: addexp
-       | compexp TK_EQ addexp
-       | compexp TK_LEQ addexp
-       | compexp TK_GEQ addexp
-       | compexp '<' addexp
-       | compexp '>' addexp
+       | compexp TK_EQ addexp {printf(" == ");}
+       | compexp TK_LEQ addexp {printf(" <= ");}
+       | compexp TK_GEQ addexp {printf(" >= ");}
+       | compexp '<' addexp {printf(" < ");}
+       | compexp '>' addexp {printf(" > ");}
        ;
 
 addexp: multexp
-      | addexp '+' multexp
-      | addexp '-' multexp
+      | addexp '+' multexp{printf(" + ");}
+      | addexp '-' multexp{printf(" - ");}
       ;
 
 multexp: unaryexp
-       | multexp '*' unaryexp
-       | multexp '/' unaryexp
-       | multexp '%' unaryexp
+       | multexp '*' unaryexp {printf(" * ");}
+       | multexp '/' unaryexp {printf(" / ");}
+       | multexp '%' unaryexp {printf(" % ");}
        ;
 
 unaryexp: '-' unaryexp 
@@ -115,10 +115,10 @@ unaryexp: '-' unaryexp
    | exp
    ;
 
-exp : TK_LITERALINT 
-    | TK_LITERALFLOAT 
-    | TK_LITERALSTRING 
-    | var
+exp : TK_LITERALINT {printf(" L(int) ");} 
+    | TK_LITERALFLOAT  {printf(" L(float) ");}
+    | TK_LITERALSTRING  {printf(" L(string) ");}
+    | var {printf(" var ");}
     | '(' boolexp ')'
     | chamada
     | TK_NEW tipo '[' boolexp ']'
@@ -140,8 +140,8 @@ void yyerror(char *s) {
 }
 int main(void) {
  if(!yyparse())
-    printf("parsing finished\n");
+    printf("\n\nparsing finished\n\n");
  else
-    printf("parsing error\n");
+    printf("\n\nparsing error\n\n");
  return 0;
 }
