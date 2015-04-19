@@ -69,36 +69,23 @@ comandos: comandos comando
         | 
         ;
 
-<<<<<<< HEAD
-comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
-        | TK_IF '(' exp ')' comando TK_ELSE comando {printf("if no else\n");}
-        | TK_WHILE '(' exp ')' comando {printf("while\n");}
-        | var '=' exp ';' {printf("atribuicao\n");}
-        | TK_RETURN [ exp ] ';' {printf("return \n");}
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
+        | TK_IF '(' boolexp ')' comando TK_ELSE comando {printf("if no else\n");}
+        | TK_WHILE '(' boolexp ')' comando {printf("while\n");}
+        | var '=' boolexp ';' {printf("atribuicao\n");}
+        | comandoreturn ';' {printf("return \n");}
         | chamada ';' {printf("chamada\n");}
         | bloco {printf("bloco\n");}
         ;
 
 var : TK_ID {printf("id\n");} 
-    | exp '[' exp ']' {printf("indexavel\n");}
-=======
-comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE
-        | TK_IF '(' boolexp ')' comando TK_ELSE comando
-        | TK_WHILE '(' boolexp ')' comando
-        | var '=' boolexp ';'
-        | comandoreturn ';'
-        | chamada ';'
-        | bloco
-        ;
+    | boolexp '[' boolexp ']' {printf("indexavel\n");}
 
-comandoreturn: TK_RETURN
-	     | TK_RETURN boolexp
-	     ;
 
-var : TK_ID 
-    | boolexp '[' boolexp ']' 
->>>>>>> ff472b0624b198255e3291ecea2417afe2346727
-    ;
+comandoreturn: TK_RETURN 
+     	     | TK_RETURN boolexp 
+	         ;
+
 
 boolexp: compexp 
        | boolexp TK_AND compexp
