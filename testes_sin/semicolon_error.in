@@ -1,0 +1,8 @@
+/* Teste de ponto-e-vírgula (erro) */
+
+void main () {
+	/* Aqui não tem ponto-e-vírgula */
+	int a
+
+	return;
+}

@@ -1,0 +1,17 @@
+/* Testes de chamada de funcao */
+
+
+void main () {
+	
+	int a;
+	int[] b;
+
+	b = new int[5];
+
+	b = {1, 2, 3, 4, 5};
+
+	a = (b + 1)[2];
+
+
+	return;
+}
