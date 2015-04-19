@@ -9,6 +9,7 @@
     int sym[26];
     extern int currentLine;
     extern char yytext[];
+    int red = 0;
 %}
 %error-verbose
 %union {
@@ -17,10 +18,9 @@
     char * stringval;
     char * name;
 };
-
 %%
-programa : programa declaracao {printf("programa\n");} 
-         | {printf("programa vazio\n");} 
+programa : programa declaracao {red++;printf("programa%d\n",red);} 
+         | {red++;printf("programa vazio%d\n",red);} 
          ;
 
 declaracao : decvariavel {printf("dec var\n");} 
@@ -30,8 +30,8 @@ declaracao : decvariavel {printf("dec var\n");}
 decvariavel : tipo listanomes ';' 
             ;
 
-listanomes : TK_ID 
-           | listanomes ',' TK_ID 
+listanomes : TK_ID {printf("var id\n");}
+           | listanomes ',' TK_ID {printf(", var id\n");}
            ;
 
 tipo : tipobase 
@@ -69,17 +69,17 @@ comandos: comandos comando
         | 
         ;
 
-comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE
-        | TK_IF '(' exp ')' comando TK_ELSE comando
-        | TK_WHILE '(' exp ')' comando
-        | var '=' exp ';'
-        | TK_RETURN [ exp ] ';'
-        | chamada ';'
-        | bloco
+comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
+        | TK_IF '(' exp ')' comando TK_ELSE comando {printf("if no else\n");}
+        | TK_WHILE '(' exp ')' comando {printf("while\n");}
+        | var '=' exp ';' {printf("atribuicao\n");}
+        | TK_RETURN [ exp ] ';' {printf("return \n");}
+        | chamada ';' {printf("chamada\n");}
+        | bloco {printf("bloco\n");}
         ;
 
-var : TK_ID 
-    | exp '[' exp ']' 
+var : TK_ID {printf("id\n");} 
+    | exp '[' exp ']' {printf("indexavel\n");}
     ;
 
 boolexp: compexp 
@@ -132,7 +132,7 @@ exps : exp
      ;
 %%
 void yyerror(char *s) {
-    fprintf(stderr, "line %d: %s\n", currentLine, s);
+    fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
 int main(void) {
  if(!yyparse())
