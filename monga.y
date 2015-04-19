@@ -69,6 +69,7 @@ comandos: comandos comando
         | 
         ;
 
+<<<<<<< HEAD
 comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
         | TK_IF '(' exp ')' comando TK_ELSE comando {printf("if no else\n");}
         | TK_WHILE '(' exp ')' comando {printf("while\n");}
@@ -80,6 +81,23 @@ comando : TK_IF '(' exp ')' comando %prec IF_NO_ELSE  {printf("if no else\n");}
 
 var : TK_ID {printf("id\n");} 
     | exp '[' exp ']' {printf("indexavel\n");}
+=======
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE
+        | TK_IF '(' boolexp ')' comando TK_ELSE comando
+        | TK_WHILE '(' boolexp ')' comando
+        | var '=' boolexp ';'
+        | comandoreturn ';'
+        | chamada ';'
+        | bloco
+        ;
+
+comandoreturn: TK_RETURN
+	     | TK_RETURN boolexp
+	     ;
+
+var : TK_ID 
+    | boolexp '[' boolexp ']' 
+>>>>>>> ff472b0624b198255e3291ecea2417afe2346727
     ;
 
 boolexp: compexp 
@@ -106,8 +124,8 @@ multexp: unaryexp
        | multexp '%' unaryexp
        ;
 
-unaryexp: '-' exp 
-   | '!' exp
+unaryexp: '-' unaryexp 
+   | '!' unaryexp
    | exp
    ;
 
@@ -127,8 +145,8 @@ listaexp : exps
          | 
          ;
 
-exps : exp 
-     | exps ',' exp 
+exps : boolexp 
+     | exps ',' boolexp 
      ;
 %%
 void yyerror(char *s) {

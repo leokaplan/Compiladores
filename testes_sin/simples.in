@@ -1,5 +1,12 @@
 /* Teste simples */
 
+<<<<<<< HEAD
+=======
+int powerOfLove(int love) {
+	return love;
+}
+
+>>>>>>> ff472b0624b198255e3291ecea2417afe2346727
 void main() {
     int a,b,c;
 }
