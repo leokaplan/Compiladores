@@ -1,13 +1,10 @@
 /* Teste simples */
-<<<<<<< HEAD
+
 int powerOfLove(int love) {
 	return love;
 }
-=======
->>>>>>> c977c5768785fcd5910fa27cd064cae3398acb25
 
-void main() {
-    int a,b,c;
-
+void main () {
+	int a, b, c;
 	return;
 }
