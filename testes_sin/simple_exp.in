@@ -1,0 +1,29 @@
+/* Testes simples de expressoes */
+
+void main () {
+
+	int a, b, c, d, e;
+
+	a = 1;
+	b = 2;
+	c = 3;
+	d = 4;
+	e = 5;
+
+	a = a + 4;
+
+	b = a - c;
+
+	d = e / 3;
+
+	c = -b;
+
+	a = !d;
+
+	b = a && b;
+
+	if (e >= c)
+		d = 1 - e;
+
+	return;
+}
