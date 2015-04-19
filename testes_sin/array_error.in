@@ -1,4 +1,4 @@
-/* Testes de array */
+/* Testes de array  (erro) */
 
 
 void main () {
@@ -8,6 +8,7 @@ void main () {
 
 	b = new int[5];
 
+	/* Nao aceito pela linguagem */
 	b = {1, 2, 3, 4, 5};
 
 	a = (b + 1)[2];
