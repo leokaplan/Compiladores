@@ -9,7 +9,6 @@
     int sym[26];
     extern int currentLine;
     extern char yytext[];
-    int red = 0;
 %}
 %error-verbose
 %union {
@@ -19,8 +18,8 @@
     char * name;
 };
 %%
-programa : programa declaracao {red++;printf("programa%d\n",red);} 
-         | {red++;printf("programa vazio%d\n",red);} 
+programa : programa declaracao {printf("programa\n");} 
+         | {printf("programa vazio\n");} 
          ;
 
 declaracao : decvariavel {printf("dec var\n");} 
