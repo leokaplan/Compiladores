@@ -1,0 +1,23 @@
+/* Teste simples */
+
+int powerOfLove(int love);
+
+void main() {
+
+	int a, i;
+	int[] b;	
+
+	a = powerOfLove(0) + powerOfLove(1);
+	a = powerOfLove(a + 5);
+	
+	i = 0;
+	
+	b = new int[powerOfLove(a * 3)];
+
+	while (i < powerOfLove(a * 3)) {
+		b[i] = a;
+		i++;
+	}
+
+	return;
+}
