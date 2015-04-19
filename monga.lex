@@ -112,7 +112,7 @@ UNITARY         [][{}(),;+\-*/=<>!]
 {LITERALSTRING} { yylval.stringval = escapeddupl(yytext); return TK_LITERALSTRING; }
 {ID}            { yylval.name = dupl(yytext); return TK_ID; }
 {UNITARY}       { return yytext[0]; } 
-.               { ERROR("\nERROR > scanner > on line %d > unmatched sequence.\n", currentLine); }   
+.               { yyerror("invalid character sequence"); }   
 
 %%
 
@@ -133,7 +133,7 @@ char escape(char a, char b) {
                 return '\n';
                 break;
             default:
-                ERROR("\nERROR > scanner > on line %d > invalid literal escape\n", currentLine);
+                yyerror("invalid escape character");
                 break;
         }
     }
@@ -164,7 +164,7 @@ char * dupl(char * s) {
     size_t slen = strlen(s);
     char * d = (char *) malloc(slen + 1);
     if(d == NULL) { 
-        ERROR("\nERROR > scanner > on line %d > not enough memory to scan ID\n", currentLine);
+        yyerror("not enough memory to scan identifier");
     }
     memcpy(d, s, slen+1);
     return d;
@@ -174,7 +174,7 @@ char * escapeddupl(char * s) {
     size_t slen = strlen(s);
     char* d = (char *) malloc(slen + 1);
     if(d==NULL) { 
-        ERROR("\nERROR > scanner > on line %d > not enough memory to scan literal\n",currentLine);
+        yyerror("not enough memory to scan literal");
     }
     cpy(d, s, slen+1);
     return d;

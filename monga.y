@@ -8,8 +8,9 @@
     int yylex(void);
     int sym[26];
     extern int currentLine;
+    extern char yytext[];
 %}
-
+%error-verbose
 %union {
     int intval;
     float floatval;
@@ -18,12 +19,12 @@
 };
 
 %%
-programa : programa declaracao 
-         | 
+programa : programa declaracao {printf("programa\n");} 
+         | {printf("programa vazio\n");} 
          ;
 
-declaracao : decvariavel 
-           | decfuncao 
+declaracao : decvariavel {printf("dec var\n");} 
+           | decfuncao {printf("dec func\n");} 
            ;
 
 decvariavel : tipo listanomes ';' 
@@ -37,24 +38,24 @@ tipo : tipobase
      | tipo '[' ']'
      ;
 
-tipobase : TK_INT 
-         | TK_FLOAT  
-         | TK_CHAR
+tipobase : TK_INT {printf("tipo int\n");} 
+         | TK_FLOAT {printf("tipo float\n");}  
+         | TK_CHAR {printf("tipo char\n");} 
          ;
 
-decfuncao : tipo TK_ID '(' listaparametros ')' bloco 
-          | TK_VOID TK_ID '(' listaparametros ')' bloco
+decfuncao : tipo TK_ID '(' listaparametros ')' bloco {printf("func tipo\n");} 
+          | TK_VOID TK_ID '(' listaparametros ')' bloco {printf("func void\n");} 
           ;
 
-listaparametros : parametros 
-                | 
+listaparametros : parametros {printf("parametros\n");} 
+                | {printf("sem parametros\n");} 
                 ;
 
 parametros : parametro 
            | parametros ',' parametro 
            ;
 
-parametro : tipo TK_ID
+parametro : tipo TK_ID {printf("parametro tipo: id:\n");}
           ;
 
 bloco : '{'  decsvariaveis  comandos  '}'
@@ -134,6 +135,9 @@ void yyerror(char *s) {
     fprintf(stderr, "line %d: %s\n", currentLine, s);
 }
 int main(void) {
- yyparse();
+ if(!yyparse())
+    printf("parsing finished\n");
+ else
+    printf("parsing error\n");
  return 0;
 }
