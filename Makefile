@@ -9,4 +9,4 @@ main: lex.yy.c monga.tab.c
 			
 clean:
 		$(RM) main lex.yy.c monga.tab.c monga.tab.h 
-		$(RM) testes_sin/*.out
+		$(RM) testes/*.out
