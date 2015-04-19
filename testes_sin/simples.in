@@ -1,5 +1,10 @@
 /* Teste simples */
 
+int powerOfLove(int love) {
+    return love;
+}
+
 void main() {
     int a,b,c;
+    return;
 }
