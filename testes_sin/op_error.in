@@ -1,0 +1,10 @@
+/* Testes de operandos (erro) */
+
+void main () {
+
+	int a;
+
+	a = 3 +;
+
+	return;
+}
