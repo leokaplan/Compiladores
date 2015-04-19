@@ -1,0 +1,6 @@
+/* Teste de chaves (erro) */
+
+void main() {
+	int a;
+
+/* As chaves não fecham */
