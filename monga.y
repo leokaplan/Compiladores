@@ -7,6 +7,7 @@
     void yyerror(char *);
     int yylex(void);
     int sym[26];
+    extern int currentLine;
 %}
 
 %union {
@@ -130,7 +131,7 @@ exps : exp
      ;
 %%
 void yyerror(char *s) {
- fprintf(stderr, "%s\n", s);
+    fprintf(stderr, "line %d: %s\n", currentLine, s);
 }
 int main(void) {
  yyparse();
