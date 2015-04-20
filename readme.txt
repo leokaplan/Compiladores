@@ -33,7 +33,11 @@ ser encadeados. Como está dito na definição da linguagem Monga, os únicos es
 são \t, \n e \"; os outros, portanto, gerarão erro.
   Tokens de um caracter só têm como valor o próprio caracter (ex.: { é representado por '{').
   As expressões na gramática têm prioridade, da seguinte ordem
-  "atômicas" > unárias > multiplicativas > aditivas > comparativas > booleanas
+  "atômicas" > multiplicativas > aditivas > comparativas > booleanas
 
 Observações:
+
+  Known issue: precedência do menos unário. Quando colocamos a espressão unária entre parênteses não
+há erros, porém, sem os parênteses há erro de sintaxe. Tentamos usar %nonassoc, alterar a gramática,
+mas não se alterou o resultado.
 
