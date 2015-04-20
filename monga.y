@@ -81,11 +81,12 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE  {DEBUG("\nif sem else"
 
 var : TK_ID {DEBUG(" id ");} 
     | boolexp '[' boolexp ']' {DEBUG(" indexavel ");}
+    ;
 
 
 comandoreturn: TK_RETURN 
      	     | TK_RETURN boolexp 
-	         ;
+             ;
 
 
 boolexp: compexp 
@@ -106,18 +107,15 @@ addexp: multexp
       | addexp '-' multexp{DEBUG(" - ");}
       ;
 
-multexp: unaryexp
-       | multexp '*' unaryexp {DEBUG(" * ");}
-       | multexp '/' unaryexp {DEBUG(" / ");}
-       | multexp '%' unaryexp {DEBUG(" % ");}
+multexp: exp
+       | multexp '*' exp {DEBUG(" * ");}
+       | multexp '/' exp {DEBUG(" / ");}
+       | multexp '%' exp {DEBUG(" % ");}
        ;
 
-unaryexp: '-' unaryexp 
-   | '!' unaryexp
-   | exp
-   ;
-
-exp : TK_LITERALINT {DEBUG(" L(int) ");} 
+exp : '-' exp
+    | '!' exp
+    | TK_LITERALINT {DEBUG(" L(int) ");} 
     | TK_LITERALFLOAT  {DEBUG(" L(float) ");}
     | TK_LITERALSTRING  {DEBUG(" L(string) ");}
     | var {DEBUG(" var ");}
