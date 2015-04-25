@@ -1,3 +1,32 @@
+%{
+/*
+	Arquivo monga.y
+	Bernardo Alkmim 1210514
+	Leonardo Kaplan 1212509
+*/
+
+#include <stdio.h>
+
+#define DEBUG(X) printf(X)
+#define DEBUG(x) 
+
+void yyerror(char *);
+int yylex(void);
+int sym[26];
+extern int currentLine;
+extern char yytext[];
+
+%}
+
+%error-verbose
+
+%union {
+    int intval;
+    float floatval;
+    char * stringval;
+    char * name;
+}
+
 %token TK_CHAR 
 %token TK_INT
 %token TK_FLOAT
@@ -21,30 +50,11 @@
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
 
-%{
-    #include <stdio.h>
-    void yyerror(char *);
-    int yylex(void);
-    int sym[26];
-    extern int currentLine;
-    extern char yytext[];
-    #define DEBUG(X) printf(X)
-    #define DEBUG(x) 
-%}
-
-%error-verbose
-
-%union {
-    int intval;
-    float floatval;
-    char * stringval;
-    char * name;
-};
 
 %%
 
 programa : programa declaracao 								{ DEBUG("\n programa"); } 
-         | 													{ DEBUG("\n programa vazio"); } 
+         | 													{ } 
          ;
 
 declaracao : decvariavel 									{ DEBUG("\ndec var"); } 
@@ -72,7 +82,7 @@ decfuncao : tipo TK_ID '(' listaparametros ')' bloco 		{ DEBUG("\nfunc tipo"); }
           ;
 
 listaparametros : parametros 								{ DEBUG("\nparametros"); }
-                | 											{ DEBUG("\nsem parametros"); } 
+                | 											{ $$ = NULL; } 
                 ;
 
 parametros : parametro 										{ }
@@ -86,11 +96,11 @@ bloco : '{'  decsvariaveis  comandos  '}' 					{ }
       ;
 
 decsvariaveis: decsvariaveis decvariavel 					{ }
-             | 												{ }
+             | 												{ $$ = NULL; }
              ;
 
 comandos: comandos comando 									{ }
-        | 													{ }
+        | 													{ $$ = NULL;}
         ;
 
 comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ DEBUG("\nif sem else"); }
@@ -151,16 +161,19 @@ chamada : TK_ID '(' listaexp ')' 							{ }
         ;
 
 listaexp : exps 											{ }
-         | 													{ }
+         | 													{ $$ = NULL; }
          ;
 
 exps : boolexp 												{ }
      | exps ',' boolexp 									{ }
      ;
+
 %%
+
 void yyerror(char *s) {
     fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
+
 int main(void) {
 	if(!yyparse())
     	printf("\n\nparsing finished\n\n");
