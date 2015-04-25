@@ -1,4 +1,22 @@
-%token TK_CHAR TK_INT TK_FLOAT TK_IF  TK_ELSE  TK_WHILE TK_VOID  TK_RETURN TK_NEW  TK_AND  TK_OR  TK_EQ  TK_NEQ  TK_GEQ  TK_LEQ  TK_ID TK_LITERALINT TK_LITERALFLOAT TK_LITERALSTRING
+%token TK_CHAR 
+%token TK_INT
+%token TK_FLOAT
+%token TK_IF
+%token TK_ELSE
+%token TK_WHILE
+%token TK_VOID
+%token TK_RETURN
+%token TK_NEW
+%token TK_AND
+%token TK_OR
+%token TK_EQ 
+%token TK_NEQ 
+%token TK_GEQ
+%token TK_LEQ 
+%token TK_ID 
+%token TK_LITERALINT 
+%token TK_LITERALFLOAT
+%token TK_LITERALSTRING
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
 
