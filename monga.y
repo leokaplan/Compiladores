@@ -57,8 +57,8 @@ programa : programa declaracao 								{ DEBUG("\n programa"); }
          | 													{ } 
          ;
 
-declaracao : decvariavel 									{ DEBUG("\ndec var"); } 
-           | decfuncao 										{ DEBUG("\ndec func"); } 
+declaracao : decvariavel 									{ $$ = $1; } 
+           | decfuncao 										{ $$ = $1; } 
            ;
 
 decvariavel : tipo listanomes ';' 							{ }
@@ -68,8 +68,9 @@ listanomes : TK_ID 											{ DEBUG(" var id "); }
            | listanomes ',' TK_ID 							{ DEBUG(", var id "); }
            ;
 
-tipo : tipobase 											{ }
-     | tipo '[' ']' 										{ }
+tipo : tipobase 											{ $$ = $1; }
+     | tipo '[' ']' 										{ // provavelmente tem que fazer alguma louca com array na ast
+															  $$ = $1; }
      ;
 
 tipobase : TK_INT 											{ DEBUG(" T(int) "); }
@@ -81,11 +82,11 @@ decfuncao : tipo TK_ID '(' listaparametros ')' bloco 		{ DEBUG("\nfunc tipo"); }
           | TK_VOID TK_ID '(' listaparametros ')' bloco 	{ DEBUG("\nfunc void"); } 
           ;
 
-listaparametros : parametros 								{ DEBUG("\nparametros"); }
+listaparametros : parametros 								{ $$ = $1; }
                 | 											{ $$ = NULL; } 
                 ;
 
-parametros : parametro 										{ }
+parametros : parametro 										{ $$ = $1; }
            | parametros ',' parametro 						{ }
            ;
 
@@ -107,9 +108,9 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ DEBUG("\nif sem else
         | TK_IF '(' boolexp ')' comando TK_ELSE comando 	{ DEBUG("\nif com else"); }
         | TK_WHILE '(' boolexp ')' comando 					{ DEBUG("\nwhile"); }
         | var '=' boolexp ';' 								{ DEBUG("\natribuicao"); }
-        | comandoreturn ';' 								{ DEBUG("\nreturn "); }
-        | chamada ';' 										{ DEBUG("\nchamada"); }
-        | bloco 											{ DEBUG("\nbloco"); }
+        | comandoreturn ';' 								{ $$ = $1; }
+        | chamada ';' 										{ $$ = $1; }
+        | bloco 											{ $$ = $1; }
         ;
 
 var : TK_ID 												{ DEBUG(" id "); } 
@@ -122,12 +123,12 @@ comandoreturn: TK_RETURN 									{ }
              ;
 
 
-boolexp: compexp 											{ }
+boolexp: compexp 											{ $$ = $1; }
        | boolexp TK_AND compexp 							{ DEBUG(" and "); }
        | boolexp TK_OR compexp 								{ DEBUG(" or "); }
        ;
 
-compexp: addexp 											{ }
+compexp: addexp 											{ $$ = $1; }
        | compexp TK_EQ addexp 								{ DEBUG(" == "); }
        | compexp TK_LEQ addexp 								{ DEBUG(" <= "); }
        | compexp TK_GEQ addexp 								{ DEBUG(" >= "); }
@@ -135,36 +136,39 @@ compexp: addexp 											{ }
        | compexp '>' addexp 								{ DEBUG(" > "); }
        ;
 
-addexp: multexp 											{ }
+addexp: multexp 											{ $$ = $1; }
       | addexp '+' multexp									{ DEBUG(" + "); }
       | addexp '-' multexp									{ DEBUG(" - "); }
       ;
 
-multexp: exp 												{ }
+multexp: exp 												{ $$ = $1; }
        | multexp '*' exp 									{ DEBUG(" * "); }
        | multexp '/' exp 									{ DEBUG(" / "); }
        | multexp '%' exp 									{ DEBUG(" % "); }
        ;
 
-exp : '-' exp 												{ }
-    | '!' exp 												{ }
+exp : '-' exp 												{ // provavelmente tem que fazer mais coisa
+															  $$ = $2; }
+    | '!' exp 												{ // provavelmente tem que fazer mais coisa
+															  $$ = $2; }
     | TK_LITERALINT 										{ DEBUG(" L(int) "); } 
     | TK_LITERALFLOAT  										{ DEBUG(" L(float) "); }
     | TK_LITERALSTRING 										{ DEBUG(" L(string) "); }
-    | var 													{ DEBUG(" var "); }
-    | '(' boolexp ')' 										{ }
-    | chamada 												{ }
+    | var 													{ // provavelmente tem que fazer mais coisa
+															  $$ = $1; }
+    | '(' boolexp ')' 										{ $$ = $2; }
+    | chamada 												{ $$ = $1; }
     | TK_NEW tipo '[' boolexp ']' 							{ }
     ;
 
 chamada : TK_ID '(' listaexp ')' 							{ }
         ;
 
-listaexp : exps 											{ }
+listaexp : exps 											{ $$ = $1; }
          | 													{ $$ = NULL; }
          ;
 
-exps : boolexp 												{ }
+exps : boolexp 												{ $$ = $1; }
      | exps ',' boolexp 									{ }
      ;
 
