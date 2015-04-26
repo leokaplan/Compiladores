@@ -43,10 +43,13 @@ extern char yytext[];
 %token TK_NEQ 
 %token TK_GEQ
 %token TK_LEQ 
-%token TK_ID 
-%token TK_LITERALINT 
-%token TK_LITERALFLOAT
-%token TK_LITERALSTRING
+%token <name>      TK_ID 
+%token <intval>    TK_LITERALINT 
+%token <floatval>  TK_LITERALFLOAT
+%token <stringval> TK_LITERALSTRING
+
+%type <intval> exp exps declaracao decvariavel decfuncao tipo tipobase listaparametros parametros parametro bloco decsvariaveis comandos comando var comandoreturn boolexp chamada compexp addexp multexp listaexp  
+
 
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
