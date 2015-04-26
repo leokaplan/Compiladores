@@ -6,6 +6,7 @@
 */
 
 #include <stdio.h>
+#include "abstractsyntaxtree.h"
 
 #define DEBUG(X) printf(X)
 #define DEBUG(x) 
