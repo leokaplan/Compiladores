@@ -1,9 +1,9 @@
 %{
-/*
-	Arquivo monga.y
-	Bernardo Alkmim 1210514
-	Leonardo Kaplan 1212509
-*/
+	/*
+	   Arquivo monga.y
+	   Bernardo Alkmim 1210514
+	   Leonardo Kaplan 1212509
+	 */
 
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
@@ -11,22 +11,22 @@
 #define DEBUG(X) printf(X)
 #define DEBUG(x) 
 
-void yyerror(char *);
-int yylex(void);
-int sym[26];
-extern int currentLine;
-extern char yytext[];
+	void yyerror(char *);
+	int yylex(void);
+	int sym[26];
+	extern int currentLine;
+	extern char yytext[];
 
-%}
+	%}
 
-%error-verbose
+	%error-verbose
 
-%union {
-    int intval;
-    float floatval;
-    char * stringval;
-    char * name;
-}
+	%union {
+		int intval;
+		float floatval;
+		char * stringval;
+		char * name;
+	}
 
 %token TK_CHAR 
 %token TK_INT
@@ -58,134 +58,130 @@ extern char yytext[];
 %%
 
 programa : programa declaracao 								{ DEBUG("\n programa"); } 
-         | 													{ } 
-         ;
+		 |													{ } 
+		 ;
 
 declaracao : decvariavel 									{ $$ = $1; } 
-           | decfuncao 										{ $$ = $1; } 
-           ;
+		   | decfuncao 										{ $$ = $1; } 
+		   ;
 
 decvariavel : tipo listanomes ';' 							{ }
-            ;
+			;
 
-listanomes : TK_ID 											{ DEBUG(" var id "); }
-           | listanomes ',' TK_ID 							{ DEBUG(", var id "); }
-           ;
+listanomes : TK_ID 											{ $$ = id($1); }
+		   | listanomes ',' TK_ID 							{ $$ = opr($2, 2, $1, id($3)); }
+		   ;
 
 tipo : tipobase 											{ $$ = $1; }
-     | tipo '[' ']' 										{ // provavelmente tem que fazer alguma louca com array na ast
-															  $$ = $1; }
-     ;
+	 | tipo '[' ']' 										{ $$ = opr(tipo, 1, $1); }
+	 ;
 
-tipobase : TK_INT 											{ DEBUG(" T(int) "); }
-         | TK_FLOAT 										{ DEBUG(" T(float "); }
-         | TK_CHAR 											{ DEBUG(" T(char) "); } 
-         ;
+tipobase : TK_INT 											{ $$ = opr(tipobase, 1, $1); }
+		 | TK_FLOAT 										{ $$ = opr(tipobase, 1, $1); }
+		 | TK_CHAR 											{ $$ = opr(tipobase, 1, $1); } 
+		 ;
 
 decfuncao : tipo TK_ID '(' listaparametros ')' bloco 		{ DEBUG("\nfunc tipo"); } 
-          | TK_VOID TK_ID '(' listaparametros ')' bloco 	{ DEBUG("\nfunc void"); } 
-          ;
+		  | TK_VOID TK_ID '(' listaparametros ')' bloco 	{ DEBUG("\nfunc void"); } 
+		  ;
 
 listaparametros : parametros 								{ $$ = $1; }
-                | 											{ $$ = NULL; } 
-                ;
+				| 											{ } 
+				;
 
 parametros : parametro 										{ $$ = $1; }
-           | parametros ',' parametro 						{ }
-           ;
+		   | parametros ',' parametro 						{ $$ = opr($2, 2, $1, $3); }
+		   ;
 
 parametro : tipo TK_ID 										{ DEBUG("parametro tipo: id:"); }
-          ;
+		  ;
 
 bloco : '{'  decsvariaveis  comandos  '}' 					{ }
-      ;
+	  ;
 
 decsvariaveis: decsvariaveis decvariavel 					{ }
-             | 												{ $$ = NULL; }
-             ;
+			 | 												{ }
+			 ;
 
 comandos: comandos comando 									{ }
-        | 													{ $$ = NULL;}
-        ;
+		| 													{ }
+		;
 
-comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ DEBUG("\nif sem else"); }
-        | TK_IF '(' boolexp ')' comando TK_ELSE comando 	{ DEBUG("\nif com else"); }
-        | TK_WHILE '(' boolexp ')' comando 					{ DEBUG("\nwhile"); }
-        | var '=' boolexp ';' 								{ DEBUG("\natribuicao"); }
-        | comandoreturn ';' 								{ $$ = $1; }
-        | chamada ';' 										{ $$ = $1; }
-        | bloco 											{ $$ = $1; }
-        ;
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = opr($1, 2, $3, $5); }
+		| TK_IF '(' boolexp ')' comando TK_ELSE comando 	{ $$ = opr($1, 3, $3, $5, $7); }
+		| TK_WHILE '(' boolexp ')' comando 					{ $$ = opr($1, 2, $3, $5); }
+		| var '=' boolexp ';' 								{ $$ = opr($2, 2, $1, $3); }
+		| comandoreturn ';' 								{ $$ = $1; }
+		| chamada ';' 										{ $$ = $1; }
+		| bloco 											{ $$ = $1; }
+		;
 
-var : TK_ID 												{ DEBUG(" id "); } 
-    | boolexp '[' boolexp ']' 								{ DEBUG(" indexavel "); }
-    ;
+var : TK_ID 												{ $$ = id($1); } 
+	| boolexp '[' boolexp ']' 								{ DEBUG(" indexavel "); }
+	;
 
 
-comandoreturn: TK_RETURN 									{ }
-     	     | TK_RETURN boolexp 							{ }
-             ;
+comandoreturn: TK_RETURN 									{ $$ = opr($1, 1, NULL); }
+			 | TK_RETURN boolexp 							{ $$ = opr($1, 1, $2);}
+			 ;
 
 
 boolexp: compexp 											{ $$ = $1; }
-       | boolexp TK_AND compexp 							{ DEBUG(" and "); }
-       | boolexp TK_OR compexp 								{ DEBUG(" or "); }
-       ;
+	   | boolexp TK_AND compexp 							{ $$ = opr($2, 2, $1, $3); }
+	   | boolexp TK_OR compexp 								{ $$ = opr($2, 2, $1, $3); }
+	   ;
 
 compexp: addexp 											{ $$ = $1; }
-       | compexp TK_EQ addexp 								{ DEBUG(" == "); }
-       | compexp TK_LEQ addexp 								{ DEBUG(" <= "); }
-       | compexp TK_GEQ addexp 								{ DEBUG(" >= "); }
-       | compexp '<' addexp 								{ DEBUG(" < "); }
-       | compexp '>' addexp 								{ DEBUG(" > "); }
-       ;
+	   | compexp TK_EQ addexp 								{ $$ = opr($2, 2, $1, $3); }
+	   | compexp TK_LEQ addexp 								{ $$ = opr($2, 2, $1, $3); }
+	   | compexp TK_GEQ addexp 								{ $$ = opr($2, 2, $1, $3); }
+	   | compexp '<' addexp 								{ $$ = opr($2, 2, $1, $3); }
+	   | compexp '>' addexp 								{ $$ = opr($2, 2, $1, $3); }
+	   ;
 
 addexp: multexp 											{ $$ = $1; }
-      | addexp '+' multexp									{ DEBUG(" + "); }
-      | addexp '-' multexp									{ DEBUG(" - "); }
-      ;
+	  | addexp '+' multexp									{ $$ = opr($2, 2, $1, $3); }
+	  | addexp '-' multexp									{ $$ = opr($2, 2, $1, $3); }
+	  ;
 
 multexp: exp 												{ $$ = $1; }
-       | multexp '*' exp 									{ DEBUG(" * "); }
-       | multexp '/' exp 									{ DEBUG(" / "); }
-       | multexp '%' exp 									{ DEBUG(" % "); }
-       ;
+	   | multexp '*' exp 									{ $$ = opr($2, 2, $1, $3); }
+	   | multexp '/' exp 									{ $$ = opr($2, 2, $1, $3); }
+	   | multexp '%' exp 									{ $$ = opr($2, 2, $1, $3); }
+	   ;
 
-exp : '-' exp 												{ // provavelmente tem que fazer mais coisa
-															  $$ = $2; }
-    | '!' exp 												{ // provavelmente tem que fazer mais coisa
-															  $$ = $2; }
-    | TK_LITERALINT 										{ DEBUG(" L(int) "); } 
-    | TK_LITERALFLOAT  										{ DEBUG(" L(float) "); }
-    | TK_LITERALSTRING 										{ DEBUG(" L(string) "); }
-    | var 													{ // provavelmente tem que fazer mais coisa
-															  $$ = $1; }
-    | '(' boolexp ')' 										{ $$ = $2; }
-    | chamada 												{ $$ = $1; }
-    | TK_NEW tipo '[' boolexp ']' 							{ }
-    ;
+exp : '-' exp 												{ /* TODO ver prioridade */ $$ = opr($1, 1, $2); }
+	| '!' exp 												{ /* TODO ver prioridade */ $$ = opr($1, 1, $2); }
+	| TK_LITERALINT 										{ $$ = litInt($1); } 
+	| TK_LITERALFLOAT  										{ $$ = litFloat($1); }
+	| TK_LITERALSTRING 										{ $$ = litString($1); }
+	| var 													{ /* TODO provavelmente tem que fazer mais coisa */ $$ = $1; }
+	| '(' boolexp ')' 										{ $$ = $2; }
+	| chamada 												{ $$ = $1; }
+	| TK_NEW tipo '[' boolexp ']' 							{ }
+	;
 
-chamada : TK_ID '(' listaexp ')' 							{ }
-        ;
+chamada : TK_ID '(' listaexp ')' 							{ $$ = opr(chamada, 2, id($1), $3); }
+		;
 
 listaexp : exps 											{ $$ = $1; }
-         | 													{ $$ = NULL; }
-         ;
+		 | 													{ }
+		 ;
 
 exps : boolexp 												{ $$ = $1; }
-     | exps ',' boolexp 									{ }
-     ;
+	 | exps ',' boolexp 									{ $$ = opr($2, 2, $1, $3); }
+	 ;
 
 %%
 
 void yyerror(char *s) {
-    fprintf(stderr, "line %d: %s \n", currentLine, s);
+	fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
 
 int main(void) {
 	if(!yyparse())
-    	printf("\n\nparsing finished\n\n");
- 	else
-    	printf("\n\nparsing error\n\n");
- 	return 0;
+		printf("\n\nparsing finished\n\n");
+	else
+		printf("\n\nparsing error\n\n");
+	return 0;
 }
