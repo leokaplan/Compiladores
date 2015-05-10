@@ -1,51 +1,56 @@
 /*
-	abstractsyntaxtree.h
-	Bernardo Alkmim - 1210514
-	Leonardo Kaplan - 1212509
-*/
+   abstractsyntaxtree.h
+   Bernardo Alkmim - 1210514
+   Leonardo Kaplan - 1212509
+ */
+
+#ifndef ABSTRACTSYNTAXTREE
+	#define ABSTRACTSYNTAXTREE
 
 typedef enum {
 	TYPE_LIT,
 	TYPE_ID,
 	TYPE_OPR,
-} nodeEnum;
+} AST_nodeEnum;
 
 /* Literais */
 typedef union {
 	int ivalue; 
 	float fvalue;
 	char * svalue;
-} litNodeType;
+} AST_litNodeType;
 
 /* Identificadores */
 typedef struct {
 	char * name;
-} idNodeType;
+} AST_idNodeType;
 
-/* operators */
+/* Operadores */
 typedef struct {
-	int oper; /* operator */
-	int nops; /* number of operands */
-	struct nodeTypeTag ** op; /* operands */
-} oprNodeType;
+	int oper;
+	int nops;
+	struct AST_nodeType ** op; /* Lista de operandos */
+} AST_oprNodeType;
 
 typedef struct nodeTypeTag {
-	nodeEnum type; /* type of node */
+	AST_nodeEnum type;
 	int line;
 	union {
-		litNodeType lit;
-		idNodeType id;
-		oprNodeType opr;
+		AST_litNodeType lit;
+		AST_idNodeType id;
+		AST_oprNodeType opr;
 	};
-} nodeType;
+} AST_nodeType;
 
 // TODO Mudar depois para o trabalho 4. Tabela de símbolos de mais de um caracter
 extern int sym[26];
 
-nodeType * opr(int oper, int nops, ...);
-nodeType * id(char * name);
-nodeType * litInt(int value);
-nodeType * litFloat(float value);
-nodeType * litString(char * value);
-void freeNode(nodeType *p);
-int ex(nodeType *p);
+AST_nodeType * AST_opr(int oper, int nops, ...);
+AST_nodeType * AST_id(char * name);
+AST_nodeType * AST_litInt(int value);
+AST_nodeType * AST_litFloat(float value);
+AST_nodeType * AST_litString(char * value);
+void AST_freeNode(AST_nodeType *p);
+int AST_ex(AST_nodeType *p);
+
+#endif
