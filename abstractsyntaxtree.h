@@ -1,43 +1,67 @@
 /*
-	abstractsyntaxtree.h
-	Bernardo Alkmim - 1210514
-	Leonardo Kaplan - 1212509
-*/
+   abstractsyntaxtree.h
+   Bernardo Alkmim - 1210514
+   Leonardo Kaplan - 1212509
+ */
 
+#ifndef ABSTRACTSYNTAXTREE_H
+	#define ABSTRACTSYNTAXTREE_H
+
+/* Tipos da linguagem */
 typedef enum {
-	TYPE_LIT,
+	CHAR,
+	INT,
+	FLOAT,
+	VOID
+} AST_typeEnum;
+
+/* Tipos dos nos da ast */
+typedef enum {
 	TYPE_ID,
-	TYPE_OPR,
-} nodeEnum;
+	TYPE_EXP,
+	TYPE_VAR,
+	TYPE_DECL,
+	TYPE_CMD
+} AST_nodeEnum;
 
-/* Literais */
-typedef union {
-	int ivalue; 
-	float fvalue;
-	char * svalue;
-} litNodeType;
-
-/* Identificadores */
+/* Variaveis */
 typedef struct {
-	char * name;
-} idNodeType;
+	
+} AST_varNodeType;
 
-/* operators */
+
+/* Expressoes */
 typedef struct {
-	int oper; /* operator */
-	int nops; /* number of operands */
-	struct nodeTypeTag ** op; /* operands */
-} oprNodeType;
+	int oper;
+	int nops;
+	AST_nodeType ** op; /* Lista de operandos */
+} AST_expNodeType;
+
+
+/* Declaracoes */
+typedef struct {
+
+} AST_declNodeType;
+
+/* Comandos */
+typedef struct {
+
+} AST_cmdNodeType;
+
 
 typedef struct nodeTypeTag {
-	nodeEnum type; /* type of node */
+	AST_nodeEnum type;
 	int line;
 	union {
-		litNodeType lit;
-		idNodeType id;
-		oprNodeType opr;
+		AST_litIntNodeType litInt;
+		AST_litFloatNodeType litFloat;
+		AST_idNodeType id;
+		AST_expNodeType exp;
+		AST_varNodeType var;
+		AST_declNodeType decl;
+		AST_cmdNodeType cmd;
 	};
-} nodeType;
+} AST_nodeType;
 
 // TODO Mudar depois para o trabalho 4. Tabela de símbolos de mais de um caracter
 extern int sym[26];
@@ -51,3 +75,26 @@ void freeNode(nodeType *p);
 void draw(nodeType *p);
 
 extern void yyerror(char *);
+/*  */
+AST_nodeType * AST_litInt(int value);
+AST_nodeType * AST_litFloat(float value);
+AST_nodeType * AST_litString(char * value);
+AST_nodeType * AST_id(char * name);
+
+AST_nodeType * AST_exp(...);
+
+AST_nodeType * AST_var(...);
+
+AST_nodeType * AST_decl_var(...);
+AST_nodeType * AST_decl_func(...);
+
+AST_nodeType * AST_cmd_if(...);
+AST_nodeType * AST_cmd_while(...);
+AST_nodeType * AST_cmd_attr(...);
+AST_nodeType * AST_cmd_ret(...);
+AST_nodeType * AST_cmd_call(...);
+
+void AST_freeNode(AST_nodeType *p);
+int AST_ex(AST_nodeType *p);
+
+#endif
