@@ -1,6 +1,9 @@
-#include "abstractsyntaxtree.h"
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include "monga.tab.h"
+#include "abstractsyntaxtree.h"
 #define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
 
 /*
@@ -92,4 +95,40 @@ void freeNode(nodeType *p) {
 		free(p->opr.op);
 	}
 	free (p);
+}
+
+
+void drawNode(nodeType *p){
+    switch(p->type){
+        case TYPE_LIT: 
+            printf("lit"); 
+            break;
+        case TYPE_ID: 
+            printf("%s",p->id.name);
+            break;
+        case TYPE_OPR:
+            switch(p->opr.oper){
+                case TK_WHILE:
+                    printf("while");
+                    break;
+                case TK_IF:
+                    printf("if");
+                    break;
+                case '=':
+                    printf("=");
+                    break;
+                case TK_RETURN:
+                    printf("return");
+                    break;
+            }
+            int k;
+            for (k = 0; k < p->opr.nops; k++) {
+             drawNode (p->opr.op[k]);
+            }
+            break;
+    }
+
+}
+void draw(nodeType *p){
+    drawNode(p);
 }

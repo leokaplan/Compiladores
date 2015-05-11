@@ -48,4 +48,6 @@ nodeType * litInt(int value);
 nodeType * litFloat(float value);
 nodeType * litString(char * value);
 void freeNode(nodeType *p);
-int ex(nodeType *p);
+void draw(nodeType *p);
+
+extern void yyerror(char *);
