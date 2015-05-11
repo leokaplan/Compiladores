@@ -1,6 +1,7 @@
 #include "abstractsyntaxtree.h"
 #include <stdlib.h>
 #include <string.h>
+
 #define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
 
 /*
