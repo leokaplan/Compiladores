@@ -7,6 +7,126 @@
 
 #define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
 
+/* Tipos */
+struct AST_typNodeType {
+	AST_typeEnum type;
+	/* Numero de ponteiros */
+	int indirections;
+};
+
+/* Literais */
+union AST_litNodeType {
+	int ivalue;
+	float fvalue;
+	char * svalue;
+};
+
+/* Identificadores */
+struct AST_idNodeType {
+	char * name;
+};
+
+/* Variaveis */
+union AST_varNodeType {
+	AST_nodeType * id;
+	/* Array */
+	struct {
+		AST_nodeType * exp1;
+		AST_nodeType * exp2;
+	} indexed;
+};
+
+/* Expressoes */
+union AST_expNodeType {
+	
+	AST_nodeType * varexp;
+
+	struct {
+		int opr;
+		AST_nodeType * exp1;
+		AST_nodeType * exp2;
+	} operexp;
+
+	
+	struct {
+		AST_nodeType * id;
+		AST_nodeType * exp;
+	} callexp;
+
+	/* New (para arrays) */
+	struct {
+		AST_nodeType * type;
+		AST_nodeType * exp;
+	} newexp;
+};
+
+/* Declaracoes */
+union AST_declNodeType {
+	struct {
+		AST_nodeType * type;
+		AST_nodeType * id;
+	} vardecl;
+	struct {
+		AST_nodeType * type;
+		AST_nodeType * id;
+		AST_nodeType * param;
+		AST_nodeType * block;
+	} funcdecl;
+};
+
+/* Comandos */
+union AST_cmdNodeType {
+	
+	struct {
+		AST_nodeType * exp;
+		AST_nodeType * cmd1;
+		AST_nodeType * cmd2;
+	} ifcmd;
+
+	struct {
+		AST_nodeType * exp;
+		AST_nodeType * cmd;
+	} whilecmd;
+
+	struct {
+		AST_nodeType * var;
+		AST_nodeType * exp;
+	} attrcmd;
+
+	struct {
+		AST_nodeType * exp;
+	} retcmd;
+
+	struct {
+		AST_nodeType * decl;
+		AST_nodeType * cmd;
+	} blockcmd;
+	
+	struct {
+		AST_nodeType * exp;
+	} expcmd;
+};
+
+struct AST_nodeType {
+	AST_nodeEnum type;
+	AST_unionTag tag;
+	int line;
+
+	/* Utilizados para listas */
+	AST_nodeType * nextElem;
+	AST_nodeType * lastElem;		
+
+	union {
+		AST_litNodeType lit;
+		AST_typNodeType typ;
+		AST_idNodeType id;
+		AST_expNodeType exp;
+		AST_varNodeType var;
+		AST_declNodeType decl;
+		AST_cmdNodeType cmd;
+	} node;
+};
+
 AST_nodeType * AST_litInt(int value) {
 	AST_nodeType * p;
 
@@ -45,7 +165,7 @@ AST_nodeType * AST_litString(char * value) {
 	p->tag = LIT_STRING;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	strcmp(p->node.lit.svalue, value);
+	strcpy(p->node.lit.svalue, value);
 	return p;
 }
 
@@ -59,7 +179,7 @@ AST_nodeType * AST_id(char * name) {
 	p->tag = ID;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	strcmp(p->node.id.name, name);
+	strcpy(p->node.id.name, name);
 	return p;
 }
 
@@ -89,9 +209,9 @@ AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 	p->tag = (exp2 == NULL)? EXP_UNOP: EXP_BINOP;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.exp.oprexp.opr = oper;
-	p->node.exp.oprexp.exp1 = exp1;
-	p->node.exp.oprexp.exp2 = exp2;
+	p->node.exp.operexp.opr = oper;
+	p->node.exp.operexp.exp1 = exp1;
+	p->node.exp.operexp.exp2 = exp2;
 
 	return p;
 }
@@ -121,7 +241,7 @@ AST_nodeType * AST_exp_var(AST_nodeType * var){
 	p->tag = EXP_VAR;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.exp.varexp.var = var;
+	p->node.exp.varexp = var;
 
 	return p;
 
@@ -153,8 +273,8 @@ AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2){
 	p->tag = VAR_ARRAY;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.var.exp1 = exp1;
-	p->node.var.exp2 = exp2;
+	p->node.var.indexed.exp1 = exp1;
+	p->node.var.indexed.exp2 = exp2;
 
 	return p;
 
@@ -183,8 +303,8 @@ AST_nodeType * AST_decl_var(AST_nodeType * type, AST_nodeType * id){
 	p->tag = DEC_VAR;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.vardecl.type = type;
-	p->node.vardecl.id = id;
+	p->node.decl.vardecl.type = type;
+	p->node.decl.vardecl.id = id;
 
 	return p;
 }
@@ -198,10 +318,10 @@ AST_nodeType * AST_decl_func(AST_nodeType * type, AST_nodeType * id, AST_nodeTyp
 	p->tag = DEC_FUNC;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.vardecl.type = type;
-	p->node.vardecl.id = id;
-	p->node.vardecl.param = param;
-	p->node.vardecl.block = block;
+	p->node.decl.funcdecl.type = type;
+	p->node.decl.funcdecl.id = id;
+	p->node.decl.funcdecl.param = param;
+	p->node.decl.funcdecl.block = block;
 
 	return p;
 
@@ -284,7 +404,7 @@ AST_nodeType * AST_cmd_exp(AST_nodeType * exp) {
 
 	return p;
 }
-AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * exp){
+AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * cmd){
 	AST_nodeType * p;
 
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
@@ -295,24 +415,9 @@ AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * exp){
 	p->nextElem = NULL;
 	p->lastElem = p;
 	p->node.cmd.blockcmd.decl = decl;
-	p->node.cmd.blockcmd.exp = exp;
+	p->node.cmd.blockcmd.cmd = cmd;
 
 	return p;
-}
-
-
-void AST_freeNode(AST_nodeType *p) {
-	int i;
-	if (!p)
-		return;
-
-	if (p->type == TYPE_OPR) {
-		for (i = 0; i < p->opr.nops; i++) {
-			AST_freeNode(p->opr.op[i]);
-		}
-		free(p->opr.op);
-	}
-	free (p);
 }
 
 AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
@@ -325,8 +430,11 @@ AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
 		return list;
 	}
 }
+AST_nodeType * AST_incInd(AST_nodeType * node){
+	node->node.typ.indirections++;	
+}
 
-void drawNode(nodeType *p){
+void drawNode(AST_nodeType *p){
 	switch(p->tag){
 		case LIT_INT:
 			printf("%d",p->node.lit.ivalue);
@@ -439,6 +547,6 @@ void drawNode(nodeType *p){
 	}
 
 }
-void draw(nodeType *p){
+void AST_draw(AST_nodeType *p){
 	drawNode(p);
 }

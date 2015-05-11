@@ -17,31 +17,26 @@ int sym[26];
 extern int currentLine;
 extern char yytext[];
 
+
 %}
 
 %error-verbose
 
 %union {
-	int intval;
+	int intval;	
 	float floatval;
 	char * stringval;
 	char * name;
-	AST_litNodeType * lit;
-	AST_typNodeType * typ;
-	AST_idNodeType * id;
-	AST_expNodeType * expr;
-	AST_varNodeType * var;
-	AST_declNodeType * decl;
-	AST_cmdNodeType * cmd;	
+	AST_nodeType * node;	
 }
 
-%token <typ> TK_CHAR 
-%token <typ> TK_INT
-%token <typ> TK_FLOAT
+%token <node> TK_CHAR 
+%token <node> TK_INT
+%token <node> TK_FLOAT
 %token TK_IF
 %token TK_ELSE
 %token TK_WHILE
-%token <typ> TK_VOID
+%token <node> TK_VOID
 %token TK_RETURN
 %token TK_NEW
 %token TK_AND
@@ -55,33 +50,35 @@ extern char yytext[];
 %token TK_LITERALFLOAT
 %token TK_LITERALSTRING
 
-%type <id>  TK_ID
-%type <lit> TK_LITERALINT
-%type <lit> TK_LITERALFLOAT
-%type <lit> TK_LITERALSTRING
+%type <name> TK_ID
+%type <intval> TK_LITERALINT
+%type <floatval> TK_LITERALFLOAT
+%type <stringval> TK_LITERALSTRING
 
-%type <expr> exp 
-%type <expr> exps 
-%type <decl> declaracao 
-%type <decl> decvariavel 
-%type <decl> decfuncao 
-%type <typ> tipo 
-%type <typ> tipobase 
-%type <decl> listaparametros  
-%type <decl> parametros  
-%type <decl> parametro  
-%type <cmd> bloco   
-%type <decl> decsvariaveis   
-%type <cmd> comandos   
-%type <cmd> comando   
-%type <var> var   
-%type <cmd> comandoreturn   
-%type <exp> boolexp   
-%type <exp> chamada   
-%type <exp> compexp   
-%type <exp> addexp   
-%type <exp> multexp   
-%type <exp> listaexp  
+%type <node> programa
+%type <node> listanomes
+%type <node> exp 
+%type <node> exps 
+%type <node> declaracao 
+%type <node> decvariavel 
+%type <node> decfuncao 
+%type <node> tipo 
+%type <node> tipobase 
+%type <node> listaparametros  
+%type <node> parametros  
+%type <node> parametro  
+%type <node> bloco   
+%type <node> decsvariaveis   
+%type <node> comandos   
+%type <node> comando   
+%type <node> var   
+%type <node> comandoreturn   
+%type <node> boolexp   
+%type <node> chamada   
+%type <node> compexp   
+%type <node> addexp   
+%type <node> multexp   
+%type <node> listaexp  
 
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
@@ -90,8 +87,8 @@ extern char yytext[];
 
 %%
 
-programa : programa declaracao 	{ $$ = AST_handleList($1,$2);
-				  drawNode($$); } 
+programa : programa declaracao 	{ $$ = AST_handleList($1, $2);
+				  AST_draw($$); } 
 |				{ $$ = NULL; } 
 ;
 
@@ -107,8 +104,8 @@ listanomes : TK_ID 		{ $$ = AST_id($1); }
 ;
 
 tipo : tipobase 		{ $$ = $1; }
-| tipo '[' ']' 			{ ($1)->node.typ.indirections++;
-				  $$ = $1; }
+| tipo '[' ']' 			{ $$ = $1;
+				  AST_incInd($$); }
 ;
 
 tipobase : TK_INT 		{ $$ = AST_type(INT, 0); }
@@ -152,7 +149,7 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, 
 ;
 
 var : TK_ID 				{ $$ = AST_var_simple(AST_id($1)); } 
-| boolexp '[' boolexp ']' %prec '['	{ $$ = AST_var_array($1, $2); }
+| boolexp '[' boolexp ']' %prec '['	{ $$ = AST_var_array($1, $3); }
 ;
 
 
