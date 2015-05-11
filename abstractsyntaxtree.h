@@ -179,9 +179,11 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 /* Expressão de operação (binaria ou unaria) */
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
 
+/* Expressão de criação de array (new) */
+AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp);
 
-
-AST_nodeType * AST_var(...);
+/* Var - acesso a array */
+AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);
 
 AST_nodeType * AST_decl_var(...);
 AST_nodeType * AST_decl_func(...);

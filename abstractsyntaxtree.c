@@ -129,6 +129,36 @@ AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
 	return p;
 }
 
+AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp) {
+	AST_nodeType * p;
+
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
+		yyerror("Falta de memoria");
+
+	p->type = TYPE_CMD;
+	p->tag = CMD_ATTR;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.cmd.attrcmd.var = var;
+	p->node.cmd.attrcmd.exp = exp;
+
+	return p;
+}
+
+AST_nodeType * AST_cmd_ret(AST_nodeType * exp) {
+	AST_nodeType * p;
+
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
+		yyerror("Falta de memoria");
+
+	p->type = TYPE_CMD;
+	p->tag = CMD_RET;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.cmd.retcmd.exp = exp;
+
+	return p;
+}
 
 void AST_freeNode(AST_nodeType *p) {
 	int i;
@@ -163,7 +193,7 @@ void drawNode(nodeType *p){
         case TYPE_ID: 
             printf("%s",p->id.name);
             break;
-        case TYPE_OPR:
+        case TYPE_EXP:
             switch(p->opr.oper){
                 case TK_WHILE:
                     printf("while");
