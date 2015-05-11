@@ -99,6 +99,17 @@ void AST_freeNode(AST_nodeType *p) {
 }
 
 
+AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
+	if (list == NULL) {
+		return element;
+	}
+	else {
+		list->lastElem->nextElem = element;
+		list->lastElem = element->lastElem;
+		return list;
+	}
+}
+
 void drawNode(nodeType *p){
     switch(p->type){
         case TYPE_LIT: 

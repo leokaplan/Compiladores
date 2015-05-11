@@ -26,19 +26,22 @@ extern char yytext[];
 	float floatval;
 	char * stringval;
 	char * name;
+	AST_litNodeType * lit;
+	AST_typNodeType * typ;
+	AST_idNodeType * id;
 	AST_expNodeType * expr;
 	AST_varNodeType * var;
 	AST_declNodeType * decl;
 	AST_cmdNodeType * cmd;	
 }
 
-%token TK_CHAR 
-%token TK_INT
-%token TK_FLOAT
+%token <typ> TK_CHAR 
+%token <typ> TK_INT
+%token <typ> TK_FLOAT
 %token TK_IF
 %token TK_ELSE
 %token TK_WHILE
-%token TK_VOID
+%token <typ> TK_VOID
 %token TK_RETURN
 %token TK_NEW
 %token TK_AND
@@ -52,33 +55,33 @@ extern char yytext[];
 %token TK_LITERALFLOAT
 %token TK_LITERALSTRING
 
-%type <name>      TK_ID
-%type <intval>    TK_LITERALINT
-%type <floatval>  TK_LITERALFLOAT
-%type <stringval> TK_LITERALSTRING
+%type <id>  TK_ID
+%type <lit> TK_LITERALINT
+%type <lit> TK_LITERALFLOAT
+%type <lit> TK_LITERALSTRING
 
-%type <intval> exp 
-%type <intval> exps 
-%type <intval> declaracao 
-%type <intval> decvariavel 
-%type <intval> decfuncao 
-%type <intval> tipo 
-%type <intval> tipobase 
-%type <intval> listaparametros  
-%type <intval> parametros  
-%type <intval> parametro  
-%type <intval> bloco   
-%type <intval> decsvariaveis   
-%type <intval> comandos   
-%type <intval> comando   
-%type <intval> var   
-%type <intval> comandoreturn   
-%type <intval> boolexp   
-%type <intval> chamada   
-%type <intval> compexp   
-%type <intval> addexp   
-%type <intval> multexp   
-%type <intval> listaexp  
+%type <expr> exp 
+%type <expr> exps 
+%type <decl> declaracao 
+%type <decl> decvariavel 
+%type <decl> decfuncao 
+%type <typ> tipo 
+%type <typ> tipobase 
+%type <decl> listaparametros  
+%type <decl> parametros  
+%type <decl> parametro  
+%type <cmd> bloco   
+%type <decl> decsvariaveis   
+%type <cmd> comandos   
+%type <cmd> comando   
+%type <var> var   
+%type <cmd> comandoreturn   
+%type <exp> boolexp   
+%type <exp> chamada   
+%type <exp> compexp   
+%type <exp> addexp   
+%type <exp> multexp   
+%type <exp> listaexp  
 
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
@@ -88,7 +91,7 @@ extern char yytext[];
 %%
 
 programa : programa declaracao 				{ DEBUG("\n programa"); } 
-|							{ } 
+|							{ $$ = NULL; } 
 ;
 
 declaracao : decvariavel 				{ $$ = $1; } 
@@ -98,17 +101,19 @@ declaracao : decvariavel 				{ $$ = $1; }
 decvariavel : tipo listanomes ';' 			{ }
 ;
 
-listanomes : TK_ID 					{ $$.name = AST_id($1)->id.name; }
-| listanomes ',' TK_ID 					{ $$ = AST_opr($2, 2, $1, AST_id($3)); }
+listanomes : TK_ID 					{ $$ = AST_id($1); }
+| listanomes ',' TK_ID 					{ $$ = AST_handleList($1, AST_id($3)); }
 ;
 
 tipo : tipobase 					{ $$ = $1; }
-| tipo '[' ']' 						{ $$ = AST_opr(tipo, 1, $1); }
+| tipo '[' ']' 						{ $1->node.typ.indirections++;
+							  $$ = $1; }
+
 ;
 
-tipobase : TK_INT 					{ $$ = AST_opr(tipobase, 1, $1); }
-| TK_FLOAT 						{ $$ = AST_opr(tipobase, 1, $1); }
-| TK_CHAR 						{ $$ = AST_opr(tipobase, 1, $1); } 
+tipobase : TK_INT 					{ $$ = AST_type(INT, 0); }
+| TK_FLOAT 						{ $$ = AST_type(FLOAT, 0); }
+| TK_CHAR 						{ $$ = AST_type(CHAR, 0); } 
 ;
 
 decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	{ DEBUG("\nfunc tipo"); } 
@@ -116,11 +121,11 @@ decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	{ DEBUG("\nfunc tipo"); }
 ;
 
 listaparametros : parametros 				{ $$ = $1; }
-| 							{ } 
+| 							{ $$ = NULL; } 
 ;
 
 parametros : parametro 					{ $$ = $1; }
-| parametros ',' parametro 				{ $$ = AST_opr($2, 2, $1, $3); }
+| parametros ',' parametro 				{ $$ = AST_handleList($1, $3); }
 ;
 
 parametro : tipo TK_ID 					{ DEBUG("parametro tipo: id:"); }
@@ -129,12 +134,12 @@ parametro : tipo TK_ID 					{ DEBUG("parametro tipo: id:"); }
 bloco : '{'  decsvariaveis  comandos  '}' 		{ }
 ;
 
-decsvariaveis: decsvariaveis decvariavel 		{ }
-| 							{ }
+decsvariaveis: decsvariaveis decvariavel 		{ $$ = AST_handleList($1, $2); }
+| 							{ $$ = NULL; }
 ;
 
-comandos: comandos comando 				{ }
-| 							{ }
+comandos: comandos comando 				{ $$ = AST_handleList($1, $2); }
+| 							{ $$ = NULL; }
 ;
 
 comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_opr($1, 2, $3, $5); }
@@ -146,7 +151,7 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_opr($1, 2, 
 | bloco 							{ $$ = $1; }
 ;
 
-var : TK_ID 				{ $$.name = AST_id($1)->id.name; } 
+var : TK_ID 				{ $$ = AST_id($1); } 
 | boolexp '[' boolexp ']' %prec '['	{ DEBUG(" indexavel "); }
 ;
 
@@ -199,7 +204,7 @@ listaexp : exps 	{ $$ = $1; }
 ;
 
 exps : boolexp 		{ $$ = $1; }
-| exps ',' boolexp 	{ $$ = AST_opr($2, 2, $1, $3); }
+| exps ',' boolexp 	{ $$ = AST_handleList($1, $3); }
 ;
 
 %%

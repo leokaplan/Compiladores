@@ -33,6 +33,13 @@ typedef struct {
 	int indirections;
 } AST_typNodeType;
 
+/* Literais */
+typedef union {
+	int ivalue;
+	float fvalue;
+	char * svalue;
+} AST_litNodeType;
+
 /* Variaveis */
 typedef union {
 	AST_NodeType * id;
@@ -101,10 +108,13 @@ typedef union {
 typedef struct nodeTypeTag {
 	AST_nodeEnum type;
 	int line;
+
+	/* Utilizados para listas de não terminais */
+	AST_nodeType * nextElem;
+	AST_nodeType * lastElem;		
+
 	union {
-		AST_litIntNodeType litInt;
-		AST_litFloatNodeType litFloat;
-		AST_litStringNodeType litString;
+		AST_litNodeType lit;
 		AST_typNodeType typ;
 		AST_idNodeType id;
 		AST_expNodeType exp;
@@ -169,7 +179,9 @@ AST_nodeType * AST_cmd_new(AST_NodeType * type, AST_NodeType * exp);
 /* Liberaçao de memória */
 void AST_freeNode(AST_nodeType * p);
 
-
 int AST_ex(AST_nodeType * p);
+
+/* Lida com listas de não terminais */
+AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element);
 
 #endif
