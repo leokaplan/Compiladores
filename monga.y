@@ -142,9 +142,9 @@ comandos: comandos comando 				{ $$ = AST_handleList($1, $2); }
 | 							{ $$ = NULL; }
 ;
 
-comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_opr($1, 2, $3, $5); }
-| TK_IF '(' boolexp ')' comando TK_ELSE comando 		{ $$ = AST_opr($1, 3, $3, $5, $7); }
-| TK_WHILE '(' boolexp ')' comando 				{ $$ = AST_opr($1, 2, $3, $5); }
+comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, $5, NULL); }
+| TK_IF '(' boolexp ')' comando TK_ELSE comando 		{ $$ = AST_cmd_if($3, $5, $7); }
+| TK_WHILE '(' boolexp ')' comando 				{ $$ = AST_cmd_while($3, $5); }
 | var '=' boolexp ';' 						{ $$ = AST_opr($2, 2, $1, $3); }
 | comandoreturn ';' 						{ $$ = $1; }
 | boolexp ';' 							{ $$ = $1; }
@@ -162,45 +162,45 @@ comandoreturn: TK_RETURN 					{ $$ = AST_opr($1, 1, NULL); }
 
 
 boolexp: compexp 					{ $$ = $1; }
-| boolexp TK_AND compexp 				{ $$ = AST_opr($2, 2, $1, $3); }
-| boolexp TK_OR compexp 				{ $$ = AST_opr($2, 2, $1, $3); }
+| boolexp TK_AND compexp 				{ $$ = AST_exp_opr(TK_AND, $1, $3); }
+| boolexp TK_OR compexp 				{ $$ = AST_opr(TK_OR, $1, $3); }
 ;
 
 compexp: addexp 					{ $$ = $1; }
-| compexp TK_EQ addexp 					{ $$ = AST_opr($2, 2, $1, $3); }
-| compexp TK_LEQ addexp 				{ $$ = AST_opr($2, 2, $1, $3); }
-| compexp TK_GEQ addexp 				{ $$ = AST_opr($2, 2, $1, $3); }
-| compexp '<' addexp 					{ $$ = AST_opr($2, 2, $1, $3); }
-| compexp '>' addexp 					{ $$ = AST_opr($2, 2, $1, $3); }
+| compexp TK_EQ addexp 					{ $$ = AST_exp_opr(TK_EQ, $1, $3); }
+| compexp TK_LEQ addexp 				{ $$ = AST_exp_opr(TK_LEQ, $1, $3); }
+| compexp TK_GEQ addexp 				{ $$ = AST_exp_opr(TK_GEQ, $1, $3); }
+| compexp '<' addexp 					{ $$ = AST_exp_opr('<', $1, $3); }
+| compexp '>' addexp 					{ $$ = AST_exp_opr('>', $1, $3); }
 ;
 
 addexp: multexp 					{ $$ = $1; }
-| addexp '+' multexp					{ $$ = AST_opr($2, 2, $1, $3); }
-| addexp '-' multexp					{ $$ = AST_opr($2, 2, $1, $3); }
+| addexp '+' multexp					{ $$ = AST_exp_opr('+', $1, $3); }
+| addexp '-' multexp					{ $$ = AST_exp_opr('-', $1, $3); }
 ;
 
 multexp: exp 						{ $$ = $1; }
-| multexp '*' exp 					{ $$ = AST_opr($2, 2, $1, $3); }
-| multexp '/' exp 					{ $$ = AST_opr($2, 2, $1, $3); }
-| multexp '%' exp 					{ $$ = AST_opr($2, 2, $1, $3); }
+| multexp '*' exp 					{ $$ = AST_exp_opr('*', $1, $3); }
+| multexp '/' exp 					{ $$ = AST_exp_opr('/', $1, $3); }
+| multexp '%' exp 					{ $$ = AST_exp_opr('%', $1, $3); }
 ;
 
-exp : '-' exp %prec UN_MINUS	{ /* TODO ver prioridade */ $$ = AST_opr($1, 1, $2); }
-| '!' exp %prec '!'		{ /* TODO ver prioridade */ $$ = AST_opr($1, 1, $2); }
-| TK_LITERALINT 		{ $$.intval = AST_litInt($1)->lit.ivalue; } 
-| TK_LITERALFLOAT  		{ $$.floatval = AST_litFloat($1)->lit.fvalue; }
-| TK_LITERALSTRING 		{ strcmp($$.stringval, AST_litString($1)->lit.svalue); }
+exp : '-' exp %prec UN_MINUS	{ /* TODO ver prioridade */ $$ = AST_exp_opr('-', $2, NULL); }
+| '!' exp %prec '!'		{ /* TODO ver prioridade */ $$ = AST_exp_opr('!', $2, NULL); }
+| TK_LITERALINT 		{ $$ = AST_litInt($1); } 
+| TK_LITERALFLOAT  		{ $$ = AST_litFloat($1); }
+| TK_LITERALSTRING 		{ $$ = AST_litString($1); }
 | var 				{ /* TODO provavelmente tem que fazer mais coisa */ $$ = $1; }
 | '(' boolexp ')' 		{ $$ = $2; }
 | chamada 			{ $$ = $1; }
 | TK_NEW tipo '[' boolexp ']' %prec '['	{ }
 ;
 
-chamada : TK_ID '(' listaexp ')' { $$ = AST_opr(chamada, 2, id($1), $3); }
+chamada : TK_ID '(' listaexp ')' { }
 ;
 
 listaexp : exps 	{ $$ = $1; }
-| 			{ }
+| 			{ $$ = NULL; }
 ;
 
 exps : boolexp 		{ $$ = $1; }

@@ -26,6 +26,33 @@ typedef enum {
 	TYPE_CMD
 } AST_nodeEnum;
 
+/* Marcacoes para as unions */
+typedef enum {
+	LIT_INT,
+	LIT_FLOAT,
+	LIT_STRING,
+	
+	ID,
+	
+	TYP,
+
+	VAR_SIMPLE,
+	VAR_ARRAY,
+	
+	EXP_BINOP,
+	EXP_UNOP,
+	EXP_NEW,
+	EXP_CALL,
+	
+	DEC_VAR,
+	DEC_FUNC,
+
+	CMD_IF,
+	CMD_WHILE,
+	CMD_ATTR
+
+} AST_unionTag;
+
 /* Tipos */
 typedef struct {
 	AST_typeEnum type;
@@ -40,13 +67,18 @@ typedef union {
 	char * svalue;
 } AST_litNodeType;
 
+/* Identificadores */
+typedef struct {
+	char * name;
+} AST_idNodeType;
+
 /* Variaveis */
 typedef union {
-	AST_NodeType * id;
+	AST_nodeType * id;
 	/* Array */
 	struct {
-		AST_NodeType * exp1;
-		AST_NodeType * exp2;
+		AST_nodeType * exp1;
+		AST_nodeType * exp2;
 	} indexed;
 } AST_varNodeType;
 
@@ -54,8 +86,8 @@ typedef union {
 typedef union {
 	struct {
 		int opr;
-		AST_NodeType * exp1;
-		AST_NodeType * exp2;
+		AST_nodeType * exp1;
+		AST_nodeType * exp2;
 	} operexp;
 
 	
@@ -77,26 +109,22 @@ typedef struct {
 typedef union {
 	
 	struct {
-		int token;
 		AST_nodeType * exp;
 		AST_nodeType * cmd1;
 		AST_nodeType * cmd2;
 	} ifcmd;
 
 	struct {
-		int token;
 		AST_nodeType * exp;
 		AST_nodeType * cmd;
 	} whilecmd;
 
 	struct {
-		int token;
 		AST_nodeType * var;
 		AST_nodeType * exp;
 	} attrcmd;
 
 	struct {
-		int token;
 		AST_nodeType * exp;
 	} retcmd;
 
@@ -104,12 +132,12 @@ typedef union {
 
 } AST_cmdNodeType;
 
-
 typedef struct nodeTypeTag {
 	AST_nodeEnum type;
+	AST_unionTag tag;
 	int line;
 
-	/* Utilizados para listas de não terminais */
+	/* Utilizados para listas */
 	AST_nodeType * nextElem;
 	AST_nodeType * lastElem;		
 
@@ -149,7 +177,7 @@ AST_nodeType * AST_id(char * name);
 AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 
 /* Expressão de operação (binaria ou unaria) */
-AST_nodeType * AST_exp_opr(int oper, AST_NodeType * exp1, AST_NodeType * exp2);
+AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
 
 
 
@@ -159,22 +187,22 @@ AST_nodeType * AST_decl_var(...);
 AST_nodeType * AST_decl_func(...);
 
 /* Comando if (com ou sem else) */
-AST_nodeType * AST_cmd_if(AST_NodeType * exp, AST_NodeType * cmd1, AST_NodeType * cmd2);
+AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2);
 
 /* Comando while */
-AST_nodeType * AST_cmd_while(AST_NodeType * exp, AST_NodeType * cmd);
+AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd);
 
 /* Comando de atribuição */
-AST_nodeType * AST_cmd_attr(AST_NodeType * var, AST_NodeType * exp);
+AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp);
 
 /* Comando de retorno (com ou sem valor) */
-AST_nodeType * AST_cmd_ret(AST_NodeType * exp);
+AST_nodeType * AST_cmd_ret(AST_nodeType * exp);
 
 /* Comando de chamada */
 AST_nodeType * AST_cmd_call(char * name, ...);
 
 /* Comando de new array */
-AST_nodeType * AST_cmd_new(AST_NodeType * type, AST_NodeType * exp);
+AST_nodeType * AST_cmd_new(AST_nodeType * type, AST_nodeType * exp);
 
 /* Liberaçao de memória */
 void AST_freeNode(AST_nodeType * p);

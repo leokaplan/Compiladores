@@ -7,82 +7,128 @@
 
 #define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
 
-/*
-   O nó é um literal int.
- */
 AST_nodeType * AST_litInt(int value) {
-	AST_nodeType *p;
+	AST_nodeType * p;
 
-	if ((p = malloc(sizeof(AST_nodeType))) == NULL)
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
 		yyerror("Falta de memoria");
 
 	p->type = TYPE_LIT;
-	p->lit.ivalue = value;
+	p->tag = LIT_INT;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.lit.ivalue = value;
 	return p;
 }
 
-/*
-   O nó é um literal float.
- */
 AST_nodeType * AST_litFloat(float value) {
-	AST_nodeType *p;
+	AST_nodeType * p;
 
-	if ((p = malloc(sizeof(AST_nodeType))) == NULL)
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
 		yyerror("Falta de memoria");
 
 	p->type = TYPE_LIT;
-	p->lit.fvalue = value;
+	p->tag = LIT_FLOAT;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.lit.fvalue = value;
 	return p;
 }
 
-/*
-   O nó é um literal string.
- */
 AST_nodeType * AST_litString(char * value) {
-	AST_nodeType *p;
+	AST_nodeType * p;
 
-	if ((p = malloc(sizeof(AST_nodeType))) == NULL)
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
 		yyerror("Falta de memoria");
 
 	p->type = TYPE_LIT;
-	strcmp(p->lit.svalue, value);
+	p->tag = LIT_STRING;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	strcmp(p->node.lit.svalue, value);
 	return p;
 }
 
-/*
-   O nó é um identificador
- */
 AST_nodeType * AST_id(char * name) {
-	AST_nodeType *p;
-	/* allocate node */
-	if ((p = malloc(sizeof(AST_nodeType))) == NULL)
+	AST_nodeType * p;
+	
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
 		yyerror("Falta de memoria");
-	/* copy information */
+	
 	p->type = TYPE_ID;
-	strcmp(p->id.name, name);
+	p->tag = ID;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	strcmp(p->node.id.name, name);
 	return p;
 }
 
-AST_nodeType * AST_opr(int oper, int nops, ...) {
-	va_list ap;
-	AST_nodeType *p;
-	int i;
+AST_nodeType * AST_type(AST_typeEnum type, int indirections) {
+	AST_nodeType * p;
 
-	if ((p = malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-	if ((p->opr.op = malloc(nops * sizeof(AST_nodeType *))) == NULL)
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
 		yyerror("Falta de memoria");
 
-	p->type = TYPE_OPR;
-	p->opr.oper = oper;
-	p->opr.nops = nops;
-	va_start(ap, nops);
-	for (i = 0; i < nops; i++) {
-		p->opr.op[i] = va_arg(ap, AST_nodeType*);
-	}
-	va_end(ap);
+	p->type = TYPE_TYP;
+	p->tag = TYP;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.typ.type = type;
+	p->node.typ.indirections = indirections;
+	
 	return p;
 }
+
+AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
+	AST_nodeType * p;
+
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
+		yyerror("Falta de memoria");
+
+	p->type = TYPE_EXP;
+	p->tag = (exp2 == NULL)? EXP_UNOP: EXP_BINOP;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.exp.oprexp.opr = oper;
+	p->node.exp.oprexp.exp1 = exp1;
+	p->node.exp.oprexp.exp2 = exp2;
+	
+	return p;
+}
+
+AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2) {
+	AST_nodeType * p;
+	
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
+		yyerror("Falta de memoria");
+
+	p->type = TYPE_CMD;
+	p->tag = CMD_IF;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.cmd.ifcmd.exp = exp;
+	p->node.cmd.ifcmd.cmd1 = cmd1;
+	p->node.cmd.ifcmd.cmd2 = cmd2;	
+
+	return p;
+}
+
+AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
+	AST_nodeType * p;
+	
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
+		yyerror("Falta de memoria");
+
+	p->type = TYPE_CMD;
+	p->tag = CMD_WHILE;
+	p->nextElem = NULL;
+	p->lastElem = p;
+	p->node.cmd.whilecmd.exp = exp;
+	p->node.cmd.whilecmd.cmd = cmd;
+
+	return p;
+}
+
 
 void AST_freeNode(AST_nodeType *p) {
 	int i;
@@ -97,7 +143,6 @@ void AST_freeNode(AST_nodeType *p) {
 	}
 	free (p);
 }
-
 
 AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
 	if (list == NULL) {
