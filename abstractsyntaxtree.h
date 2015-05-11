@@ -43,13 +43,17 @@ typedef enum {
 	EXP_UNOP,
 	EXP_NEW,
 	EXP_CALL,
+	EXP_VAR,
 	
 	DEC_VAR,
 	DEC_FUNC,
 
 	CMD_IF,
 	CMD_WHILE,
-	CMD_ATTR
+	CMD_ATTR,
+	CMD_EXP,
+	CMD_BLOCK,
+	CMD_RET
 
 } AST_unionTag;
 
@@ -84,6 +88,9 @@ typedef union {
 
 /* Expressoes */
 typedef union {
+	
+	AST_nodeType * varexp;
+
 	struct {
 		int opr;
 		AST_nodeType * exp1;
@@ -91,6 +98,10 @@ typedef union {
 	} operexp;
 
 	
+	struct {
+		AST_nodeType * id;
+		AST_nodeType * exp;
+	} callexp;
 
 	/* New (para arrays) */
 	struct {
@@ -101,8 +112,17 @@ typedef union {
 
 
 /* Declaracoes */
-typedef struct {
-
+typedef union {
+	struct {
+		AST_nodeType * type;
+		AST_nodeType * id;
+	} vardecl;
+	struct {
+		AST_nodeType * type;
+		AST_nodeType * id;
+		AST_nodeType * param;
+		AST_nodeType * block;
+	} funcdecl;
 } AST_declNodeType;
 
 /* Comandos */
@@ -128,6 +148,14 @@ typedef union {
 		AST_nodeType * exp;
 	} retcmd;
 
+	struct {
+		AST_nodeType * decl;
+		AST_nodeType * cmd;
+	} blockcmd;
+	
+	struct {
+		AST_nodeType * exp;
+	} expcmd;
 
 
 } AST_cmdNodeType;
@@ -175,23 +203,24 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 /* Expressão */
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
 AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp);
+AST_nodeType * AST_exp_var(AST_nodeType * var);
+AST_nodeType * AST_exp_call(AST_nodeType * id, AST_nodeType * exp);
 
 /* Var */
 AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);
+AST_nodeType * AST_var_simple(AST_nodeType * id);
 
 
-AST_nodeType * AST_decl_var(...);
-AST_nodeType * AST_decl_func(...);
+AST_nodeType * AST_decl_var(AST_nodeType * type, AST_nodeType * id);
+AST_nodeType * AST_decl_func(AST_nodeType * type, AST_nodeType * id, AST_nodeType * param, AST_nodeType * block);
 
 /* Comando */
 AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2);
 AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd);
 AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp);
 AST_nodeType * AST_cmd_ret(AST_nodeType * exp);
-
-AST_nodeType * AST_cmd_call(char * name, ...);
-
-AST_nodeType * AST_cmd_new(AST_nodeType * type, AST_nodeType * exp);
+AST_nodeType * AST_cmd_exp(AST_nodeType * exp);
+AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * exp);
 
 /* Liberaçao de memória */
 void AST_freeNode(AST_nodeType * p);

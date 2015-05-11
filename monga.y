@@ -90,74 +90,74 @@ extern char yytext[];
 
 %%
 
-programa : programa declaracao 				{ /* TODO */ } 
-|							{ $$ = NULL; } 
+programa : programa declaracao 	{ $$ = AST_handleList($1,$2);
+				  drawNode($$); } 
+|				{ $$ = NULL; } 
 ;
 
-declaracao : decvariavel 				{ $$ = $1; } 
-| decfuncao 						{ $$ = $1; } 
+declaracao : decvariavel 	{ $$ = $1; } 
+| decfuncao 			{ $$ = $1; } 
 ;
 
-decvariavel : tipo listanomes ';' 			{ /* TODO */ }
+decvariavel : tipo listanomes ';' 	{ $$ = AST_decl_var($1, $2); }
 ;
 
-listanomes : TK_ID 					{ $$ = AST_id($1); }
-| listanomes ',' TK_ID 					{ $$ = AST_handleList($1, AST_id($3)); }
+listanomes : TK_ID 		{ $$ = AST_id($1); }
+| listanomes ',' TK_ID 		{ $$ = AST_handleList($1, AST_id($3)); }
 ;
 
-tipo : tipobase 					{ $$ = $1; }
-| tipo '[' ']' 						{ $1->node.typ.indirections++;
-							  $$ = $1; }
-
+tipo : tipobase 		{ $$ = $1; }
+| tipo '[' ']' 			{ ($1)->node.typ.indirections++;
+				  $$ = $1; }
 ;
 
-tipobase : TK_INT 					{ $$ = AST_type(INT, 0); }
-| TK_FLOAT 						{ $$ = AST_type(FLOAT, 0); }
-| TK_CHAR 						{ $$ = AST_type(CHAR, 0); } 
+tipobase : TK_INT 		{ $$ = AST_type(INT, 0); }
+| TK_FLOAT 			{ $$ = AST_type(FLOAT, 0); }
+| TK_CHAR 			{ $$ = AST_type(CHAR, 0); } 
 ;
 
-decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	{ /* TODO */ } 
-| TK_VOID TK_ID '(' listaparametros ')' bloco 		{ /* TODO */ } 
+decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	{ $$ = AST_decl_func($1, AST_id($2), $4, $6); } 
+| TK_VOID TK_ID '(' listaparametros ')' bloco 		{ $$ = AST_decl_func(AST_type(VOID, 0), AST_id($2), $4, $6); } 
 ;
 
-listaparametros : parametros 				{ $$ = $1; }
-| 							{ $$ = NULL; } 
+listaparametros : parametros 			{ $$ = $1; }
+| 						{ $$ = NULL; } 
 ;
 
-parametros : parametro 					{ $$ = $1; }
-| parametros ',' parametro 				{ $$ = AST_handleList($1, $3); }
+parametros : parametro 				{ $$ = $1; }
+| parametros ',' parametro 			{ $$ = AST_handleList($1, $3); }
 ;
 
-parametro : tipo TK_ID 					{ /* TODO */ }
+parametro : tipo TK_ID 				{ $$ = AST_decl_var($1, AST_id($2)); }
 ;
 
-bloco : '{'  decsvariaveis  comandos  '}' 		{ /* TODO */ }
+bloco : '{'  decsvariaveis  comandos  '}' 	{ $$ = AST_cmd_block($2, $3); }
 ;
 
-decsvariaveis: decsvariaveis decvariavel 		{ $$ = AST_handleList($1, $2); }
-| 							{ $$ = NULL; }
+decsvariaveis: decsvariaveis decvariavel 	{ $$ = AST_handleList($1, $2); }
+| 						{ $$ = NULL; }
 ;
 
-comandos: comandos comando 				{ $$ = AST_handleList($1, $2); }
-| 							{ $$ = NULL; }
+comandos: comandos comando 			{ $$ = AST_handleList($1, $2); }
+| 						{ $$ = NULL; }
 ;
 
 comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, $5, NULL); }
-| TK_IF '(' boolexp ')' comando TK_ELSE comando 		{ $$ = AST_cmd_if($3, $5, $7); }
-| TK_WHILE '(' boolexp ')' comando 				{ $$ = AST_cmd_while($3, $5); }
-| var '=' boolexp ';' 						{ $$ = AST_cmd_attr($1, $3); }
-| comandoreturn ';' 						{ $$ = $1; }
-| boolexp ';' 							{ $$ = $1; }
-| bloco 							{ $$ = $1; }
+| TK_IF '(' boolexp ')' comando TK_ELSE comando { $$ = AST_cmd_if($3, $5, $7); }
+| TK_WHILE '(' boolexp ')' comando 		{ $$ = AST_cmd_while($3, $5); }
+| var '=' boolexp ';' 				{ $$ = AST_cmd_attr($1, $3); }
+| comandoreturn ';' 				{ $$ = $1; }
+| boolexp ';' 					{ $$ = AST_cmd_exp($1); }
+| bloco 					{ $$ = $1; }
 ;
 
-var : TK_ID 				{ $$ = AST_id($1); } 
+var : TK_ID 				{ $$ = AST_var_simple(AST_id($1)); } 
 | boolexp '[' boolexp ']' %prec '['	{ $$ = AST_var_array($1, $2); }
 ;
 
 
-comandoreturn: TK_RETURN 			{ $$ = AST_cmd_ret(NULL); }
-| TK_RETURN boolexp 				{ $$ = AST_cmd_ret($2);}
+comandoreturn: TK_RETURN 		{ $$ = AST_cmd_ret(NULL); }
+| TK_RETURN boolexp 			{ $$ = AST_cmd_ret($2);}
 ;
 
 
@@ -185,18 +185,18 @@ multexp: exp 				{ $$ = $1; }
 | multexp '%' exp 			{ $$ = AST_exp_opr('%', $1, $3); }
 ;
 
-exp : '-' exp %prec UN_MINUS	{ /* TODO ver prioridade */ $$ = AST_exp_opr('-', $2, NULL); }
-| '!' exp %prec '!'		{ /* TODO ver prioridade */ $$ = AST_exp_opr('!', $2, NULL); }
-| TK_LITERALINT 		{ $$ = AST_litInt($1); } 
-| TK_LITERALFLOAT  		{ $$ = AST_litFloat($1); }
-| TK_LITERALSTRING 		{ $$ = AST_litString($1); }
-| var 				{ /* TODO provavelmente tem que fazer mais coisa */ $$ = $1; }
-| '(' boolexp ')' 		{ $$ = $2; }
-| chamada 			{ $$ = $1; }
+exp : '-' exp %prec UN_MINUS		{ $$ = AST_exp_opr('-', $2, NULL); }
+| '!' exp %prec '!'			{ $$ = AST_exp_opr('!', $2, NULL); }
+| TK_LITERALINT 			{ $$ = AST_litInt($1); } 
+| TK_LITERALFLOAT  			{ $$ = AST_litFloat($1); }
+| TK_LITERALSTRING 			{ $$ = AST_litString($1); }
+| var 					{ $$ = AST_exp_var($1); }
+| '(' boolexp ')' 			{ $$ = $2; }
+| chamada 				{ $$ = $1; }
 | TK_NEW tipo '[' boolexp ']' %prec '['	{ $$ = AST_exp_new($2, $4); }
 ;
 
-chamada : TK_ID '(' listaexp ')' { /* TODO */ }
+chamada : TK_ID '(' listaexp ')' 	{ $$ = AST_exp_call(AST_id($1), $3); }
 ;
 
 listaexp : exps 	{ $$ = $1; }
