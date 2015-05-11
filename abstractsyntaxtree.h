@@ -161,13 +161,9 @@ void draw(nodeType *p);
 
 extern void yyerror(char *);
 
-/* Literal int */
+/* Literal */
 AST_nodeType * AST_litInt(int value);
-
-/* Literal float */
 AST_nodeType * AST_litFloat(float value);
-
-/* Literal string */
 AST_nodeType * AST_litString(char * value);
 
 /* Identificador */
@@ -176,34 +172,25 @@ AST_nodeType * AST_id(char * name);
 /* Tipo da linguagem */
 AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 
-/* Expressão de operação (binaria ou unaria) */
+/* Expressão */
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
-
-/* Expressão de criação de array (new) */
 AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp);
 
-/* Var - acesso a array */
+/* Var */
 AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);
+
 
 AST_nodeType * AST_decl_var(...);
 AST_nodeType * AST_decl_func(...);
 
-/* Comando if (com ou sem else) */
+/* Comando */
 AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2);
-
-/* Comando while */
 AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd);
-
-/* Comando de atribuição */
 AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp);
-
-/* Comando de retorno (com ou sem valor) */
 AST_nodeType * AST_cmd_ret(AST_nodeType * exp);
 
-/* Comando de chamada */
 AST_nodeType * AST_cmd_call(char * name, ...);
 
-/* Comando de new array */
 AST_nodeType * AST_cmd_new(AST_nodeType * type, AST_nodeType * exp);
 
 /* Liberaçao de memória */
