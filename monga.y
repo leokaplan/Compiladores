@@ -142,7 +142,7 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_opr($1, 2, 
 | TK_WHILE '(' boolexp ')' comando 				{ $$ = AST_opr($1, 2, $3, $5); }
 | var '=' boolexp ';' 						{ $$ = AST_opr($2, 2, $1, $3); }
 | comandoreturn ';' 						{ $$ = $1; }
-| chamada ';' 							{ $$ = $1; }
+| boolexp ';' 							{ $$ = $1; }
 | bloco 							{ $$ = $1; }
 ;
 
