@@ -158,7 +158,7 @@ multexp: unaryexp 			{ $$ = $1; }
 
 unaryexp: simpleexp			{ $$ = $1; }
 | '-' simpleexp %prec UN_MINUS		{ $$ = AST_exp_opr($1, $2, NULL); }
-| '!' logicexp				{ $$ = AST_exp_opr($1, $2, NULL); }
+| '!' simpleexp				{ $$ = AST_exp_opr($1, $2, NULL); }
 ;
 
 simpleexp : TK_LITERALINT 		{ $$ = AST_litInt($1); } 
