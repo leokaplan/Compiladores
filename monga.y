@@ -15,6 +15,7 @@ int sym[26];
 extern int currentLine;
 extern char yytext[];
 
+AST_nodeType * prog = NULL;
 
 %}
 
@@ -86,7 +87,7 @@ extern char yytext[];
 %%
 
 programa : programa declaracao 	{ $$ = AST_handleList($1, $2);
-				  AST_draw($$); } 
+				  prog = $$; } 
 |				{ $$ = NULL; } 
 ;
 
@@ -209,8 +210,10 @@ void yyerror (char * s) {
 }
 
 int main (void) {
-	if(!yyparse())
+	if(!yyparse()) {
 		printf("\n\nparsing finished\n\n");
+		AST_draw(prog);
+	}
 	else
 		printf("\n\nparsing error\n\n");
 	return 0;
