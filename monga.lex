@@ -9,6 +9,7 @@ Leonardo Kaplan - 1212509
 Arquivo .lex com as expressoes regulares e regras de tratamento de tokens
 */
 #include <stdlib.h>
+#include "abstractsyntaxtree.h"
 #include "monga.tab.h"
 
 /*

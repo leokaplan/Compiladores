@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
 
-#define DEBUG(X) printf(X)
-#define DEBUG(x) 
 
 void yyerror(char *);
 int yylex(void);

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include "monga.tab.h"
 #include "abstractsyntaxtree.h"
+#include "monga.tab.h"
 
 #define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
 
