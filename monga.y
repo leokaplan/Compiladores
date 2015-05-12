@@ -31,7 +31,7 @@ AST_nodeType * prog = NULL;
 
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
-%nonassoc '[' 
+%nonassoc '['
 %nonassoc UN_MINUS
 %nonassoc '!'
 
@@ -56,15 +56,11 @@ AST_nodeType * prog = NULL;
 %token <stringval> TK_LITERALSTRING
 
 %type <intval> '>' '<' '+' '-' '*' '/' '%' '!'
-%type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro
-%type <node> bloco comandos comando comandoreturn
-%type <node> exp exps boolexp chamada compexp addexp multexp listaexp
-%type <node> var tipobase tipo
+%type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro bloco comandos comando comandoreturn simpleexp exps logicexp chamada compexp addexp multexp listaexp var tipobase tipo unaryexp
 
 %%
 
-programa : declaracoes	 	{ $$ = $1;
-				  prog = $$; } 
+programa : declaracoes	 	{ $$ = $1; prog = $$; AST_draw(prog); }
 |				{ $$ = NULL; } 
 ;
 
@@ -84,8 +80,7 @@ listanomes : TK_ID 		{ $$ = AST_id($1); }
 ;
 
 tipo : tipobase 		{ $$ = $1; }
-| tipo '[' ']' 			{ $$ = $1;
-				  AST_incInd($$); }
+| tipo '[' ']' 			{ $$ = $1; AST_incInd($$); }
 ;
 
 tipobase : TK_INT 		{ $$ = AST_type(INT, 0); }
@@ -119,28 +114,26 @@ comandos: comandos comando 			{ $$ = AST_handleList($1, $2); }
 | 						{ $$ = NULL; }
 ;
 
-comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, $5, NULL); }
-| TK_IF '(' boolexp ')' comando TK_ELSE comando { $$ = AST_cmd_if($3, $5, $7); }
-| TK_WHILE '(' boolexp ')' comando 		{ $$ = AST_cmd_while($3, $5); }
-| var '=' boolexp ';' 				{ $$ = AST_cmd_attr($1, $3); }
+comando : TK_IF '(' logicexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, $5, NULL); }
+| TK_IF '(' logicexp ')' comando TK_ELSE comando { $$ = AST_cmd_if($3, $5, $7); }
+| TK_WHILE '(' logicexp ')' comando 		{ $$ = AST_cmd_while($3, $5); }
+| var '=' logicexp ';' 				{ $$ = AST_cmd_attr($1, $3); }
 | comandoreturn ';' 				{ $$ = $1; }
-| boolexp ';' 					{ $$ = AST_cmd_exp($1); }
+| logicexp ';' 					{ $$ = AST_cmd_exp($1); }
 | bloco 					{ $$ = $1; }
 ;
 
 var : TK_ID 				{ $$ = AST_var_simple(AST_id($1)); } 
-| boolexp '[' boolexp ']'		{ $$ = AST_var_array($1, $3); }
+| simpleexp '[' logicexp ']'		{ $$ = AST_var_array($1, $3); }
 ;
-
 
 comandoreturn: TK_RETURN 		{ $$ = AST_cmd_ret(NULL); }
-| TK_RETURN boolexp 			{ $$ = AST_cmd_ret($2); }
+| TK_RETURN logicexp 			{ $$ = AST_cmd_ret($2); }
 ;
 
-
-boolexp: compexp 			{ $$ = $1; }
-| boolexp TK_AND compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
-| boolexp TK_OR compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+logicexp: compexp 			{ $$ = $1; }
+| logicexp TK_AND compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+| logicexp TK_OR compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
 compexp: addexp 			{ $$ = $1; }
@@ -157,32 +150,35 @@ addexp: multexp 			{ $$ = $1; }
 | addexp '-' multexp			{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
-multexp: exp 				{ $$ = $1; }
-| multexp '*' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| multexp '/' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| multexp '%' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
+multexp: unaryexp 			{ $$ = $1; }
+| multexp '*' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| multexp '/' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| multexp '%' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
-exp : '-' exp %prec UN_MINUS		{ $$ = AST_exp_opr($1, $2, NULL); }
-| '!' exp				{ $$ = AST_exp_opr($1, $2, NULL); }
-| TK_LITERALINT 			{ $$ = AST_litInt($1); } 
+unaryexp: simpleexp			{ $$ = $1; }
+| '-' simpleexp %prec UN_MINUS		{ $$ = AST_exp_opr($1, $2, NULL); }
+| '!' logicexp				{ $$ = AST_exp_opr($1, $2, NULL); }
+;
+
+simpleexp : TK_LITERALINT 		{ $$ = AST_litInt($1); } 
 | TK_LITERALFLOAT  			{ $$ = AST_litFloat($1); }
 | TK_LITERALSTRING 			{ $$ = AST_litString($1); }
 | var 					{ $$ = AST_exp_var($1); }
-| '(' boolexp ')' 			{ $$ = $2; }
+| '(' logicexp ')' 			{ $$ = $2; }
 | chamada 				{ $$ = $1; }
-| TK_NEW tipo '[' boolexp ']'		{ $$ = AST_exp_new($2, $4); }
+| TK_NEW tipo '[' logicexp ']'		{ $$ = AST_exp_new($2, $4); }
 ;
 
-chamada : TK_ID '(' listaexp ')' 	{ $$ = AST_exp_call(AST_id($1), $3); }
+chamada : simpleexp '(' listaexp ')' 	{ $$ = AST_exp_all($1, $3); }
 ;
 
 listaexp : exps 	{ $$ = $1; }
 | 			{ $$ = NULL; }
 ;
 
-exps : boolexp 		{ $$ = $1; }
-| exps ',' boolexp 	{ $$ = AST_handleList($1, $3); }
+exps : logicexp 		{ $$ = $1; }
+| exps ',' logicexp 		{ $$ = AST_handleList($1, $3); }
 ;
 
 %%
@@ -194,8 +190,6 @@ void yyerror (char * s) {
 int main (void) {
 	if(!yyparse()) {
 		printf("\n\nparsing finished\n\n");
-		AST_draw(prog);
-		printf("\n\nast printed\n\n");
 	}
 	else
 		printf("\n\nparsing error\n\n");

@@ -97,7 +97,7 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
 AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp);
 AST_nodeType * AST_exp_var(AST_nodeType * var);
-AST_nodeType * AST_exp_call(AST_nodeType * id, AST_nodeType * exp);
+AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2);
 
 /* Var */
 AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);

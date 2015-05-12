@@ -47,8 +47,8 @@ union AST_expNodeType {
 
 	
 	struct {
-		AST_nodeType * id;
-		AST_nodeType * exp;
+		AST_nodeType * exp1;
+		AST_nodeType * exp2;
 	} callexp;
 
 	/* New (para arrays) */
@@ -244,7 +244,7 @@ AST_nodeType * AST_exp_var(AST_nodeType * var){
 	return p;
 
 }
-AST_nodeType * AST_exp_call(AST_nodeType * id, AST_nodeType * exp){
+AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2){
 	AST_nodeType * p;
 
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
@@ -254,8 +254,8 @@ AST_nodeType * AST_exp_call(AST_nodeType * id, AST_nodeType * exp){
 	p->tag = EXP_CALL;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	p->node.exp.callexp.id = id;
-	p->node.exp.callexp.exp = exp;
+	p->node.exp.callexp.exp1 = exp1;
+	p->node.exp.callexp.exp2 = exp2;
 
 	return p;
 
@@ -435,7 +435,8 @@ AST_nodeType * AST_incInd(AST_nodeType * node){
 }
 
 void drawNode(AST_nodeType *p){
-	if (p != NULL) {	
+	if (p != NULL) {
+		printf("%d ",p->tag);	
 		switch(p->tag){
 			case LIT_INT:
 				printf("%d",p->node.lit.ivalue);
@@ -550,5 +551,7 @@ void drawNode(AST_nodeType *p){
 	}
 }
 void AST_draw(AST_nodeType *p){
+	printf("\n\nast printing %p \n\n",p);
 	drawNode(p);
+	printf("\n\nast printed\n\n");
 }
