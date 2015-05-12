@@ -165,7 +165,7 @@ AST_nodeType * AST_litString(char * value) {
 	p->tag = LIT_STRING;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	strcpy(p->node.lit.svalue, value);
+	p->node.lit.svalue = strdup(value);
 	return p;
 }
 
@@ -179,7 +179,7 @@ AST_nodeType * AST_id(char * name) {
 	p->tag = ID;
 	p->nextElem = NULL;
 	p->lastElem = p;
-	strcpy(p->node.id.name, name);
+	p->node.id.name = strdup(name);
 	return p;
 }
 
