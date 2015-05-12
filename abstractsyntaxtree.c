@@ -435,117 +435,119 @@ AST_nodeType * AST_incInd(AST_nodeType * node){
 }
 
 void drawNode(AST_nodeType *p){
-	switch(p->tag){
-		case LIT_INT:
-			printf("%d",p->node.lit.ivalue);
-			break;
-		case LIT_FLOAT:
-			printf("%f",p->node.lit.fvalue);
-			break;
-		case LIT_STRING:
-			printf("%s",p->node.lit.svalue);
-			break;
-		case ID: 
-			printf("%s",p->node.id.name);
-			break;
-		case TYP:
-			switch(p->node.typ.type){
-				case INT:
-					printf("int");
-					break;
-				case FLOAT:
-					printf("float");
-					break;
-				case CHAR:
-					printf("char");
-					break;
-				case VOID:
-					printf("void");
-					break;
-			}
-			int k;
-			for(k=0;k<p->node.typ.indirections;k++){
-				printf("[]");
-			}
-			break;
-		case VAR_SIMPLE:
-			break;
-		case VAR_ARRAY:
-			drawNode(p->node.exp.operexp.exp1);
-			printf("[");
-			drawNode(p->node.exp.operexp.exp1);
-			printf("]");
-			break;
-		case EXP_BINOP:
-			drawNode(p->node.exp.operexp.exp1);
-			switch(p->node.exp.operexp.opr){
-				case TK_AND:
-					printf(" && ");
-					break;
-				case TK_OR:
-					printf(" || ");
-					break;
-				case TK_EQ:
-					printf(" == ");
-					break;
-				case TK_LEQ:
-					printf(" <= ");
-					break;
-				case TK_GEQ:
-					printf(" >= ");
-					break;
-				default:
-					printf(" %c ",p->node.exp.operexp.opr);
-					break;
-			}
-			drawNode(p->node.exp.operexp.exp2);
-			break;
-		case EXP_UNOP:
-			printf(" %c ",p->node.exp.operexp.opr);
-			drawNode(p->node.exp.operexp.exp2);
-			break;
-		case EXP_NEW:
-			printf("new ");
-			drawNode(p->node.exp.newexp.type);
-			printf("[");
-			drawNode(p->node.exp.newexp.exp);
-			printf("]");
-			break;
-		case EXP_CALL:
-			break;
-		case CMD_WHILE:
-			printf("while(");
-			drawNode(p->node.cmd.whilecmd.exp);
-			printf("){");
+	if (p != NULL) {	
+		switch(p->tag){
+			case LIT_INT:
+				printf("%d",p->node.lit.ivalue);
+				break;
+			case LIT_FLOAT:
+				printf("%f",p->node.lit.fvalue);
+				break;
+			case LIT_STRING:
+				printf("%s",p->node.lit.svalue);
+				break;
+			case ID: 
+				printf("%s",p->node.id.name);
+				break;
+			case TYP:
+				switch(p->node.typ.type){
+					case INT:
+						printf("int");
+						break;
+					case FLOAT:
+						printf("float");
+						break;
+					case CHAR:
+						printf("char");
+						break;
+					case VOID:
+						printf("void");
+						break;
+				}
+				int k;
+				for(k=0;k<p->node.typ.indirections;k++){
+					printf("[]");
+				}
+				break;
+			case VAR_SIMPLE:
+				break;
+			case VAR_ARRAY:
+				drawNode(p->node.exp.operexp.exp1);
+				printf("[");
+				drawNode(p->node.exp.operexp.exp1);
+				printf("]");
+				break;
+			case EXP_BINOP:
+				drawNode(p->node.exp.operexp.exp1);
+				switch(p->node.exp.operexp.opr){
+					case TK_AND:
+						printf(" && ");
+						break;
+					case TK_OR:
+						printf(" || ");
+						break;
+					case TK_EQ:
+						printf(" == ");
+						break;
+					case TK_LEQ:
+						printf(" <= ");
+						break;
+					case TK_GEQ:
+						printf(" >= ");
+						break;
+					default:
+						printf(" %c ",p->node.exp.operexp.opr);
+						break;
+				}
+				drawNode(p->node.exp.operexp.exp2);
+				break;
+			case EXP_UNOP:
+				printf(" %c ",p->node.exp.operexp.opr);
+				drawNode(p->node.exp.operexp.exp2);
+				break;
+			case EXP_NEW:
+				printf("new ");
+				drawNode(p->node.exp.newexp.type);
+				printf("[");
+				drawNode(p->node.exp.newexp.exp);
+				printf("]");
+				break;
+			case EXP_CALL:
+				break;
+			case CMD_WHILE:
+				printf("while(");
+				drawNode(p->node.cmd.whilecmd.exp);
+				printf("){");
 
-			drawNode(p->node.cmd.whilecmd.cmd);
-			printf("}");
-			break;
-		case CMD_IF:
-			printf("if(");
-			drawNode(p->node.cmd.ifcmd.exp);
-			printf("){");
-			drawNode(p->node.cmd.ifcmd.cmd1);
-			printf("}");
-			if(p->node.cmd.ifcmd.cmd2 != NULL){
-				printf("else{");
-				drawNode(p->node.cmd.ifcmd.cmd2);
+				drawNode(p->node.cmd.whilecmd.cmd);
 				printf("}");
-			}
-			break;
-		case CMD_ATTR:
-			drawNode(p->node.cmd.attrcmd.var);
-			printf("=");
-			drawNode(p->node.cmd.attrcmd.exp);
-			break;
-		case CMD_RET:
-			printf("return");
-			if(p->node.cmd.retcmd.exp != NULL){
-				drawNode(p->node.cmd.retcmd.exp);
-			}
-			break;
+				break;
+			case CMD_IF:
+				printf("if(");
+				drawNode(p->node.cmd.ifcmd.exp);
+				printf("){");
+				drawNode(p->node.cmd.ifcmd.cmd1);
+				printf("}");
+				if(p->node.cmd.ifcmd.cmd2 != NULL){
+					printf("else{");
+					drawNode(p->node.cmd.ifcmd.cmd2);
+					printf("}");
+				}
+				break;
+			case CMD_ATTR:
+				drawNode(p->node.cmd.attrcmd.var);
+				printf("=");
+				drawNode(p->node.cmd.attrcmd.exp);
+				break;
+			case CMD_RET:
+				printf("return");
+				if(p->node.cmd.retcmd.exp != NULL){
+					drawNode(p->node.cmd.retcmd.exp);
+				}
+				break;
+		}
+		drawNode(p->nextElem);
 	}
-	drawNode(p->nextElem);
 }
 void AST_draw(AST_nodeType *p){
 	drawNode(p);
