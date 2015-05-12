@@ -76,6 +76,8 @@ typedef union AST_cmdNodeType AST_cmdNodeType;
 
 typedef struct AST_nodeType AST_nodeType;
 
+extern AST_nodeType * prog;
+
 void AST_draw(AST_nodeType *p);
 
 extern void yyerror(char *);

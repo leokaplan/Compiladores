@@ -29,66 +29,47 @@ AST_nodeType * prog = NULL;
 	AST_nodeType * node;	
 }
 
-%token <node> TK_CHAR 
-%token <node> TK_INT
-%token <node> TK_FLOAT
-%token TK_IF
-%token TK_ELSE
-%token TK_WHILE
-%token <node> TK_VOID
-%token TK_RETURN
-%token TK_NEW
-%token TK_AND
-%token TK_OR
-%token TK_EQ 
-%token TK_NEQ 
-%token TK_GEQ
-%token TK_LEQ 
-%token TK_ID
-%token TK_LITERALINT
-%token TK_LITERALFLOAT
-%token TK_LITERALSTRING
-
-%type <name> TK_ID
-%type <intval> TK_LITERALINT
-%type <floatval> TK_LITERALFLOAT
-%type <stringval> TK_LITERALSTRING
-
-%type <node> programa
-%type <node> listanomes
-%type <node> exp 
-%type <node> exps 
-%type <node> declaracao 
-%type <node> decvariavel 
-%type <node> decfuncao 
-%type <node> tipo 
-%type <node> tipobase 
-%type <node> listaparametros  
-%type <node> parametros  
-%type <node> parametro  
-%type <node> bloco   
-%type <node> decsvariaveis   
-%type <node> comandos   
-%type <node> comando   
-%type <node> var   
-%type <node> comandoreturn   
-%type <node> boolexp   
-%type <node> chamada   
-%type <node> compexp   
-%type <node> addexp   
-%type <node> multexp   
-%type <node> listaexp  
-
 %nonassoc IF_NO_ELSE
 %nonassoc TK_ELSE
+%nonassoc '[' 
 %nonassoc UN_MINUS
-%nonassoc '['
+%nonassoc '!'
+
+%token <intval> TK_CHAR 
+%token <intval> TK_INT
+%token <intval> TK_FLOAT
+%token <intval> TK_IF
+%token <intval> TK_ELSE
+%token <intval> TK_WHILE
+%token <intval> TK_VOID
+%token <intval> TK_RETURN
+%token <intval> TK_NEW
+%token <intval> TK_AND
+%token <intval> TK_OR
+%token <intval> TK_EQ 
+%token <intval> TK_NEQ 
+%token <intval> TK_GEQ
+%token <intval> TK_LEQ
+%token <name> TK_ID
+%token <intval> TK_LITERALINT
+%token <floatval> TK_LITERALFLOAT
+%token <stringval> TK_LITERALSTRING
+
+%type <intval> '>' '<' '+' '-' '*' '/' '%' '!'
+%type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro
+%type <node> bloco comandos comando comandoreturn
+%type <node> exp exps boolexp chamada compexp addexp multexp listaexp
+%type <node> var tipobase tipo
 
 %%
 
-programa : programa declaracao 	{ $$ = AST_handleList($1, $2);
+programa : declaracoes	 	{ $$ = $1;
 				  prog = $$; } 
 |				{ $$ = NULL; } 
+;
+
+declaracoes : declaracoes declaracao	{ $$ = AST_handleList($1, $2); }
+|					{ $$ = NULL; }
 ;
 
 declaracao : decvariavel 	{ $$ = $1; } 
@@ -148,48 +129,49 @@ comando : TK_IF '(' boolexp ')' comando %prec IF_NO_ELSE 	{ $$ = AST_cmd_if($3, 
 ;
 
 var : TK_ID 				{ $$ = AST_var_simple(AST_id($1)); } 
-| boolexp '[' boolexp ']' %prec '['	{ $$ = AST_var_array($1, $3); }
+| boolexp '[' boolexp ']'		{ $$ = AST_var_array($1, $3); }
 ;
 
 
 comandoreturn: TK_RETURN 		{ $$ = AST_cmd_ret(NULL); }
-| TK_RETURN boolexp 			{ $$ = AST_cmd_ret($2);}
+| TK_RETURN boolexp 			{ $$ = AST_cmd_ret($2); }
 ;
 
 
 boolexp: compexp 			{ $$ = $1; }
-| boolexp TK_AND compexp 		{ $$ = AST_exp_opr(TK_AND, $1, $3); }
-| boolexp TK_OR compexp 		{ $$ = AST_exp_opr(TK_OR, $1, $3); }
+| boolexp TK_AND compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+| boolexp TK_OR compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
 compexp: addexp 			{ $$ = $1; }
-| compexp TK_EQ addexp 			{ $$ = AST_exp_opr(TK_EQ, $1, $3); }
-| compexp TK_LEQ addexp 		{ $$ = AST_exp_opr(TK_LEQ, $1, $3); }
-| compexp TK_GEQ addexp 		{ $$ = AST_exp_opr(TK_GEQ, $1, $3); }
-| compexp '<' addexp 			{ $$ = AST_exp_opr('<', $1, $3); }
-| compexp '>' addexp 			{ $$ = AST_exp_opr('>', $1, $3); }
+| compexp TK_EQ addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp TK_NEQ addexp			{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp TK_LEQ addexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp TK_GEQ addexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp '<' addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp '>' addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
 addexp: multexp 			{ $$ = $1; }
-| addexp '+' multexp			{ $$ = AST_exp_opr('+', $1, $3); }
-| addexp '-' multexp			{ $$ = AST_exp_opr('-', $1, $3); }
+| addexp '+' multexp			{ $$ = AST_exp_opr($2, $1, $3); }
+| addexp '-' multexp			{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
 multexp: exp 				{ $$ = $1; }
-| multexp '*' exp 			{ $$ = AST_exp_opr('*', $1, $3); }
-| multexp '/' exp 			{ $$ = AST_exp_opr('/', $1, $3); }
-| multexp '%' exp 			{ $$ = AST_exp_opr('%', $1, $3); }
+| multexp '*' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| multexp '/' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| multexp '%' exp 			{ $$ = AST_exp_opr($2, $1, $3); }
 ;
 
-exp : '-' exp %prec UN_MINUS		{ $$ = AST_exp_opr('-', $2, NULL); }
-| '!' exp %prec '!'			{ $$ = AST_exp_opr('!', $2, NULL); }
+exp : '-' exp %prec UN_MINUS		{ $$ = AST_exp_opr($1, $2, NULL); }
+| '!' exp				{ $$ = AST_exp_opr($1, $2, NULL); }
 | TK_LITERALINT 			{ $$ = AST_litInt($1); } 
 | TK_LITERALFLOAT  			{ $$ = AST_litFloat($1); }
 | TK_LITERALSTRING 			{ $$ = AST_litString($1); }
 | var 					{ $$ = AST_exp_var($1); }
 | '(' boolexp ')' 			{ $$ = $2; }
 | chamada 				{ $$ = $1; }
-| TK_NEW tipo '[' boolexp ']' %prec '['	{ $$ = AST_exp_new($2, $4); }
+| TK_NEW tipo '[' boolexp ']'		{ $$ = AST_exp_new($2, $4); }
 ;
 
 chamada : TK_ID '(' listaexp ')' 	{ $$ = AST_exp_call(AST_id($1), $3); }
@@ -213,6 +195,7 @@ int main (void) {
 	if(!yyparse()) {
 		printf("\n\nparsing finished\n\n");
 		AST_draw(prog);
+		printf("\n\nast printed\n\n");
 	}
 	else
 		printf("\n\nparsing error\n\n");
