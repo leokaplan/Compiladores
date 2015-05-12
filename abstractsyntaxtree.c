@@ -5,8 +5,6 @@
 #include "abstractsyntaxtree.h"
 #include "monga.tab.h"
 
-#define SIZEOF_NODETYPE ((char *)&p->lit - (char *)p)
-
 /* Tipos */
 struct AST_typNodeType {
 	AST_typeEnum type;
@@ -421,14 +419,16 @@ AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * cmd){
 }
 
 AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
+	AST_nodeType * ret = NULL;
 	if (list == NULL) {
-		return element;
+		ret = element;
 	}
 	else {
 		list->lastElem->nextElem = element;
 		list->lastElem = element->lastElem;
-		return list;
+		ret = list;
 	}
+	return ret;
 }
 AST_nodeType * AST_incInd(AST_nodeType * node){
 	node->node.typ.indirections++;	
@@ -545,7 +545,7 @@ void drawNode(AST_nodeType *p){
 			}
 			break;
 	}
-
+	drawNode(p->nextElem);
 }
 void AST_draw(AST_nodeType *p){
 	drawNode(p);
