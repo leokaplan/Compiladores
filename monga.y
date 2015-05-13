@@ -169,7 +169,7 @@ simpleexp : TK_LITERALINT 		{ $$ = AST_litInt($1); }
 | TK_NEW tipo '[' logicexp ']'		{ $$ = AST_exp_new($2, $4); }
 ;
 
-chamada : simpleexp '(' listaexp ')' 	{ $$ = AST_exp_all($1, $3); }
+chamada : simpleexp '(' listaexp ')' 	{ $$ = AST_exp_call($1, $3); }
 ;
 
 listaexp : exps 	{ $$ = $1; }

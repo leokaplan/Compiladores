@@ -436,7 +436,6 @@ AST_nodeType * AST_incInd(AST_nodeType * node){
 
 void drawNode(AST_nodeType *p){
 	if (p != NULL) {
-		printf("%d ",p->tag);	
 		switch(p->tag){
 			case LIT_INT:
 				printf("%d",p->node.lit.ivalue);
@@ -470,12 +469,23 @@ void drawNode(AST_nodeType *p){
 					printf("[]");
 				}
 				break;
+			case DEC_VAR:
+				drawNode(p->node.decl.vardecl.type);
+				drawNode(p->node.decl.vardecl.id);
+				break;
+			case DEC_FUNC:
+				drawNode(p->node.decl.funcdecl.type);
+				drawNode(p->node.decl.funcdecl.id);
+				drawNode(p->node.decl.funcdecl.param);
+				drawNode(p->node.decl.funcdecl.block);
+				break;
 			case VAR_SIMPLE:
+				drawNode(p->node.var.id);
 				break;
 			case VAR_ARRAY:
-				drawNode(p->node.exp.operexp.exp1);
+				drawNode(p->node.var.indexed.exp1);
 				printf("[");
-				drawNode(p->node.exp.operexp.exp1);
+				drawNode(p->node.var.indexed.exp1);
 				printf("]");
 				break;
 			case EXP_BINOP:
@@ -489,6 +499,9 @@ void drawNode(AST_nodeType *p){
 						break;
 					case TK_EQ:
 						printf(" == ");
+						break;
+					case TK_NEQ:
+						printf(" != ");
 						break;
 					case TK_LEQ:
 						printf(" <= ");
@@ -514,6 +527,13 @@ void drawNode(AST_nodeType *p){
 				printf("]");
 				break;
 			case EXP_CALL:
+				drawNode(p->node.exp.callexp.exp1);
+				printf("(");
+				drawNode(p->node.exp.callexp.exp2);
+				printf(")");
+				break;
+			case EXP_VAR:
+				drawNode(p->node.exp.varexp);
 				break;
 			case CMD_WHILE:
 				printf("while(");
@@ -539,6 +559,13 @@ void drawNode(AST_nodeType *p){
 				drawNode(p->node.cmd.attrcmd.var);
 				printf("=");
 				drawNode(p->node.cmd.attrcmd.exp);
+				break;
+			case CMD_EXP:
+				drawNode(p->node.cmd.expcmd.exp);
+				break;
+			case CMD_BLOCK:
+				drawNode(p->node.cmd.blockcmd.decl);
+				drawNode(p->node.cmd.blockcmd.cmd);
 				break;
 			case CMD_RET:
 				printf("return");
