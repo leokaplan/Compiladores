@@ -450,7 +450,7 @@ void drawNode(AST_nodeType *p,int ident){
 				printf("%s",p->node.lit.svalue);
 				break;
 			case ID: 
-				printf(" %s",p->node.id.name);
+				printf("%s",p->node.id.name);
 				break;
 			case TYP:
 				switch(p->node.typ.type){
@@ -474,18 +474,22 @@ void drawNode(AST_nodeType *p,int ident){
 				break;
 			case DEC_VAR:
 				drawNode(p->node.decl.vardecl.type,ident);
-				drawNode(p->node.decl.vardecl.id,ident);
+				printf(" ");
+                drawNode(p->node.decl.vardecl.id,ident);
+                printf(";");
+                newline(ident);
 				break;
 			case DEC_FUNC:
 				drawNode(p->node.decl.funcdecl.type,ident);
-				drawNode(p->node.decl.funcdecl.id,ident);
+				printf(" ");
+                drawNode(p->node.decl.funcdecl.id,ident);
                 printf("(");
 				drawNode(p->node.decl.funcdecl.param,ident);
                 printf("){");
                 newline(ident+1);
 				drawNode(p->node.decl.funcdecl.block,ident+1);
-                printf("}");
                 newline(ident);
+                printf("}");
 				break;
 			case VAR_SIMPLE:
 				drawNode(p->node.var.id,ident);
@@ -524,7 +528,7 @@ void drawNode(AST_nodeType *p,int ident){
 				drawNode(p->node.exp.operexp.exp2,ident);
 				break;
 			case EXP_UNOP:
-				printf(" %c ",p->node.exp.operexp.opr);
+				printf("%c",p->node.exp.operexp.opr);
 				drawNode(p->node.exp.operexp.exp1,ident);
 				break;
 			case EXP_NEW:
@@ -549,6 +553,7 @@ void drawNode(AST_nodeType *p,int ident){
 				printf("){");
                 newline(ident+1);
 				drawNode(p->node.cmd.whilecmd.cmd,ident+1);
+                newline(ident);
 				printf("}");
                 newline(ident);
 				break;
@@ -558,27 +563,26 @@ void drawNode(AST_nodeType *p,int ident){
 				printf("){");
                 newline(ident+1);
 				drawNode(p->node.cmd.ifcmd.cmd1,ident+1);
-				printf("}");
                 newline(ident);
+				printf("}");
 				if(p->node.cmd.ifcmd.cmd2 != NULL){
 					printf("else{");
                     newline(ident+1);
 					drawNode(p->node.cmd.ifcmd.cmd2,ident+1);
-					printf("}");
                     newline(ident);
+					printf("}");
 				}
+                newline(ident);
 				break;
 			case CMD_ATTR:
 				drawNode(p->node.cmd.attrcmd.var,ident);
-				printf("=");
+				printf(" = ");
 				drawNode(p->node.cmd.attrcmd.exp,ident);
                 printf(";");
                 newline(ident);
 				break;
 			case CMD_EXP:
 				drawNode(p->node.cmd.expcmd.exp,ident);
-                printf(";");
-                newline(ident);
 				break;
 			case CMD_BLOCK:
 				drawNode(p->node.cmd.blockcmd.decl,ident);
@@ -591,11 +595,16 @@ void drawNode(AST_nodeType *p,int ident){
                     drawNode(p->node.cmd.retcmd.exp,ident);
 				}
                 printf(";");
-                newline(ident-1);
+                newline(ident);
 				break;
 		}
 		if(p->nextElem != NULL){
             switch(p->tag){
+                case ID:
+                    printf(",");
+                    break;
+                default:
+                    break;
             }
             drawNode(p->nextElem,ident);
         }
