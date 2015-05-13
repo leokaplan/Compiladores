@@ -476,8 +476,6 @@ void drawNode(AST_nodeType *p,int ident){
 				drawNode(p->node.decl.vardecl.type,ident);
 				printf(" ");
                 drawNode(p->node.decl.vardecl.id,ident);
-                printf(";");
-                newline(ident);
 				break;
 			case DEC_FUNC:
 				drawNode(p->node.decl.funcdecl.type,ident);
@@ -608,10 +606,16 @@ void drawNode(AST_nodeType *p,int ident){
             }
             drawNode(p->nextElem,ident);
         }
+        else{
+            switch(p->tag){
+                case DEC_VAR:
+                    printf(";");
+                    newline(ident);
+                    break;
+            }
+        }
 	}
 }
 void AST_draw(AST_nodeType *p){
-	printf("\n\nast printing\n\n");
 	drawNode(p,0);
-	printf("\n\nast printed\n\n");
 }
