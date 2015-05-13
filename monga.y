@@ -131,33 +131,33 @@ comandoreturn: TK_RETURN 		{ $$ = AST_cmd_ret(NULL); }
 ;
 
 logicexp: compexp 			{ $$ = $1; }
-| logicexp TK_AND compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
-| logicexp TK_OR compexp 		{ $$ = AST_exp_opr($2, $1, $3); }
+| logicexp TK_AND compexp 		{ $$ = AST_exp_opr(TK_AND, $1, $3); }
+| logicexp TK_OR compexp 		{ $$ = AST_exp_opr(TK_OR, $1, $3); }
 ;
 
 compexp: addexp 			{ $$ = $1; }
-| compexp TK_EQ addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| compexp TK_NEQ addexp			{ $$ = AST_exp_opr($2, $1, $3); }
-| compexp TK_LEQ addexp 		{ $$ = AST_exp_opr($2, $1, $3); }
-| compexp TK_GEQ addexp 		{ $$ = AST_exp_opr($2, $1, $3); }
-| compexp '<' addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| compexp '>' addexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| compexp TK_EQ addexp 			{ $$ = AST_exp_opr(TK_EQ, $1, $3); }
+| compexp TK_NEQ addexp			{ $$ = AST_exp_opr(TK_NEQ, $1, $3); }
+| compexp TK_LEQ addexp 		{ $$ = AST_exp_opr(TK_LEQ, $1, $3); }
+| compexp TK_GEQ addexp 		{ $$ = AST_exp_opr(TK_GEQ, $1, $3); }
+| compexp '<' addexp 			{ $$ = AST_exp_opr('<', $1, $3); }
+| compexp '>' addexp 			{ $$ = AST_exp_opr('>', $1, $3); }
 ;
 
 addexp: multexp 			{ $$ = $1; }
-| addexp '+' multexp			{ $$ = AST_exp_opr($2, $1, $3); }
-| addexp '-' multexp			{ $$ = AST_exp_opr($2, $1, $3); }
+| addexp '+' multexp			{ $$ = AST_exp_opr('+', $1, $3); }
+| addexp '-' multexp			{ $$ = AST_exp_opr('-', $1, $3); }
 ;
 
 multexp: unaryexp 			{ $$ = $1; }
-| multexp '*' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| multexp '/' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
-| multexp '%' unaryexp 			{ $$ = AST_exp_opr($2, $1, $3); }
+| multexp '*' unaryexp 			{ $$ = AST_exp_opr('*', $1, $3); }
+| multexp '/' unaryexp 			{ $$ = AST_exp_opr('/', $1, $3); }
+| multexp '%' unaryexp 			{ $$ = AST_exp_opr('%', $1, $3); }
 ;
 
 unaryexp: simpleexp			{ $$ = $1; }
-| '-' simpleexp %prec UN_MINUS		{ $$ = AST_exp_opr($1, $2, NULL); }
-| '!' simpleexp				{ $$ = AST_exp_opr($1, $2, NULL); }
+| '-' simpleexp %prec UN_MINUS		{ $$ = AST_exp_opr('-', $2, NULL); }
+| '!' simpleexp				{ $$ = AST_exp_opr('!', $2, NULL); }
 ;
 
 simpleexp : TK_LITERALINT 		{ $$ = AST_litInt($1); } 
