@@ -437,7 +437,7 @@ void newline(int ident){
     int spaces = ident;
     while(spaces--) printf("\t");
 }
-void drawNode(AST_nodeType *p,int ident){
+void GRAPH_drawNode(AST_nodeType *p,int ident){
     if (p != NULL) {
 		switch(p->tag){
 			case LIT_INT:
@@ -473,33 +473,34 @@ void drawNode(AST_nodeType *p,int ident){
 				}
 				break;
 			case DEC_VAR:
-				drawNode(p->node.decl.vardecl.type,ident);
+				printf("")
+                GRAPH_drawNode(p->node.decl.vardecl.type,ident);
 				printf(" ");
-                drawNode(p->node.decl.vardecl.id,ident);
+                GRAPH_drawNode(p->node.decl.vardecl.id,ident);
 				break;
 			case DEC_FUNC:
-				drawNode(p->node.decl.funcdecl.type,ident);
+				GRAPH_drawNode(p->node.decl.funcdecl.type,ident);
 				printf(" ");
-                drawNode(p->node.decl.funcdecl.id,ident);
+                GRAPH_drawNode(p->node.decl.funcdecl.id,ident);
                 printf("(");
-				drawNode(p->node.decl.funcdecl.param,ident);
+				GRAPH_drawNode(p->node.decl.funcdecl.param,ident);
                 printf("){");
                 newline(ident+1);
-				drawNode(p->node.decl.funcdecl.block,ident+1);
+				GRAPH_drawNode(p->node.decl.funcdecl.block,ident+1);
                 newline(ident);
                 printf("}");
 				break;
 			case VAR_SIMPLE:
-				drawNode(p->node.var.id,ident);
+				GRAPH_drawNode(p->node.var.id,ident);
 				break;
 			case VAR_ARRAY:
-				drawNode(p->node.var.indexed.exp1,ident);
+				GRAPH_drawNode(p->node.var.indexed.exp1,ident);
 				printf("[");
-				drawNode(p->node.var.indexed.exp1,ident);
+				GRAPH_drawNode(p->node.var.indexed.exp1,ident);
 				printf("]");
 				break;
 			case EXP_BINOP:
-				drawNode(p->node.exp.operexp.exp1,ident);
+				GRAPH_drawNode(p->node.exp.operexp.exp1,ident);
 				switch(p->node.exp.operexp.opr){
 					case TK_AND:
 						printf(" && ");
@@ -523,74 +524,65 @@ void drawNode(AST_nodeType *p,int ident){
 						printf(" %c ",p->node.exp.operexp.opr);
 						break;
 				}
-				drawNode(p->node.exp.operexp.exp2,ident);
+				GRAPH_drawNode(p->node.exp.operexp.exp2,ident);
 				break;
 			case EXP_UNOP:
 				printf("%c",p->node.exp.operexp.opr);
-				drawNode(p->node.exp.operexp.exp1,ident);
+				GRAPH_drawNode(p->node.exp.operexp.exp1,ident);
 				break;
 			case EXP_NEW:
 				printf("new ");
-				drawNode(p->node.exp.newexp.type,ident);
+				GRAPH_drawNode(p->node.exp.newexp.type,ident);
 				printf("[");
-				drawNode(p->node.exp.newexp.exp,ident);
+				GRAPH_drawNode(p->node.exp.newexp.exp,ident);
 				printf("]");
 				break;
 			case EXP_CALL:
-				drawNode(p->node.exp.callexp.exp1,ident);
+				GRAPH_drawNode(p->node.exp.callexp.exp1,ident);
 				printf("(");
-				drawNode(p->node.exp.callexp.exp2,ident);
+				GRAPH_drawNode(p->node.exp.callexp.exp2,ident);
 				printf(")");
 				break;
 			case EXP_VAR:
-				drawNode(p->node.exp.varexp,ident);
+				GRAPH_drawNode(p->node.exp.varexp,ident);
 				break;
 			case CMD_WHILE:
-				printf("while(");
-				drawNode(p->node.cmd.whilecmd.exp,ident);
-				printf("){");
-                newline(ident+1);
-				drawNode(p->node.cmd.whilecmd.cmd,ident+1);
-                newline(ident);
-				printf("}");
-                newline(ident);
+				printf("%p->%p [weight=4]",p,p->node.cmd.whilecmd.exp);
+				GRAPH_drawNode(p->node.cmd.whilecmd.exp,ident);
+				printf("%p->%p",p,p->node.cmd.whilecmd.cmd);
+				GRAPH_drawNode(p->node.cmd.whilecmd.cmd,ident+1);
+                printf("%p [label=\"while\"]",p);
 				break;
 			case CMD_IF:
-				printf("if(");
-				drawNode(p->node.cmd.ifcmd.exp,ident);
-				printf("){");
-                newline(ident+1);
-				drawNode(p->node.cmd.ifcmd.cmd1,ident+1);
-                newline(ident);
-				printf("}");
+				printf("%p->%p [weight=4]",p,p->node.cmd.ifcmd.exp);
+				GRAPH_drawNode(p->node.cmd.ifcmd.exp,ident);
+				printf("%p->%p",p,p->node.cmd.ifcmd.cmd1);
+				GRAPH_drawNode(p->node.cmd.ifcmd.cmd1,ident+1);
 				if(p->node.cmd.ifcmd.cmd2 != NULL){
-					printf("else{");
-                    newline(ident+1);
-					drawNode(p->node.cmd.ifcmd.cmd2,ident+1);
-                    newline(ident);
-					printf("}");
+				    printf("%p->%p",p,p->node.cmd.ifcmd.cmd2);
+					GRAPH_drawNode(p->node.cmd.ifcmd.cmd2,ident+1);
 				}
-                newline(ident);
+                printf("%p [label=\"if\"]",p);
 				break;
 			case CMD_ATTR:
-				drawNode(p->node.cmd.attrcmd.var,ident);
-				printf(" = ");
-				drawNode(p->node.cmd.attrcmd.exp,ident);
-                printf(";");
-                newline(ident);
+				printf("%p->%p",p,p->node.cmd.attrcmd.var);
+                GRAPH_drawNode(p->node.cmd.attrcmd.var,ident);
+				printf("%p->%p",p,p->node.cmd.attrcmd.exp);
+				GRAPH_drawNode(p->node.cmd.attrcmd.exp,ident);
+                printf("%p [label=\"attr\"]",p);
 				break;
 			case CMD_EXP:
-				drawNode(p->node.cmd.expcmd.exp,ident);
+				GRAPH_drawNode(p->node.cmd.expcmd.exp,ident);
 				break;
 			case CMD_BLOCK:
-				drawNode(p->node.cmd.blockcmd.decl,ident);
-				drawNode(p->node.cmd.blockcmd.cmd,ident);
+				GRAPH_drawNode(p->node.cmd.blockcmd.decl,ident);
+				GRAPH_drawNode(p->node.cmd.blockcmd.cmd,ident);
 				break;
 			case CMD_RET:
 				printf("return");
 				if(p->node.cmd.retcmd.exp != NULL){
 					printf(" ");
-                    drawNode(p->node.cmd.retcmd.exp,ident);
+                    GRAPH_drawNode(p->node.cmd.retcmd.exp,ident);
 				}
                 printf(";");
                 newline(ident);
@@ -604,7 +596,7 @@ void drawNode(AST_nodeType *p,int ident){
                 default:
                     break;
             }
-            drawNode(p->nextElem,ident);
+            GRAPH_drawNode(p->nextElem,ident);
         }
         else{
             switch(p->tag){
@@ -616,6 +608,186 @@ void drawNode(AST_nodeType *p,int ident){
         }
 	}
 }
-void AST_draw(AST_nodeType *p){
-	drawNode(p,0);
+void CODE_drawNode(AST_nodeType *p,int ident){
+    if (p != NULL) {
+		switch(p->tag){
+			case LIT_INT:
+				printf("%d",p->node.lit.ivalue);
+				break;
+			case LIT_FLOAT:
+				printf("%f",p->node.lit.fvalue);
+				break;
+			case LIT_STRING:
+				printf("%s",p->node.lit.svalue);
+				break;
+			case ID: 
+				printf("%s",p->node.id.name);
+				break;
+			case TYP:
+				switch(p->node.typ.type){
+					case INT:
+						printf("int");
+						break;
+					case FLOAT:
+						printf("float");
+						break;
+					case CHAR:
+						printf("char");
+						break;
+					case VOID:
+						printf("void");
+						break;
+				}
+				int k;
+				for(k=0;k<p->node.typ.indirections;k++){
+					printf("[]");
+				}
+				break;
+			case DEC_VAR:
+				CODE_drawNode(p->node.decl.vardecl.type,ident);
+				printf(" ");
+                CODE_drawNode(p->node.decl.vardecl.id,ident);
+				break;
+			case DEC_FUNC:
+				CODE_drawNode(p->node.decl.funcdecl.type,ident);
+				printf(" ");
+                CODE_drawNode(p->node.decl.funcdecl.id,ident);
+                printf("(");
+				CODE_drawNode(p->node.decl.funcdecl.param,ident);
+                printf("){");
+                newline(ident+1);
+				CODE_drawNode(p->node.decl.funcdecl.block,ident+1);
+                newline(ident);
+                printf("}");
+				break;
+			case VAR_SIMPLE:
+				CODE_drawNode(p->node.var.id,ident);
+				break;
+			case VAR_ARRAY:
+				CODE_drawNode(p->node.var.indexed.exp1,ident);
+				printf("[");
+				CODE_drawNode(p->node.var.indexed.exp1,ident);
+				printf("]");
+				break;
+			case EXP_BINOP:
+				CODE_drawNode(p->node.exp.operexp.exp1,ident);
+				switch(p->node.exp.operexp.opr){
+					case TK_AND:
+						printf(" && ");
+						break;
+					case TK_OR:
+						printf(" || ");
+						break;
+					case TK_EQ:
+						printf(" == ");
+						break;
+					case TK_NEQ:
+						printf(" != ");
+						break;
+					case TK_LEQ:
+						printf(" <= ");
+						break;
+					case TK_GEQ:
+						printf(" >= ");
+						break;
+					default:
+						printf(" %c ",p->node.exp.operexp.opr);
+						break;
+				}
+				CODE_drawNode(p->node.exp.operexp.exp2,ident);
+				break;
+			case EXP_UNOP:
+				printf("%c",p->node.exp.operexp.opr);
+				CODE_drawNode(p->node.exp.operexp.exp1,ident);
+				break;
+			case EXP_NEW:
+				printf("new ");
+				CODE_drawNode(p->node.exp.newexp.type,ident);
+				printf("[");
+				CODE_drawNode(p->node.exp.newexp.exp,ident);
+				printf("]");
+				break;
+			case EXP_CALL:
+				CODE_drawNode(p->node.exp.callexp.exp1,ident);
+				printf("(");
+				CODE_drawNode(p->node.exp.callexp.exp2,ident);
+				printf(")");
+				break;
+			case EXP_VAR:
+				CODE_drawNode(p->node.exp.varexp,ident);
+				break;
+			case CMD_WHILE:
+				printf("while(");
+				CODE_drawNode(p->node.cmd.whilecmd.exp,ident);
+				printf("){");
+                newline(ident+1);
+				CODE_drawNode(p->node.cmd.whilecmd.cmd,ident+1);
+                newline(ident);
+				printf("}");
+                newline(ident);
+				break;
+			case CMD_IF:
+				printf("if(");
+				CODE_drawNode(p->node.cmd.ifcmd.exp,ident);
+				printf("){");
+                newline(ident+1);
+				CODE_drawNode(p->node.cmd.ifcmd.cmd1,ident+1);
+                newline(ident);
+				printf("}");
+				if(p->node.cmd.ifcmd.cmd2 != NULL){
+					printf("else{");
+                    newline(ident+1);
+					CODE_drawNode(p->node.cmd.ifcmd.cmd2,ident+1);
+                    newline(ident);
+					printf("}");
+				}
+                newline(ident);
+				break;
+			case CMD_ATTR:
+				CODE_drawNode(p->node.cmd.attrcmd.var,ident);
+				printf(" = ");
+				CODE_drawNode(p->node.cmd.attrcmd.exp,ident);
+                printf(";");
+                newline(ident);
+				break;
+			case CMD_EXP:
+				CODE_drawNode(p->node.cmd.expcmd.exp,ident);
+				break;
+			case CMD_BLOCK:
+				CODE_drawNode(p->node.cmd.blockcmd.decl,ident);
+				CODE_drawNode(p->node.cmd.blockcmd.cmd,ident);
+				break;
+			case CMD_RET:
+				printf("return");
+				if(p->node.cmd.retcmd.exp != NULL){
+					printf(" ");
+                    CODE_drawNode(p->node.cmd.retcmd.exp,ident);
+				}
+                printf(";");
+                newline(ident);
+				break;
+		}
+		if(p->nextElem != NULL){
+            switch(p->tag){
+                case ID:
+                    printf(",");
+                    break;
+                default:
+                    break;
+            }
+            CODE_drawNode(p->nextElem,ident);
+        }
+        else{
+            switch(p->tag){
+                case DEC_VAR:
+                    printf(";");
+                    newline(ident);
+                    break;
+            }
+        }
+	}
+}
+void AST_draw(AST_nodeType *p,int mode){
+	if(mode == 1) CODE_drawNode(p,0);
+	if(mode == 2) GRAPH_drawNode(p,0);
 }

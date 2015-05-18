@@ -78,7 +78,12 @@ typedef struct AST_nodeType AST_nodeType;
 
 extern AST_nodeType * prog;
 
-void AST_draw(AST_nodeType *p);
+
+/*
+ * mode = 1 print a formatted code
+ * mode = 2 ptint in DOT
+ * */
+void AST_draw(AST_nodeType *p,int mode);
 
 extern void yyerror(char *);
 

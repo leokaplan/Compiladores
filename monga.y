@@ -7,8 +7,9 @@
 
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
-
-
+#ifndef MODE
+#define MODE 1
+#endif
 void yyerror(char *);
 int yylex(void);
 int sym[26];
@@ -60,7 +61,7 @@ AST_nodeType * prog = NULL;
 
 %%
 
-programa : declaracoes	 	{ $$ = $1; prog = $$; AST_draw(prog); } 
+programa : declaracoes	 	{ $$ = $1; prog = $$; AST_draw(prog,MODE); } 
 ;
 
 declaracoes : declaracoes declaracao	{ $$ = AST_handleList($1, $2); }
