@@ -51,12 +51,13 @@ AST_nodeType * prog = NULL;
 %token <intval> TK_NEQ 
 %token <intval> TK_GEQ
 %token <intval> TK_LEQ
+%type <intval> '>' '<' '+' '-' '*' '/' '%' '!'
+
 %token <name> TK_ID
 %token <intval> TK_LITERALINT
 %token <floatval> TK_LITERALFLOAT
 %token <stringval> TK_LITERALSTRING
 
-%type <intval> '>' '<' '+' '-' '*' '/' '%' '!'
 %type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro bloco comandos comando comandoreturn simpleexp exps logicexp chamada compexp addexp multexp listaexp var tipobase tipo unaryexp
 
 %%

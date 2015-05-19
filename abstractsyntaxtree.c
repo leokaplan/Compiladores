@@ -5,6 +5,14 @@
 #include "abstractsyntaxtree.h"
 #include "monga.tab.h"
 
+#define MAKE_NODE(p,TYPE,TAG); \
+	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
+		yyerror("Falta de memoria"); \
+	p->nextElem = NULL; \
+	p->lastElem = p; \
+	p->type = TYPE; \
+	p->tag = TAG; 
+
 /* Tipos */
 struct AST_typNodeType {
 	AST_typeEnum type;
@@ -127,70 +135,36 @@ struct AST_nodeType {
 
 AST_nodeType * AST_litInt(int value) {
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-
-	p->type = TYPE_LIT;
-	p->tag = LIT_INT;
-	p->nextElem = NULL;
-	p->lastElem = p;
+        MAKE_NODE(p,TYPE_LIT,LIT_INT);
 	p->node.lit.ivalue = value;
 	return p;
 }
 
 AST_nodeType * AST_litFloat(float value) {
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-
-	p->type = TYPE_LIT;
-	p->tag = LIT_FLOAT;
-	p->nextElem = NULL;
-	p->lastElem = p;
+        MAKE_NODE(p,TYPE_LIT,LIT_FLOAT);
 	p->node.lit.fvalue = value;
 	return p;
 }
 
 AST_nodeType * AST_litString(char * value) {
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-
-	p->type = TYPE_LIT;
-	p->tag = LIT_STRING;
-	p->nextElem = NULL;
-	p->lastElem = p;
+        MAKE_NODE(p,TYPE_LIT,LIT_STRING);
 	p->node.lit.svalue = strdup(value);
 	return p;
 }
 
 AST_nodeType * AST_id(char * name) {
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-
-	p->type = TYPE_ID;
-	p->tag = ID;
-	p->nextElem = NULL;
-	p->lastElem = p;
+        MAKE_NODE(p,TYPE_ID,ID);
 	p->node.id.name = strdup(name);
 	return p;
 }
 
 AST_nodeType * AST_type(AST_typeEnum type, int indirections) {
 	AST_nodeType * p;
+        MAKE_NODE(p,TYPE_TYP,TYP);
 
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-
-	p->type = TYPE_TYP;
-	p->tag = TYP;
-	p->nextElem = NULL;
-	p->lastElem = p;
 	p->node.typ.type = type;
 	p->node.typ.indirections = indirections;
 
@@ -199,14 +173,15 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections) {
 
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
-	p->type = TYPE_EXP;
-	p->tag = (exp2 == NULL)? EXP_UNOP: EXP_BINOP;
-	p->nextElem = NULL;
-	p->lastElem = p;
-	p->node.exp.operexp.opr = oper;
+	if (exp2 == NULL)
+        {
+            MAKE_NODE(p,TYPE_EXP,UNOP);
+        }
+        else
+        {
+            MAKE_NODE(p,TYPE_EXP,BINOP);
+        }
+        p->node.exp.operexp.opr = oper;
 	p->node.exp.operexp.exp1 = exp1;
 	p->node.exp.operexp.exp2 = exp2;
 
@@ -214,18 +189,12 @@ AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 }
 AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp){
 	AST_nodeType * p;
-
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL)
-		yyerror("Falta de memoria");
+        MAKE_NODE(p,TYPE_EXP,EXP_NEW);
 	
-	p->type = TYPE_EXP;
-	p->tag = EXP_NEW;
-	p->nextElem = NULL;
-	p->lastElem = p;
-	p->node.exp.newexp.type = type;
+        p->node.exp.newexp.type = type;
 	p->node.exp.newexp.exp = exp;
 
-	return p;
+        return p;
 
 }
 AST_nodeType * AST_exp_var(AST_nodeType * var){
