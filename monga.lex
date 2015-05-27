@@ -92,21 +92,21 @@ UNITARY         [][{}(),;+\-*/=<>!]
 }
 {WHITESPACE}    { }
 {NEWLINE}       { currentLine++; }
-"char"          { return TK_CHAR; }
-"int"           { return TK_INT; } 
-"float"         { return TK_FLOAT; } 
-"if"            { return TK_IF; } 
-"else"          { return TK_ELSE; } 
-"while"         { return TK_WHILE; } 
-"void"          { return TK_VOID; } 
-"return"        { return TK_RETURN; } 
-"new"           { return TK_NEW; } 
-"&&"            { return TK_AND; } 
-"||"            { return TK_OR; } 
-"=="            { return TK_EQ; } 
-"!="            { return TK_NEQ; } 
-">="            { return TK_GEQ; } 
-"<="            { return TK_LEQ; } 
+"char"          { yylval.intval = currentLine;return TK_CHAR; }
+"int"           { yylval.intval = currentLine;return TK_INT; } 
+"float"         { yylval.intval = currentLine;return TK_FLOAT; } 
+"if"            { yylval.intval = currentLine;return TK_IF; } 
+"else"          { yylval.intval = currentLine;return TK_ELSE; } 
+"while"         { yylval.intval = currentLine;return TK_WHILE; } 
+"void"          { yylval.intval = currentLine;return TK_VOID; } 
+"yylval.intval = currentLine;return"        { return TK_RETURN; } 
+"new"           { yylval.intval = currentLine;return TK_NEW; } 
+"&&"            { yylval.intval = currentLine;return TK_AND; } 
+"||"            { yylval.intval = currentLine;return TK_OR; } 
+"=="            { yylval.intval = currentLine;return TK_EQ; } 
+"!="            { yylval.intval = currentLine;return TK_NEQ; } 
+">="            { yylval.intval = currentLine;return TK_GEQ; } 
+"<="            { yylval.intval = currentLine;return TK_LEQ; } 
 {LITERALCHAR}   { yylval.intval = escape(yytext[1],yytext[2]); return TK_LITERALINT; }
 {LITERALINT}    { yylval.intval = strtol(yytext, NULL, 0); return TK_LITERALINT; }
 {LITERALFLOAT}  { yylval.floatval = strtof(yytext, NULL); return TK_LITERALFLOAT; }

@@ -44,13 +44,54 @@ mas não se alterou o resultado. CONSERTADO NO TRABALHO 3.
 Mudanças após revisão do Roberto (Issues):
 
 Indirections (tipo) -> Criar subníveis para cada subtipo, ao invés de um nó para o tipão.
+
 AST_litNodeType -> Colocar em exp.
+
 Retirar o nonassoc de '!' e UN_MINUS
+
 Usar o intval dos %token e %type para a linha
-Macros nas funções de criação de nó
+    OK no lex, falta mudar o cabecalho de todas as funcoes e passar o comando como parametro em cada chamada
+
+Macros nas funções de criação de nó 
+    OK
 Precedência de TK_AND e TK_OR
-Retirar o "$$ = $1;" do programa -> fim do bottom up, não faz sentido.
+
+Retirar o "$$ = $1;" do programa -> fim do bottom up, não faz sentido. 
+    OK
 
 
 
+TODO:
+    criar decls, a lista de declaracoes
+        se for populando em ordem, ja garante shadowing
 
+    onde uma declaracao eh um nome, um tipo e uma linha 
+
+
+    refazer os tipos
+    criar o types (array de tipos) pra gente poder costurar
+    criar a tabela de simbolos (dar p cada uso um numero p fazer um mapa int->int) ai da p fazer 
+        //acha associa o _nome_ de uma var com uma declaracao
+        decl = decls.root
+        achou = false
+        while decl->next
+            if nome==decl.sym//igual de string 
+                //shadowing:
+                if achou 
+                    --> shadowing
+                else
+                    //p ver se o tipo ta ok
+                    if tipo_esperado == decl.tipo 
+                        //ok
+                        nothing
+                    else 
+                        --> type error
+                    end
+                    achou = true
+                    //break;//sem warning de shadowing
+            else
+                decl = decl->next
+            end
+        end
+        if !achou 
+            --> variavel nao declarada

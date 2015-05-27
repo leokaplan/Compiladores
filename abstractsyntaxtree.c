@@ -19,6 +19,9 @@ struct AST_typNodeType {
 	/* Numero de ponteiros */
 	int indirections;
 };
+//obviamente mudar
+typedef int AST_types;
+AST_types types[];
 
 /* Literais */
 union AST_litNodeType {
@@ -165,7 +168,7 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections) {
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_TYP,TYP);
 
-	p->node.typ.type = type;
+	p->node.typ.type = types[type];
 	p->node.typ.indirections = indirections;
 
 	return p;

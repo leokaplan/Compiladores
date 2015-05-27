@@ -62,7 +62,7 @@ AST_nodeType * prog = NULL;
 
 %%
 
-programa : declaracoes	 	{ $$ = $1; prog = $$; AST_draw(prog,MODE); } 
+programa : declaracoes	 	{ prog = $$; AST_draw(prog,MODE); } 
 ;
 
 declaracoes : declaracoes declaracao	{ $$ = AST_handleList($1, $2); }
