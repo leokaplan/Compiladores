@@ -95,3 +95,8 @@ TODO:
         end
         if !achou 
             --> variavel nao declarada
+
+
+        usar 2 'pilhas' fazer escopo
+            ai inves de ser shadowing é dupla declaracao, erro.
+            shadowing eh qnd vc redeclara uma variavel de um escopo acima.

@@ -15,13 +15,10 @@
 
 /* Tipos */
 struct AST_typNodeType {
-	AST_typeEnum type;
-	/* Numero de ponteiros */
-	int indirections;
+	int size;
 };
-//obviamente mudar
-typedef int AST_types;
-AST_types types[];
+
+
 
 /* Literais */
 union AST_litNodeType {
@@ -35,22 +32,16 @@ struct AST_idNodeType {
 	char * name;
 };
 
-/* Variaveis */
-union AST_varNodeType {
-	AST_nodeType * id;
-	/* Array */
-	struct {
-		AST_nodeType * exp1;
-		AST_nodeType * exp2;
-	} indexed;
-};
 
-/* Expressoes */
 union AST_expNodeType {
+/* Expressoes */
+    int type;
 	
 	AST_nodeType * varexp;
-
-	struct {
+	
+    
+    
+    struct {
 		int opr;
 		AST_nodeType * exp1;
 		AST_nodeType * exp2;
@@ -136,6 +127,25 @@ struct AST_nodeType {
 	} node;
 };
 
+int size_arrays = 0;
+void ** arrays;//(void *) arrays[];
+int newarray(AST_nodeType* node, AST_nodeType * p){
+    size_arrays++;
+    arrays = realloc(arrays,size_arrays*sizeof(void*));
+    arrays[size_arrays-1] = p; 
+    return size_arrays-1;
+}
+AST_nodeType* checkarray(AST_nodeType* node){
+    AST_nodeType * i = *(types[node.type]);
+    if(i==NULL)
+        return NULL;
+    
+    while(i != NULL){
+        if(checktype())
+    } 
+}
+
+
 AST_nodeType * AST_litInt(int value) {
 	AST_nodeType * p;
         MAKE_NODE(p,TYPE_LIT,LIT_INT);
@@ -164,14 +174,17 @@ AST_nodeType * AST_id(char * name) {
 	return p;
 }
 
-AST_nodeType * AST_type(AST_typeEnum type, int indirections) {
-	AST_nodeType * p;
-    MAKE_NODE(p,TYPE_TYP,TYP);
-
-	p->node.typ.type = types[type];
-	p->node.typ.indirections = indirections;
-
-	return p;
+//retorna o indice na lista de tipos
+int AST_basetype(AST_typeEnum type) {
+	return type;
+}
+//retorna o indice na lista de tipos
+int AST_array(int typenode){
+    //esse tipo foi criado?
+    if( typenode < size_types - NUM_BASETYPES){
+    
+    }
+    return r;
 }
 
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
@@ -331,9 +344,6 @@ AST_nodeType * AST_handleList(AST_nodeType * list, AST_nodeType * element) {
 		ret = list;
 	}
 	return ret;
-}
-AST_nodeType * AST_incInd(AST_nodeType * node){
-	node->node.typ.indirections++;	
 }
 void newline(int ident){
     printf("\n");

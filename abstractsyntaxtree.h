@@ -16,9 +16,11 @@ enum AST_typeEnum {
 	CHAR,
 	INT,
 	FLOAT,
-	VOID
+	VOID,
+    BOOL,
+    NUM_BASETYPES 
 };
-
+int types[] = {sizeof(char),sizeof(int),sizeof(float),0,sizeof(int)};
 /* Tipos dos nos da ast */
 enum AST_nodeEnum {
 	TYPE_LIT,

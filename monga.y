@@ -39,10 +39,11 @@ AST_nodeType * prog = NULL;
 %token <intval> TK_CHAR 
 %token <intval> TK_INT
 %token <intval> TK_FLOAT
+%token <intval> TK_VOID
+%token <intval> TK_BOOL
 %token <intval> TK_IF
 %token <intval> TK_ELSE
 %token <intval> TK_WHILE
-%token <intval> TK_VOID
 %token <intval> TK_RETURN
 %token <intval> TK_NEW
 %token <intval> TK_AND
@@ -55,10 +56,12 @@ AST_nodeType * prog = NULL;
 
 %token <name> TK_ID
 %token <intval> TK_LITERALINT
+%token <intval> TK_LITERALBOOL
 %token <floatval> TK_LITERALFLOAT
 %token <stringval> TK_LITERALSTRING
 
-%type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro bloco comandos comando comandoreturn simpleexp exps logicexp chamada compexp addexp multexp listaexp var tipobase tipo unaryexp
+%type <node> programa listanomes declaracoes declaracao decvariavel decfuncao decsvariaveis listaparametros parametros parametro bloco comandos comando comandoreturn simpleexp exps logicexp chamada compexp addexp multexp listaexp var unaryexp
+%type <intval> tipobase tipo 
 
 %%
 
@@ -81,16 +84,17 @@ listanomes : TK_ID 		{ $$ = AST_id($1); }
 ;
 
 tipo : tipobase 		{ $$ = $1; }
-| tipo '[' ']' 			{ $$ = $1; AST_incInd($$); }
+| tipo '[' ']' 			{ $$ = AST_array($1); }
 ;
 
-tipobase : TK_INT 		{ $$ = AST_type(INT, 0); }
-| TK_FLOAT 			{ $$ = AST_type(FLOAT, 0); }
-| TK_CHAR 			{ $$ = AST_type(CHAR, 0); } 
+tipobase : TK_INT 	{ $$ = AST_basetype(INT); }
+| TK_FLOAT 			{ $$ = AST_basetype(FLOAT); }
+| TK_CHAR 			{ $$ = AST_basetype(CHAR); } 
+| TK_BOOL 			{ $$ = AST_basetype(BOOL); } 
 ;
 
 decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	{ $$ = AST_decl_func($1, AST_id($2), $4, $6); } 
-| TK_VOID TK_ID '(' listaparametros ')' bloco 		{ $$ = AST_decl_func(AST_type(VOID, 0), AST_id($2), $4, $6); } 
+| TK_VOID TK_ID '(' listaparametros ')' bloco 		{ $$ = AST_decl_func(AST_type(VOID), AST_id($2), $4, $6); } 
 ;
 
 listaparametros : parametros 			{ $$ = $1; }
