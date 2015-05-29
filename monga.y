@@ -191,9 +191,12 @@ exps : logicexp 		{ $$ = $1; }
 void yyerror (char * s) {
 	fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
-
+extern void ** types;
 int main (void) {
-	if(!yyparse()) {
+	types = malloc(size_types*sizeof(void*));
+    //mudar isso para uma macro, talvez
+    types = {sizeof(char),sizeof(int),sizeof(float),0,sizeof(int)};
+    if(!yyparse()) {
 		printf("\n\nparsing finished\n\n");
 	}
 	else

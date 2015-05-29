@@ -127,24 +127,6 @@ struct AST_nodeType {
 	} node;
 };
 
-int size_arrays = 0;
-void ** arrays;//(void *) arrays[];
-int newarray(AST_nodeType* node, AST_nodeType * p){
-    size_arrays++;
-    arrays = realloc(arrays,size_arrays*sizeof(void*));
-    arrays[size_arrays-1] = p; 
-    return size_arrays-1;
-}
-AST_nodeType* checkarray(AST_nodeType* node){
-    AST_nodeType * i = *(types[node.type]);
-    if(i==NULL)
-        return NULL;
-    
-    while(i != NULL){
-        if(checktype())
-    } 
-}
-
 
 AST_nodeType * AST_litInt(int value) {
 	AST_nodeType * p;
@@ -181,10 +163,17 @@ int AST_basetype(AST_typeEnum type) {
 //retorna o indice na lista de tipos
 int AST_array(int typenode){
     //esse tipo foi criado?
-    if( typenode < size_types - NUM_BASETYPES){
-    
+    int i;
+    for(i = NUM_BASETYPES; i < size_types; i++){
+        if(types[i] - (void *)types == typenode)
+            return i;
+        i++;
     }
-    return r;
+    //n foi criado:
+    size_types++;
+    types = realloc(types,size_types*sizeof(void*));
+    types[size_types] = types+typenode;
+    return size_types;
 }
 
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {

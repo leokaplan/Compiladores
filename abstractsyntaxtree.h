@@ -20,7 +20,8 @@ enum AST_typeEnum {
     BOOL,
     NUM_BASETYPES 
 };
-int types[] = {sizeof(char),sizeof(int),sizeof(float),0,sizeof(int)};
+int size_types = NUM_BASETYPES;
+void ** types;
 /* Tipos dos nos da ast */
 enum AST_nodeEnum {
 	TYPE_LIT,
