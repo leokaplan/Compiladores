@@ -53,7 +53,7 @@ AST_nodeType * prog = NULL;
 %token <intval> TK_NEQ 
 %token <intval> TK_GEQ
 %token <intval> TK_LEQ
-%type <intval> '>' '<' '+' '-' '*' '/' '%' '!'
+%type <intval> '>' '<' '+' '-' '*' '/' '%' '!' '(' '['
 
 %token <identifier> TK_ID
 %token <intval> TK_LITERALINT
