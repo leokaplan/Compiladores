@@ -88,10 +88,10 @@ tipo : tipobase 	    { $$ = $1; }
      | tipo '[' ']' 	    { $$ = AST_array($1); }
      ;
 
-tipobase : TK_INT 	    { $$ = AST_basetype(INT, $1); }
-         | TK_FLOAT 	    { $$ = AST_basetype(FLOAT, $1); }
-         | TK_CHAR 	    { $$ = AST_basetype(CHAR, $1); } 
-         | TK_BOOL 	    { $$ = AST_basetype(BOOL, $1); } 
+tipobase : TK_INT 	    { $$ = AST_basetype(INT); }
+         | TK_FLOAT 	    { $$ = AST_basetype(FLOAT); }
+         | TK_CHAR 	    { $$ = AST_basetype(CHAR); } 
+         | TK_BOOL 	    { $$ = AST_basetype(BOOL); } 
          ;
 
 decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	    { $$ = AST_decl_func($1, AST_id($2), $4, $6); } 
