@@ -11,12 +11,7 @@
 // TODO Mudar depois para o trabalho 4. Tabela de símbolos de mais de um caracter
 extern int sym[26];
 
-#define NUMUNOP 2
-#define NUMBOP 4
-int op_bool_type[NUMUNOP];
-int op_arithm_left[NUMBOP];
-int op_arithm_right[NUMBOP];
-int op_arithm_result[NUMBOP][NUMBOP];
+
 
 /* Tipos da linguagem */
 enum AST_typeEnum {
@@ -29,6 +24,16 @@ enum AST_typeEnum {
 };
 int size_types = NUM_BASETYPES;
 void ** types;
+
+#define NUMUNOP 2
+#define NUMBOP 4
+int op_bool_type[NUMUNOP];
+int op_arithm_left[NUMBOP];
+int op_arithm_right[NUMBOP];
+int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES];
+
+
+
 /* Tipos dos nos da ast */
 enum AST_nodeEnum {
 	TYPE_ID,
