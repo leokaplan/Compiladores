@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
 #include "monga.tab.h"
-
+#include "decls.c"
+#include "types.c"
 #define MAKE_NODE(p,TYPE,TAG); \
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
 		yyerror("Falta de memoria"); \
@@ -17,9 +18,6 @@
 struct AST_typNodeType {
 	int size;
 };
-
-
-
 
 /* Identificadores */
 struct AST_idNodeType {
@@ -66,7 +64,7 @@ struct AST_expNodeType {
             int type;
             AST_nodeType * exp;
         } newexp;
-    }
+    };
 };
 
 /* Declaracoes */
@@ -166,48 +164,7 @@ AST_nodeType * AST_id(char * name) {
 	p->node.id.name = strdup(name);
 	return p;
 }
-//lista de declaracoes
-typedef struct {
-    decl* next;
-    int type;
-    AST_nodeType* id;
-}decl;
-decl* head;//root
-decl* tail;
-//cria uma declaracao na lista de declaracoes
-void new_decl(int type, AST_nodeType* id){
-    decl* new = malloc(sizeof(decl));
-    new->type = type;
-    new->id = id;
-    new->next = NULL;
-    if(head==NULL){
-        head = new;
-    }
-    else{
-        tail->next = new;
-    }
-    tail = new;
-}
 
-//retorna o indice na lista de tipos
-int AST_basetype(AST_typeEnum type) {
-	return type;
-}
-//retorna o indice na lista de tipos
-int array(int typenode){
-    //esse tipo foi criado?
-    int i;
-    for(i = NUM_BASETYPES; i < size_types; i++){
-        if(types[i] - (void *)types == typenode)
-            return i;
-        i++;
-    }
-    //n foi criado:
-    size_types++;
-    types = realloc(types,size_types*sizeof(void*));
-    types[size_types] = types+typenode;
-    return size_types;
-}
 
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 	AST_nodeType * p;

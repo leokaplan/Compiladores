@@ -84,3 +84,26 @@ TODO:
         usar 2 'pilhas' fazer escopo
             ai inves de ser shadowing é dupla declaracao, erro.
             shadowing eh qnd vc redeclara uma variavel de um escopo acima.
+
+
+TODO pratico:
+
+    coisas tipadas sao expressoes e toda expressao tem um campo tipo int
+        ok
+    conta do tipo mudar -> tipo = tipobase + numtipos*indirecoes 
+        ok 
+    void push_scope()
+    void pop_scope()
+        muda escopo, na abertura de funcoes e blocos, promovendo shadowing 
+    void set_return_type(int type)
+        armazena o tipo do retorno da funcao sendo analizada
+    int  check_return_type()
+        le o tipo do retorno da funcao sendo analizada
+    void new_func_decl(char* id, int ret_type, int* arg_types,int n_args)
+    void new_var_decl(char* id,int type, int line)
+        pode dar erro(retornar um int error talvez?)
+    int check_var_decl(char* id) 
+        retorna o tipo do id ja resolvido(isso é, dentro do escopo e tal)
+    int check_call(char* id, int* args_types, int n_args)
+        retorna o tipo de retorno da funcao, ou erro(-1, talvez)
+

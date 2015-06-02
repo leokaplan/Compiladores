@@ -26,9 +26,30 @@ int size_types = NUM_BASETYPES;
 void ** types;
 
 #define NUMUNOP 2
-#define NUMBOP 4
-int op_bool_type[NUMUNOP];
-int op_arithm_left[NUMBOP];
+#define NUMBOP 11
+int binop_key(int op){
+    switch(op){
+        case '+':     return 0;
+        case '-':     return 1;
+        case '/':     return 2;
+        case '*':     return 3;
+        case '%':     return 4;
+        case '<':     return 5;
+        case '>':     return 6;
+        case TK_EQ:   return 7;
+        case TK_NEQ:  return 8;
+        case TK_LEQ:  return 9;
+        case TK_GEQ:  return 10;
+    }
+}
+int unop_key(int op){
+    switch(op){
+        case '!': return 0;
+        case '-': return 1;
+    }
+}_
+int op_bool_type[NUMUNOP] = {BOOL,BOOL};
+int op_arithm_left[NUMBOP] = {INT,INT,FLOAT,FLOAT,INT,};
 int op_arithm_right[NUMBOP];
 int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES];
 
