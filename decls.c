@@ -103,16 +103,18 @@ void set_return_type(int type){
 int check_return_type(){
     return return_type;
 }
-
+//retorna tipo de retorno da funcao ou -1 caso nao exista esse par (id,{params})
 int check_call(AST_nodeType* id,int* args, int n_args){
     func_decl* it = func_head;
     while(it->next != NULL){
         if(it->id == id){
             int flag = 0;
             int i;
-            for(i=0;i<n_args;i++){
-                if(args[i] != it->args_types[i]) 
-                    flag = 1;
+            if(it->n_args == n_args){
+                for(i=0;i<n_args;i++){
+                    if(args[i] != it->args_types[i]) 
+                        flag = 1;
+                }
             }
             if(!flag)
                 return it->ret_type;
