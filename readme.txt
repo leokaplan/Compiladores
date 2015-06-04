@@ -93,17 +93,33 @@ TODO pratico:
     conta do tipo mudar -> tipo = tipobase + numtipos*indirecoes 
         ok 
     void push_scope()
-    void pop_scope()
+        ok
         muda escopo, na abertura de funcoes e blocos, promovendo shadowing 
+        usar nos comecos de blocos e de declaracao de funcao 
+    void pop_scope()
+        ok
+        usar no fim dos blocos e no return
+    
     void set_return_type(int type)
         armazena o tipo do retorno da funcao sendo analizada
+        ok
+        
     int  check_return_type()
         le o tipo do retorno da funcao sendo analizada
+        ok
+    
     void new_func_decl(char* id, int ret_type, int* arg_types,int n_args)
+        ok
+        quando for chamar, tratar a lista parametros
     void new_var_decl(char* id,int type, int line)
         pode dar erro(retornar um int error talvez?)
+        ok
     int check_var_decl(char* id) 
+        retorna o tipo do id para qualquer escopo acima
+        ok
+    int check_var_decl_scope(char* id) 
         retorna o tipo do id ja resolvido(isso é, dentro do escopo e tal)
+        ok
     int check_call(char* id, int* args_types, int n_args)
         retorna o tipo de retorno da funcao, ou erro(-1, talvez)
-
+        ok
