@@ -10,7 +10,6 @@ Arquivo .lex com as expressoes regulares e regras de tratamento de tokens
 */
 #include <stdlib.h>
 #include "abstractsyntaxtree.h"
-#include "monga.tab.h"
 
 /*
     Macro para mensagens de erro
@@ -121,7 +120,7 @@ UNITARY         [][{}(),;+\-*/=<>!]
 %%
 
 int yywrap(void) {
- return 1;
+    return 1;
 }
 
 char escape(char a, char b) {

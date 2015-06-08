@@ -6,7 +6,7 @@
 
 #ifndef ABSTRACTSYNTAXTREE_H
 #define ABSTRACTSYNTAXTREE_H
-
+#include "monga.tab.h"
 
 // TODO Mudar depois para o trabalho 4. Tabela de símbolos de mais de um caracter
 extern int sym[26];
@@ -22,13 +22,15 @@ enum AST_typeEnum {
     BOOL,
     NUM_BASETYPES 
 };
+
 int size_types = NUM_BASETYPES;
 void ** types;
 
 #define NUMUNOP 2
 #define NUMBOP 11
-int binop_key(int op){
-    switch(op){
+
+int binop_key(int op) {
+    switch(op) {
         case '+':     return 0;
         case '-':     return 1;
         case '/':     return 2;
@@ -40,16 +42,20 @@ int binop_key(int op){
         case TK_NEQ:  return 8;
         case TK_LEQ:  return 9;
         case TK_GEQ:  return 10;
+        default: return -1;
     }
 }
-int unop_key(int op){
-    switch(op){
+
+int unop_key(int op) {
+    switch(op) {
         case '!': return 0;
         case '-': return 1;
+        default: return -1;
     }
-}_
+}
+
 int op_bool_type[NUMUNOP] = {BOOL,BOOL};
-int op_arithm_left[NUMBOP] = {INT,INT,FLOAT,FLOAT,INT,};
+int op_arithm_left[NUMBOP] = {INT,INT,FLOAT,FLOAT,INT};
 int op_arithm_right[NUMBOP];
 int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES];
 

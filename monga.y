@@ -7,9 +7,11 @@
 
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
+
 #ifndef MODE
 #define MODE 1
 #endif
+
 void yyerror(char *);
 int yylex(void);
 int sym[26];
@@ -23,14 +25,16 @@ AST_nodeType * prog = NULL;
 %error-verbose
 
 %union {
-	int intval;	
-	float floatval;
-	char * stringval;
-	struct {
-            char * name;
-            int line;
-        } identifier;
-	AST_nodeType * node;	
+    int intval;	
+    float floatval;
+    char * stringval;
+    
+    struct {
+        char * name;
+        int line;
+    } identifier;
+
+    AST_nodeType * node;	
 }
 
 %nonassoc IF_NO_ELSE
@@ -53,7 +57,7 @@ AST_nodeType * prog = NULL;
 %token <intval> TK_NEQ 
 %token <intval> TK_GEQ
 %token <intval> TK_LEQ
-%type <intval> '>' '<' '+' '-' '*' '/' '%' '!' '(' '['
+%token <intval> '>' '<' '+' '-' '*' '/' '%' '!' '(' '['
 
 %token <identifier> TK_ID
 %token <intval> TK_LITERALINT
@@ -194,17 +198,21 @@ exps : logicexp 		{ $$ = $1; }
 %%
 
 void yyerror (char * s) {
-	fprintf(stderr, "line %d: %s \n", currentLine, s);
+    fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
+
 extern void ** types;
+
 int main (void) {
-	types = malloc(size_types*sizeof(void*));
+    types = malloc(size_types*sizeof(void*));
+    
     //mudar isso para uma macro, talvez
     types = {sizeof(char),sizeof(int),sizeof(float),0,sizeof(int)};
     if(!yyparse()) {
-		printf("\n\nparsing finished\n\n");
-	}
-	else
-		printf("\n\nparsing error\n\n");
-	return 0;
+	printf("\n\nparsing finished\n\n");
+    }
+    else {
+	printf("\n\nparsing error\n\n");
+    }
+    return 0;
 }
