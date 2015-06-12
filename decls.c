@@ -121,7 +121,7 @@ int check_call(AST_nodeType* id,int* args, int n_args){
             int i;
             if(it->n_args == n_args){
                 for(i=0;i<n_args;i++){
-                    if(args[i] != it->args_types[i]) 
+                    if(args[i] != it->arg_types[i]) 
                         flag = 1;
                 }
             }
