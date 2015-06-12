@@ -1,22 +1,20 @@
 /*
  * Módulo de geração de código
- * assemble.h
+ * assembler.h
  *
  * INF1715
  * Bernardo Alkmim
  * Leonardo Kaplan
  */
 
-#ifndef ASSEMBLE_H
-#define ASSEMBLE_H
+#ifndef ASSEMBLER_H
+#define ASSEMBLER_H
 
-
-
-
-
-
-
-
-
+/*
+ * Função que gera o arquivo .s de saída a partir da AST.
+ *
+ * @param tree Árvore de sintaxe abstrata.
+ */
+void generateMachineCode(AST_nodeType * tree);
 
 #endif
