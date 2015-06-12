@@ -12,54 +12,61 @@
 
 /*
  * Função que gera o arquivo .s de saída a partir da AST.
+ * Escrevemos na saída padrão, que será redirecionada.
  *
  * @param tree Árvore de sintaxe abstrata.
- * @param fileName Nome do arquivo a ser criado.
  */
-void ASS_generateMachineCode(AST_nodeType * tree, char * fileName);
+void ASS_generateMachineCode(AST_nodeType * tree);
 
 // Funções internas do módulo
 // Declarações
-static void generateDeclCode(AST_nodeType * node);
+static void declCode(AST_nodeType * node);
 // Subdivisões de declarações
-static void generateDeclVarCode(AST_nodeType * node);
-static void generateDeclFuncCode(AST_nodeType * node);
+static void declVarCode(AST_nodeType * node);
+static void declFuncCode(AST_nodeType * node);
 
 // TODO Será necessário para tipos? A ver.
 
 // Comandos
-static void generateCmdCode(AST_nodeType * node);
+static void cmdCode(AST_nodeType * node);
 // Subdivisões de comandos
-static void generateCmdIfCode(AST_nodeType * node);
-static void generateCmdWhileCode(AST_nodeType * node);
-static void generateCmdAttrCode(AST_nodeType * node);
-static void generateCmdRetCode(AST_nodeType * node);
-static void generateCmdExpCode(AST_nodeType * node);
-static void generateCmdBlockCode(AST_nodeType * node);
+static void cmdIfCode(AST_nodeType * node);
+static void cmdWhileCode(AST_nodeType * node);
+static void cmdAttrCode(AST_nodeType * node);
+static void cmdRetCode(AST_nodeType * node);
+static void cmdExpCode(AST_nodeType * node);
+static void cmdBlockCode(AST_nodeType * node);
 
 // Subsubdivisões de comandos
 // TODO
 
 // Expressões
-static void generateExpCode(AST_nodeType * node);
+static void expCode(AST_nodeType * node);
 // Subdivisões de expressões
-static void generateExpOprCode(AST_nodeType * node);
-static void generateExpLitCode(AST_nodeType * node);
-static void generateExpVarCode(AST_nodeType * node);
-static void generateExpParenCode(AST_nodeType * node);
-static void generateExpCallCode(AST_nodeType * node);
-static void generateExpNewCode(AST_nodeType * node);
+static void expBinopCode(AST_nodeType * node);
+static void expUnopCode(AST_nodeType * node);
+static void expLitCode(AST_nodeType * node);
+static void expVarCode(AST_nodeType * node);
+static void expParenCode(AST_nodeType * node);
+static void expCallCode(AST_nodeType * node);
+static void expNewCode(AST_nodeType * node);
 
 // Subsubdivisões de expressões
 // TODO
 
 // Variáveis
-static void generateVarCode(AST_nodeType * node);
+static void varCode(AST_nodeType * node);
 // Subdivisões de variáveis
-static void generateVarSimpleCode(AST_nodeType * node);
-static void generateVarArrayCode(AST_nodeType * node);
+static void varSimpleCode(AST_nodeType * node);
+static void varArrayCode(AST_nodeType * node);
 
-static void generateIdCode(AST_nodeType * node);
-// TODO Ver como gerar as listas de coisas, provavelmente pelos próprios nós
+static void idCode(AST_nodeType * node);
+static void typeCode(AST_nodeType * node);
+static void litIntCode(AST_nodeType * node);
+static void litFloatCode(AST_nodeType * node);
+static void litStringCode(AST_nodeType * node);
+
+// Funções auxiliares de assembly
+static void endProgram();
 
 #endif

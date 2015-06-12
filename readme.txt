@@ -34,6 +34,9 @@ são \t, \n e \"; os outros, portanto, gerarão erro.
   Tokens de um caracter só têm como valor o próprio caracter (ex.: { é representado por '{').
   As expressões na gramática têm prioridade, da seguinte ordem
   "simples" > multiplicativas > aditivas > comparativas > lógicas
+  Permitimos sobrecarga de funções.
+  Temos shadowing de variáveis.
+  Para a geração de código, supomos arquitetura IA-32.
 
 Observações:
 
