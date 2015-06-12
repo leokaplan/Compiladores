@@ -8,8 +8,6 @@
 #define ABSTRACTSYNTAXTREE_H
 #include "monga.tab.h"
 
-// TODO Mudar depois para o trabalho 4. Tabela de símbolos de mais de um caracter
-extern int sym[26];
 
 
 
@@ -106,8 +104,8 @@ typedef enum AST_unionTag AST_unionTag;
 typedef struct AST_typNodeType AST_typNodeType;
 typedef struct AST_idNodeType AST_idNodeType;
 
-typedef union AST_expNodeType AST_expNodeType;
-typedef union AST_varNodeType AST_varNodeType;
+typedef struct AST_expNodeType AST_expNodeType;
+typedef struct AST_varNodeType AST_varNodeType;
 typedef union AST_litNodeType AST_litNodeType;
 typedef union AST_declNodeType AST_declNodeType;
 typedef union AST_cmdNodeType AST_cmdNodeType;
@@ -138,7 +136,7 @@ AST_nodeType * AST_type(AST_typeEnum type, int indirections);
 
 /* Expressão */
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
-AST_nodeType * AST_exp_new(AST_nodeType * type, AST_nodeType * exp);
+AST_nodeType * AST_exp_new(int type, AST_nodeType * exp);
 AST_nodeType * AST_exp_var(AST_nodeType * var);
 AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2);
 
@@ -147,8 +145,8 @@ AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);
 AST_nodeType * AST_var_simple(AST_nodeType * id);
 
 
-AST_nodeType * AST_decl_var(AST_nodeType * type, AST_nodeType * id);
-AST_nodeType * AST_decl_func(AST_nodeType * type, AST_nodeType * id, AST_nodeType * param, AST_nodeType * block);
+AST_nodeType * AST_decl_var(int type, AST_nodeType * id);
+AST_nodeType * AST_decl_func(int type, AST_nodeType * id, AST_nodeType * param, AST_nodeType * block);
 
 /* Comando */
 AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2);
