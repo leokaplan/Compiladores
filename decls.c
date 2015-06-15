@@ -58,7 +58,7 @@ int check_var_decl_scope(AST_nodeType* id){
     return -1;
 }
 
-int check_var_decl(AST_nodeType* id){
+int check_var_decl_global(AST_nodeType* id){
     decl* it = head;
     while(it->next != NULL){
         if(it->id == id){
@@ -67,6 +67,14 @@ int check_var_decl(AST_nodeType* id){
         it = it->next;
     }
     return -1;
+}
+
+int check_var_decl(AST_nodeType* id){
+    int type = check_var_decl_scope(id);
+    if ( type == -1)
+        return check_var_decl_global(id);
+    else
+        return type;
 }
 
 //cria uma declaracao na lista de declaracoes
@@ -82,7 +90,7 @@ void new_var_decl(int type, AST_nodeType* id){
         if(check_var_decl_scope(id)!=-1){
            error("variavel ja declarada");
         }
-        if(check_var_decl(id)!=-1){
+        if(check_var_decl_global(id)!=-1){
            warning("shadowing");
         }
         tail->next = new;

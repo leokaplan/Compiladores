@@ -234,7 +234,11 @@ AST_nodeType * AST_var_simple(AST_nodeType * id){
 
     MAKE_NODE(p,TYPE_VAR,VAR_SIMPLE);
 	p->node.exp.var.id = id;
-
+    int type = check_var_decl(id);
+    if(type == -1)
+        error("variavel nao declarada")
+    else
+        p->node.exp.type = type; 
 	return p;
 }
 AST_nodeType * AST_decl_var(int type, AST_nodeType * id){
