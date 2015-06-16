@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
 #include "monga.tab.h"
-#include "decls.c"
+#include "decls.h"
 #include "types.c"
 #define MAKE_NODE(p,TYPE,TAG); \
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
@@ -70,7 +70,7 @@ union AST_declNodeType {
 		AST_nodeType * id;
 	} vardecl;
 	struct {
-		AST_nodeType * type;
+		int type;
 		AST_nodeType * id;
 		AST_nodeType * param;
 		AST_nodeType * block;
@@ -211,9 +211,14 @@ AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2){
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_EXP,EXP_CALL);
-	p->node.exp.callexp.exp1 = exp1;
-	p->node.exp.callexp.exp2 = exp2;
-
+    if(check_call(exp1.id,unpack(exp2),#exp2)==-1)
+    {
+        error("funcao nao declarada");
+    }
+    else{
+        p->node.exp.content.callexp.exp1 = exp1;
+	    p->node.exp.content.callexp.exp2 = exp2;
+    }
 	return p;
 
 
@@ -222,24 +227,24 @@ AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2){
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_VAR,VAR_ARRAY);
-	p->node.var.indexed.exp1 = exp1;
-	p->node.var.indexed.exp2 = exp2;
+	p->node.var.id = exp1;
+	p->node.var.index = exp2;
 
 	return p;
 
 }
-//TODO botar tipo
 AST_nodeType * AST_var_simple(AST_nodeType * id){
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_VAR,VAR_SIMPLE);
-	p->node.exp.var.id = id;
+	p->node.var.id = id;
     int type = check_var_decl(id);
     if(type == -1)
-        error("variavel nao declarada")
+        error("variavel nao declarada");
     else
-        p->node.exp.type = type; 
-	return p;
+        p->node.var.type = type; 
+	p->node.var.index = NULL;
+    return p;
 }
 AST_nodeType * AST_decl_var(int type, AST_nodeType * id){
 	AST_nodeType * p;
@@ -248,13 +253,15 @@ AST_nodeType * AST_decl_var(int type, AST_nodeType * id){
 	
 	p->node.decl.vardecl.type = type;
 	p->node.decl.vardecl.id = id;
-    new_decl(type,id);
-	return p;
+    new_var_decl(type,id);
+    return p;
 }
-//TODO mudar escopo
+//TODO ver bloco
 AST_nodeType * AST_decl_func(int type, AST_nodeType * id, AST_nodeType * param, AST_nodeType * block){
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_DECL,DEC_FUNC);
+    
+    new_func_decl(id,type,unpack(param),#param);
 
 	p->node.decl.funcdecl.type = type;
 	p->node.decl.funcdecl.id = id;
@@ -264,41 +271,46 @@ AST_nodeType * AST_decl_func(int type, AST_nodeType * id, AST_nodeType * param, 
 	return p;
 
 }
-//TODO tipo
 AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType * cmd2) {
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_CMD,CMD_IF);
+    if(exp->node.exp.type != BOOL)
+        error("type error");
 	p->node.cmd.ifcmd.exp = exp;
 	p->node.cmd.ifcmd.cmd1 = cmd1;
 	p->node.cmd.ifcmd.cmd2 = cmd2;	
 
 	return p;
 }
-//TODO tipo
 AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_CMD,CMD_WHILE);
+    if(exp->node.exp.type != BOOL)
+        error("type error");
 	p->node.cmd.whilecmd.exp = exp;
 	p->node.cmd.whilecmd.cmd = cmd;
 
 	return p;
 }
-//TODO checar tipo
 AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp) {
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_CMD,CMD_ATTR);
-	p->node.cmd.attrcmd.var = var;
+    if(exp->node.exp.type != exp->node.var.type)
+        error("type error");
+    p->node.cmd.attrcmd.var = var;
 	p->node.cmd.attrcmd.exp = exp;
 
 	return p;
 }
-//TODO tipo com retorno da funcao
+//TODO check return type chamado antes da declaracao da funcao
 AST_nodeType * AST_cmd_ret(AST_nodeType * exp) {
 	AST_nodeType * p;
     
     MAKE_NODE(p,TYPE_CMD,CMD_RET);
+    if(exp->node.exp.type != check_return_type())
+        error("type error");
     p->node.cmd.retcmd.exp = exp;
 	return p;
 }

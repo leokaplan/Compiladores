@@ -65,6 +65,7 @@ enum AST_nodeEnum {
 	TYPE_TYP,
 	TYPE_EXP,
 	TYPE_DECL,
+	TYPE_VAR,
 	TYPE_CMD
 };
 
@@ -84,6 +85,8 @@ enum AST_unionTag {
 	LIT_INT,
 	LIT_FLOAT,
 	LIT_STRING,
+	VAR_SIMPLE,
+	VAR_ARRAY,
 	
 	DEC_VAR,
 	DEC_FUNC,
