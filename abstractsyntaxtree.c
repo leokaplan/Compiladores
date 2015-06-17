@@ -169,14 +169,14 @@ AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
         {
             MAKE_NODE(p,TYPE_EXP,EXP_UNOP);
 	        if(op_bool_type[op]!=exp1->node.exp.type) 
-                error("type");
+                yyerror("type");
             p->node.exp.type = exp1->node.exp.type;
         }
         else
         {
             MAKE_NODE(p,TYPE_EXP,EXP_BINOP);
 	        if(op_arithm_left[op] != exp1->node.exp.type && op_arithm_right[op] != exp2->node.exp.type) 
-                error("type");
+                yyerror("type");
             p->node.exp.type = op_arithm_result[op][exp1->node.exp.type][exp2->node.exp.type];
         }
     p->node.exp.content.operexp.opr = oper;
@@ -191,7 +191,7 @@ AST_nodeType * AST_exp_new(int type, AST_nodeType * exp){
 	
     p->node.exp.type = type;
 	if(exp->node.exp.type != INT) 
-        error("type");
+        yyerror("type");
     p->node.exp.content.newexp.exp = exp;
 
         return p;
@@ -213,7 +213,7 @@ AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2){
     MAKE_NODE(p,TYPE_EXP,EXP_CALL);
     if(check_call(exp1.id,unpack(exp2),#exp2)==-1)
     {
-        error("funcao nao declarada");
+        yyerror("funcao nao declarada");
     }
     else{
         p->node.exp.content.callexp.exp1 = exp1;
@@ -240,7 +240,7 @@ AST_nodeType * AST_var_simple(AST_nodeType * id){
 	p->node.var.id = id;
     int type = check_var_decl(id);
     if(type == -1)
-        error("variavel nao declarada");
+        yyerror("variavel nao declarada");
     else
         p->node.var.type = type; 
 	p->node.var.index = NULL;
@@ -253,7 +253,6 @@ AST_nodeType * AST_decl_var(int type, AST_nodeType * id){
 	
 	p->node.decl.vardecl.type = type;
 	p->node.decl.vardecl.id = id;
-    new_var_decl(type,id);
     return p;
 }
 //TODO ver bloco
@@ -261,7 +260,6 @@ AST_nodeType * AST_decl_func(int type, AST_nodeType * id, AST_nodeType * param, 
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_DECL,DEC_FUNC);
     
-    new_func_decl(id,type,unpack(param),#param);
 
 	p->node.decl.funcdecl.type = type;
 	p->node.decl.funcdecl.id = id;
@@ -276,7 +274,7 @@ AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType 
 
     MAKE_NODE(p,TYPE_CMD,CMD_IF);
     if(exp->node.exp.type != BOOL)
-        error("type error");
+        yyerror("type error");
 	p->node.cmd.ifcmd.exp = exp;
 	p->node.cmd.ifcmd.cmd1 = cmd1;
 	p->node.cmd.ifcmd.cmd2 = cmd2;	
@@ -288,7 +286,7 @@ AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
 
     MAKE_NODE(p,TYPE_CMD,CMD_WHILE);
     if(exp->node.exp.type != BOOL)
-        error("type error");
+        yyerror("type error");
 	p->node.cmd.whilecmd.exp = exp;
 	p->node.cmd.whilecmd.cmd = cmd;
 
@@ -298,7 +296,7 @@ AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp) {
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_CMD,CMD_ATTR);
     if(exp->node.exp.type != exp->node.var.type)
-        error("type error");
+        yyerror("type error");
     p->node.cmd.attrcmd.var = var;
 	p->node.cmd.attrcmd.exp = exp;
 
@@ -310,7 +308,7 @@ AST_nodeType * AST_cmd_ret(AST_nodeType * exp) {
     
     MAKE_NODE(p,TYPE_CMD,CMD_RET);
     if(exp->node.exp.type != check_return_type())
-        error("type error");
+        yyerror("type error");
     p->node.cmd.retcmd.exp = exp;
 	return p;
 }

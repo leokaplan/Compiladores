@@ -1,6 +1,7 @@
 
 #include "abstractsyntaxtree.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 //lista de declaracoes
 struct decl{
@@ -88,10 +89,10 @@ void new_var_decl(int type, AST_nodeType* id){
     }
     else{
         if(check_var_decl_scope(id)!=-1){
-           error("variavel ja declarada");
+           yyerror("variavel ja declarada");
         }
         if(check_var_decl_global(id)!=-1){
-           warning("shadowing");
+           printf("shadowing\n");
         }
         tail->next = new;
     }
@@ -155,7 +156,7 @@ void new_func_decl(AST_nodeType* id, int ret_type, int* arg_types,int n_args){
     }
     else{
         if(check_call(id,arg_types,n_args)==ret_type){
-           error("funcao ja declarada");
+           yyerror("funcao ja declarada");
         }
         func_tail->next = new;
     }

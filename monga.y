@@ -70,7 +70,7 @@ AST_nodeType * prog = NULL;
 
 %%
 
-programa : declaracoes	 	{ prog = $$; AST_draw(prog, MODE); }
+programa : declaracoes	 	{ prog = $$; }
          ;
 
 declaracoes : declaracoes declaracao	{ $$ = AST_handleList($1, $2); }
@@ -214,5 +214,8 @@ int main (void) {
     else {
 	printf("\n\nparsing error\n\n");
     }
+    //checktypes mata o programa com exit(0) em caso de erro
+    checktypes(prog);
+    assembler(prog);
     return 0;
 }
