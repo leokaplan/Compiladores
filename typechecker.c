@@ -41,23 +41,14 @@ void checktypes(AST_nodeType *p){
                 
                 break;
 			case EXP_BINOP:
-				switch(p->node.exp.operexp.opr){
-					case TK_AND:
-						break;
-					case TK_OR:
-						break;
-					case TK_EQ:
-						break;
-					case TK_NEQ:
-						break;
-					case TK_LEQ:
-						break;
-					case TK_GEQ:
-						break;
-					default:
-						//aritmetica
-						break;
-				}
+                int op = binop_key(p->node.exp.operexp.opr);
+                int type1 = p->node.exp.operexp.exp1.type;
+                int type2 = p->node.exp.operexp.exp2.type;
+                if(op_arithm_left[op] != type1 && op_arithm_right[op] != type2) 
+                {
+                    ERROR("type error on arithmetic expression");
+                }
+                p->node.exp.type = op_arithm_result[op][type1][type2];
 				break;
 			case EXP_UNOP:
                 //if(op_bool_type[op] != exp1->node.exp.type) 
