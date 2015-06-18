@@ -166,19 +166,17 @@ AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 	AST_nodeType * p;
     int op = binop_key(oper);
 	if (exp2 == NULL)
-        {
-            MAKE_NODE(p,TYPE_EXP,EXP_UNOP);
-	        if(op_bool_type[op]!=exp1->node.exp.type) 
-                yyerror("type");
-            p->node.exp.type = exp1->node.exp.type;
-        }
-        else
-        {
-            MAKE_NODE(p,TYPE_EXP,EXP_BINOP);
-	        if(op_arithm_left[op] != exp1->node.exp.type && op_arithm_right[op] != exp2->node.exp.type) 
-                yyerror("type");
-            p->node.exp.type = op_arithm_result[op][exp1->node.exp.type][exp2->node.exp.type];
-        }
+    {
+        MAKE_NODE(p,TYPE_EXP,EXP_UNOP);
+        p->node.exp.type = exp1->node.exp.type;
+    }
+    else
+    {
+        MAKE_NODE(p,TYPE_EXP,EXP_BINOP);
+        if(op_arithm_left[op] != exp1->node.exp.type && op_arithm_right[op] != exp2->node.exp.type) 
+            yyerror("type");
+        p->node.exp.type = op_arithm_result[op][exp1->node.exp.type][exp2->node.exp.type];
+    }
     p->node.exp.content.operexp.opr = oper;
     p->node.exp.content.operexp.exp1 = exp1;
 	p->node.exp.content.operexp.exp2 = exp2;
@@ -190,8 +188,6 @@ AST_nodeType * AST_exp_new(int type, AST_nodeType * exp){
     MAKE_NODE(p,TYPE_EXP,EXP_NEW);
 	
     p->node.exp.type = type;
-	if(exp->node.exp.type != INT) 
-        yyerror("type");
     p->node.exp.content.newexp.exp = exp;
 
         return p;
@@ -211,14 +207,8 @@ AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2){
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_EXP,EXP_CALL);
-    if(check_call(exp1.id,unpack(exp2),#exp2)==-1)
-    {
-        yyerror("funcao nao declarada");
-    }
-    else{
-        p->node.exp.content.callexp.exp1 = exp1;
-	    p->node.exp.content.callexp.exp2 = exp2;
-    }
+    p->node.exp.content.callexp.exp1 = exp1;
+    p->node.exp.content.callexp.exp2 = exp2;
 	return p;
 
 
@@ -238,11 +228,8 @@ AST_nodeType * AST_var_simple(AST_nodeType * id){
 
     MAKE_NODE(p,TYPE_VAR,VAR_SIMPLE);
 	p->node.var.id = id;
-    int type = check_var_decl(id);
-    if(type == -1)
-        yyerror("variavel nao declarada");
-    else
-        p->node.var.type = type; 
+    //o semantico acha o tipo
+    p->node.var.type = -1; 
 	p->node.var.index = NULL;
     return p;
 }
@@ -255,11 +242,9 @@ AST_nodeType * AST_decl_var(int type, AST_nodeType * id){
 	p->node.decl.vardecl.id = id;
     return p;
 }
-//TODO ver bloco
 AST_nodeType * AST_decl_func(int type, AST_nodeType * id, AST_nodeType * param, AST_nodeType * block){
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_DECL,DEC_FUNC);
-    
 
 	p->node.decl.funcdecl.type = type;
 	p->node.decl.funcdecl.id = id;
@@ -273,8 +258,6 @@ AST_nodeType * AST_cmd_if(AST_nodeType * exp, AST_nodeType * cmd1, AST_nodeType 
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_CMD,CMD_IF);
-    if(exp->node.exp.type != BOOL)
-        yyerror("type error");
 	p->node.cmd.ifcmd.exp = exp;
 	p->node.cmd.ifcmd.cmd1 = cmd1;
 	p->node.cmd.ifcmd.cmd2 = cmd2;	
@@ -285,8 +268,6 @@ AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
 	AST_nodeType * p;
 
     MAKE_NODE(p,TYPE_CMD,CMD_WHILE);
-    if(exp->node.exp.type != BOOL)
-        yyerror("type error");
 	p->node.cmd.whilecmd.exp = exp;
 	p->node.cmd.whilecmd.cmd = cmd;
 
@@ -295,20 +276,15 @@ AST_nodeType * AST_cmd_while(AST_nodeType * exp, AST_nodeType * cmd) {
 AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp) {
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_CMD,CMD_ATTR);
-    if(exp->node.exp.type != exp->node.var.type)
-        yyerror("type error");
     p->node.cmd.attrcmd.var = var;
 	p->node.cmd.attrcmd.exp = exp;
 
 	return p;
 }
-//TODO check return type chamado antes da declaracao da funcao
 AST_nodeType * AST_cmd_ret(AST_nodeType * exp) {
 	AST_nodeType * p;
     
     MAKE_NODE(p,TYPE_CMD,CMD_RET);
-    if(exp->node.exp.type != check_return_type())
-        yyerror("type error");
     p->node.cmd.retcmd.exp = exp;
 	return p;
 }
@@ -321,11 +297,9 @@ AST_nodeType * AST_cmd_exp(AST_nodeType * exp) {
 
 	return p;
 }
-//TODO mudar escopo
 AST_nodeType * AST_cmd_block(AST_nodeType * decl, AST_nodeType * cmd){
 	AST_nodeType * p;
     MAKE_NODE(p,TYPE_CMD,CMD_BLOCK);
-
 	p->node.cmd.blockcmd.decl = decl;
 	p->node.cmd.blockcmd.cmd = cmd;
 	return p;

@@ -1,28 +1,17 @@
 
+#define ERROR(...) printf(__VA_ARGS__);exit(0);
+//retorna o tamanho da lista
+int size(AST_nodetype* list){
+    return 0;
+}
+//retorna um array ordenado de tipos correspondentes à lista
+int* unpack(AST_nodetype* list){
+    return 0;
+}
     
 void checktypes(AST_nodeType *p){
     if (p != NULL) {
 		switch(p->tag){
-			case LIT_INT:	
-				break;
-			case LIT_FLOAT:
-				break;
-			case LIT_STRING:
-				break;
-			case ID: 
-				break;
-			case TYP:
-				switch(p->node.typ.type){
-					case INT:
-						break;
-					case FLOAT:
-						break;
-					case CHAR:
-						break;
-					case VOID:
-						break;
-				}
-				break;
 			case DEC_VAR:
 				int type = p->node.decl.vardecl.type;
                 AST_nodeType* id = p->node.decl.vardecl.id;
@@ -32,134 +21,113 @@ void checktypes(AST_nodeType *p){
                 int type = p->node.decl.funcdecl.type;
                 AST_nodeType* id = p->node.decl.funcdecl.id;
 				AST_nodeType* param = p->node.decl.funcdecl.param;
+                //tem um push scope embutido
                 new_func_decl(id,type,unpack(param),size(param));
-				checktype(p->node.decl.funcdecl.block);
+				//declara as variaveis do cabeçalho como locais na função
+                checktype(p->node.decl.funcdecl.param);
+                checktype(p->node.decl.funcdecl.block);
+                
                 pop_scope();
-				break;
+				
+                break;
 			case VAR_SIMPLE:
-				CODE_drawNode(p->node.var.id,ident);
+                int type = check_var_decl(p->node.var.id);
+                if(type == -1)
+                    ERROR("undeclared variable");
+                else
+                    p->node.var.type = type; 
 				break;
 			case VAR_ARRAY:
-				CODE_drawNode(p->node.var.indexed.exp1,ident);
-				printf("[");
-				CODE_drawNode(p->node.var.indexed.exp1,ident);
-				printf("]");
-				break;
+                
+                break;
 			case EXP_BINOP:
-				CODE_drawNode(p->node.exp.operexp.exp1,ident);
 				switch(p->node.exp.operexp.opr){
 					case TK_AND:
-						printf(" && ");
 						break;
 					case TK_OR:
-						printf(" || ");
 						break;
 					case TK_EQ:
-						printf(" == ");
 						break;
 					case TK_NEQ:
-						printf(" != ");
 						break;
 					case TK_LEQ:
-						printf(" <= ");
 						break;
 					case TK_GEQ:
-						printf(" >= ");
 						break;
 					default:
-						printf(" %c ",p->node.exp.operexp.opr);
+						//aritmetica
 						break;
 				}
-				CODE_drawNode(p->node.exp.operexp.exp2,ident);
 				break;
 			case EXP_UNOP:
-				printf("%c",p->node.exp.operexp.opr);
-				CODE_drawNode(p->node.exp.operexp.exp1,ident);
+                //if(op_bool_type[op] != exp1->node.exp.type) 
+                if(BOOL != exp1->node.exp.type) 
+                    ERROR("expected logic expression");
 				break;
 			case EXP_NEW:
-				printf("new ");
-				CODE_drawNode(p->node.exp.newexp.type,ident);
-				printf("[");
-				CODE_drawNode(p->node.exp.newexp.exp,ident);
-				printf("]");
-				break;
+			    if(p->node.exp.content.newexp.exp.type != INT){
+                    ERROR("non integer size in array definition");
+                }	
+                break;
 			case EXP_CALL:
-				CODE_drawNode(p->node.exp.callexp.exp1,ident);
-				printf("(");
-				CODE_drawNode(p->node.exp.callexp.exp2,ident);
-				printf(")");
+                AST_nodeType* id = p->node.exp.callexp.exp1.id;
+                AST_nodeType* args = p->node.exp.callexp.exp2;
+                if(check_call(id,unpack(args),size(args))==-1)
+                {
+                    ERROR("undeclared function");
+                }
+                else{
 				break;
 			case EXP_VAR:
-				CODE_drawNode(p->node.exp.varexp,ident);
-				break;
+	            
+                break;
 			case CMD_WHILE:
-				printf("while(");
-				CODE_drawNode(p->node.cmd.whilecmd.exp,ident);
-				printf("){");
-                newline(ident+1);
-				CODE_drawNode(p->node.cmd.whilecmd.cmd,ident+1);
-                newline(ident);
-				printf("}");
-                newline(ident);
+				if(p->node.cmd.whilecmd.exp.type != BOOL){
+                    ERROR("expected logic expression");
+                }
+                else{
+                    push_scope();
+                    checktype(p->node.cmd.whilecmd.cmd);
+                    pop_scope();
+                }
 				break;
 			case CMD_IF:
-				printf("if(");
-				CODE_drawNode(p->node.cmd.ifcmd.exp,ident);
-				printf("){");
-                newline(ident+1);
-				CODE_drawNode(p->node.cmd.ifcmd.cmd1,ident+1);
-                newline(ident);
-				printf("}");
-				if(p->node.cmd.ifcmd.cmd2 != NULL){
-					printf("else{");
-                    newline(ident+1);
-					CODE_drawNode(p->node.cmd.ifcmd.cmd2,ident+1);
-                    newline(ident);
-					printf("}");
-				}
-                newline(ident);
+				if(p->node.cmd.ifcmd.exp.type != BOOL){
+                    ERROR("expected logic expression");
+                }
+                else{
+                    push_scope();
+                    checktype(p->node.cmd.ifcmd.cmd1);
+                    pop_scope();
+                    if(p->node.cmd.ifcmd.cmd2 != NULL){
+                        push_scope();
+                        checktype(p->node.cmd.ifcmd.cmd2);
+                        pop_scope();
+                    }
+                }
 				break;
 			case CMD_ATTR:
-				CODE_drawNode(p->node.cmd.attrcmd.var,ident);
-				printf(" = ");
-				CODE_drawNode(p->node.cmd.attrcmd.exp,ident);
-                printf(";");
-                newline(ident);
+				if(p->node.cmd.attrcmd.var.type != p->node.cmd.attrcmd.exp,ident){
+                    ERROR("conflicting types on assignment");
+                }
 				break;
 			case CMD_EXP:
-				CODE_drawNode(p->node.cmd.expcmd.exp,ident);
 				break;
 			case CMD_BLOCK:
-				CODE_drawNode(p->node.cmd.blockcmd.decl,ident);
-				CODE_drawNode(p->node.cmd.blockcmd.cmd,ident);
+                push_scope();
+				typecheck(p->node.cmd.blockcmd.decl);
+				typecheck(p->node.cmd.blockcmd.cmd);
+                pop_scope();
 				break;
 			case CMD_RET:
-				printf("return");
 				if(p->node.cmd.retcmd.exp != NULL){
-					printf(" ");
-                    CODE_drawNode(p->node.cmd.retcmd.exp,ident);
+                    if(p->node.cmd.retcmd.exp.type != check_return_type() )
+                        ERROR("return type is not correct");
 				}
-                printf(";");
-                newline(ident);
-				break;
+                break;
 		}
 		if(p->nextElem != NULL){
-            switch(p->tag){
-                case ID:
-                    printf(",");
-                    break;
-                default:
-                    break;
-            }
-            CODE_drawNode(p->nextElem,ident);
-        }
-        else{
-            switch(p->tag){
-                case DEC_VAR:
-                    printf(";");
-                    newline(ident);
-                    break;
-            }
+            typecheck(p->nextElem);
         }
 	}
 }
