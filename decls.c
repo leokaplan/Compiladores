@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define ERROR(...) printf(__VA_ARGS__);exit(0);
+#define WARNING printf
 //lista de declaracoes
 struct decl{
     struct decl* next;
@@ -89,10 +91,10 @@ void new_var_decl(int type, AST_nodeType* id){
     }
     else{
         if(check_var_decl_scope(id)!=-1){
-           yyerror("variavel ja declarada");
+           ERROR("already declared variable");
         }
         if(check_var_decl_global(id)!=-1){
-           printf("shadowing\n");
+           WARNING("shadowing\n");
         }
         tail->next = new;
     }
@@ -156,7 +158,7 @@ void new_func_decl(AST_nodeType* id, int ret_type, int* arg_types,int n_args){
     }
     else{
         if(check_call(id,arg_types,n_args)==ret_type){
-           yyerror("funcao ja declarada");
+           ERROR("function already declared");
         }
         func_tail->next = new;
     }

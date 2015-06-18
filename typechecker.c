@@ -1,4 +1,4 @@
-
+#include "abstractsyntaxtree.h"
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
 //retorna o tamanho da lista
 int size(AST_nodetype* list){

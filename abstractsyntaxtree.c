@@ -164,19 +164,15 @@ AST_nodeType * AST_id(char * name) {
 
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2) {
 	AST_nodeType * p;
-    int op = binop_key(oper);
 	if (exp2 == NULL)
     {
         MAKE_NODE(p,TYPE_EXP,EXP_UNOP);
-        p->node.exp.type = exp1->node.exp.type;
     }
     else
     {
         MAKE_NODE(p,TYPE_EXP,EXP_BINOP);
-        if(op_arithm_left[op] != exp1->node.exp.type && op_arithm_right[op] != exp2->node.exp.type) 
-            yyerror("type");
-        p->node.exp.type = op_arithm_result[op][exp1->node.exp.type][exp2->node.exp.type];
     }
+    p->node.exp.type = -1;
     p->node.exp.content.operexp.opr = oper;
     p->node.exp.content.operexp.exp1 = exp1;
 	p->node.exp.content.operexp.exp2 = exp2;
