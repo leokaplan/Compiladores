@@ -11,36 +11,36 @@ int* unpack(AST_nodetype* list){
     
 void checktypes(AST_nodeType *p){
     if (p != NULL) {
-		switch(p->tag){
-			case DEC_VAR:
-				int type = p->node.decl.vardecl.type;
+	switch(p->tag){
+	    case DEC_VAR:
+		int type = p->node.decl.vardecl.type;
                 AST_nodeType* id = p->node.decl.vardecl.id;
                 new_var_decl(type,id);
-				break;
-			case DEC_FUNC:
+		break;
+	    case DEC_FUNC:
                 int type = p->node.decl.funcdecl.type;
                 AST_nodeType* id = p->node.decl.funcdecl.id;
-				AST_nodeType* param = p->node.decl.funcdecl.param;
+		AST_nodeType* param = p->node.decl.funcdecl.param;
                 //tem um push scope embutido
                 new_func_decl(id,type,unpack(param),size(param));
-				//declara as variaveis do cabeçalho como locais na função
+		//declara as variaveis do cabeçalho como locais na função
                 checktype(p->node.decl.funcdecl.param);
                 checktype(p->node.decl.funcdecl.block);
                 
                 pop_scope();
 				
                 break;
-			case VAR_SIMPLE:
+	    case VAR_SIMPLE:
                 int type = check_var_decl(p->node.var.id);
                 if(type == -1)
                     ERROR("undeclared variable");
                 else
                     p->node.var.type = type; 
-				break;
-			case VAR_ARRAY:
+		break;
+	    case VAR_ARRAY:
                 
                 break;
-			case EXP_BINOP:
+	    case EXP_BINOP:
                 int op = binop_key(p->node.exp.operexp.opr);
                 int type1 = p->node.exp.operexp.exp1.type;
                 int type2 = p->node.exp.operexp.exp2.type;
@@ -49,18 +49,18 @@ void checktypes(AST_nodeType *p){
                     ERROR("type error on arithmetic expression");
                 }
                 p->node.exp.type = op_arithm_result[op][type1][type2];
-				break;
-			case EXP_UNOP:
+		break;
+	    case EXP_UNOP:
                 //if(op_bool_type[op] != exp1->node.exp.type) 
                 if(BOOL != exp1->node.exp.type) 
                     ERROR("expected logic expression");
-				break;
-			case EXP_NEW:
-			    if(p->node.exp.content.newexp.exp.type != INT){
+		break;
+	    case EXP_NEW:
+	        if(p->node.exp.content.newexp.exp.type != INT){
                     ERROR("non integer size in array definition");
                 }	
                 break;
-			case EXP_CALL:
+	    case EXP_CALL:
                 AST_nodeType* id = p->node.exp.callexp.exp1.id;
                 AST_nodeType* args = p->node.exp.callexp.exp2;
                 if(check_call(id,unpack(args),size(args))==-1)

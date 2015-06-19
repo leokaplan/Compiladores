@@ -78,6 +78,7 @@ void cmdWhileCode(AST_nodeType * node) {
 void cmdAttrCode(AST_nodeType * node) {
     expCode(node->exp);
     // TODO push %eax
+    puts("\tpush %eax");
     varCode(node->var);
     // TODO pop %ecx; mov(?) %ecx, (%eax)
 }
@@ -175,7 +176,6 @@ void varArrayCode(AST_nodeType * node) {
     // TODO
 }
 
-
 void idCode(AST_nodeType * node) {
     // TODO
 }
@@ -196,8 +196,12 @@ void litStringCode(AST_nodeType * node) {
     // TODO
 }
 
+void beginProgram() {
+    // TODO ver como separar as seções, como .glodl, .data, .text etc.
+}
+
 void endProgram() {
-    puts("\tmovl \%ebp, \%esp\n");
+    puts("\tmovl %ebp, %esp\n");
     puts("\tret\n");
 }
 
