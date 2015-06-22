@@ -31,14 +31,13 @@ void checktypes(AST_nodeType *p){
 				
                 break;
 	    case VAR_SIMPLE:
+	    case VAR_ARRAY:
                 int type = check_var_decl(p->node.var.id);
                 if(type == -1)
                     ERROR("undeclared variable");
                 else
                     p->node.var.type = type; 
-		break;
-	    case VAR_ARRAY:
-                
+                //with constant folding type could be checked
                 break;
 	    case EXP_BINOP:
                 int op = binop_key(p->node.exp.operexp.opr);
@@ -48,6 +47,7 @@ void checktypes(AST_nodeType *p){
                 {
                     ERROR("type error on arithmetic expression");
                 }
+                //if lit in both sizes, fold
                 p->node.exp.type = op_arithm_result[op][type1][type2];
 		break;
 	    case EXP_UNOP:
@@ -103,7 +103,8 @@ void checktypes(AST_nodeType *p){
                 }
 				break;
 			case CMD_EXP:
-				break;
+			
+                break;
 			case CMD_BLOCK:
                 push_scope();
 				typecheck(p->node.cmd.blockcmd.decl);
