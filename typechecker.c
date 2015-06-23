@@ -8,30 +8,30 @@ int size(AST_nodetype* list){
 int* unpack(AST_nodetype* list){
     return 0;
 }
-    
+
 void checktypes(AST_nodeType *p){
     if (p != NULL) {
-	switch(p->tag){
-	    case DEC_VAR:
-		int type = p->node.decl.vardecl.type;
+        switch(p->tag){
+            case DEC_VAR:
+                int type = p->node.decl.vardecl.type;
                 AST_nodeType* id = p->node.decl.vardecl.id;
                 new_var_decl(type,id);
-		break;
-	    case DEC_FUNC:
+                break;
+            case DEC_FUNC:
                 int type = p->node.decl.funcdecl.type;
                 AST_nodeType* id = p->node.decl.funcdecl.id;
-		AST_nodeType* param = p->node.decl.funcdecl.param;
+                AST_nodeType* param = p->node.decl.funcdecl.param;
                 //tem um push scope embutido
                 new_func_decl(id,type,unpack(param),size(param));
-		//declara as variaveis do cabeçalho como locais na função
+                //declara as variaveis do cabeçalho como locais na função
                 checktype(p->node.decl.funcdecl.param);
                 checktype(p->node.decl.funcdecl.block);
-                
+
                 pop_scope();
-				
+
                 break;
-	    case VAR_SIMPLE:
-	    case VAR_ARRAY:
+            case VAR_SIMPLE:
+            case VAR_ARRAY:
                 int type = check_var_decl(p->node.var.id);
                 if(type == -1)
                     ERROR("undeclared variable");
@@ -39,7 +39,7 @@ void checktypes(AST_nodeType *p){
                     p->node.var.type = type; 
                 //with constant folding type could be checked
                 break;
-	    case EXP_BINOP:
+            case EXP_BINOP:
                 int op = binop_key(p->node.exp.operexp.opr);
                 int type1 = p->node.exp.operexp.exp1.type;
                 int type2 = p->node.exp.operexp.exp2.type;
@@ -49,31 +49,29 @@ void checktypes(AST_nodeType *p){
                 }
                 //if lit in both sizes, fold
                 p->node.exp.type = op_arithm_result[op][type1][type2];
-		break;
-	    case EXP_UNOP:
+                break;
+            case EXP_UNOP:
                 //if(op_bool_type[op] != exp1->node.exp.type) 
                 if(BOOL != exp1->node.exp.type) 
                     ERROR("expected logic expression");
-		break;
-	    case EXP_NEW:
-	        if(p->node.exp.content.newexp.exp.type != INT){
+                break;
+            case EXP_NEW:
+                if(p->node.exp.content.newexp.exp.type != INT){
                     ERROR("non integer size in array definition");
                 }	
                 break;
-	    case EXP_CALL:
+            case EXP_CALL:
                 AST_nodeType* id = p->node.exp.callexp.exp1.id;
                 AST_nodeType* args = p->node.exp.callexp.exp2;
                 if(check_call(id,unpack(args),size(args))==-1)
                 {
                     ERROR("undeclared function");
                 }
-                else{
-				break;
-			case EXP_VAR:
-	            
                 break;
-			case CMD_WHILE:
-				if(p->node.cmd.whilecmd.exp.type != BOOL){
+            case EXP_VAR:
+                break;
+            case CMD_WHILE:
+                if(p->node.cmd.whilecmd.exp.type != BOOL){
                     ERROR("expected logic expression");
                 }
                 else{
@@ -81,9 +79,9 @@ void checktypes(AST_nodeType *p){
                     checktype(p->node.cmd.whilecmd.cmd);
                     pop_scope();
                 }
-				break;
-			case CMD_IF:
-				if(p->node.cmd.ifcmd.exp.type != BOOL){
+                break;
+            case CMD_IF:
+                if(p->node.cmd.ifcmd.exp.type != BOOL){
                     ERROR("expected logic expression");
                 }
                 else{
@@ -96,30 +94,29 @@ void checktypes(AST_nodeType *p){
                         pop_scope();
                     }
                 }
-				break;
-			case CMD_ATTR:
-				if(p->node.cmd.attrcmd.var.type != p->node.cmd.attrcmd.exp,ident){
+                break;
+            case CMD_ATTR:
+                if(p->node.cmd.attrcmd.var.type != p->node.cmd.attrcmd.exp,ident){
                     ERROR("conflicting types on assignment");
                 }
-				break;
-			case CMD_EXP:
-			
                 break;
-			case CMD_BLOCK:
+            case CMD_EXP:		
+                break;
+            case CMD_BLOCK:
                 push_scope();
-				typecheck(p->node.cmd.blockcmd.decl);
-				typecheck(p->node.cmd.blockcmd.cmd);
+                typecheck(p->node.cmd.blockcmd.decl);
+                typecheck(p->node.cmd.blockcmd.cmd);
                 pop_scope();
-				break;
-			case CMD_RET:
-				if(p->node.cmd.retcmd.exp != NULL){
+                break;
+            case CMD_RET:
+                if(p->node.cmd.retcmd.exp != NULL){
                     if(p->node.cmd.retcmd.exp.type != check_return_type() )
                         ERROR("return type is not correct");
-				}
+                }
                 break;
-		}
-		if(p->nextElem != NULL){
+        }
+        if(p->nextElem != NULL){
             typecheck(p->nextElem);
         }
-	}
+    }
 }
