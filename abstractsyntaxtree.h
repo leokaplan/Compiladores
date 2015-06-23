@@ -121,9 +121,9 @@ int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES] = {
     },
     // %
     { //vertical = left; horizontal = right;
-        {CHAR,INT,FLOAT,-1,-1},
-        {INT,INT,FLOAT,-1,-1},
-        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {INT,INT,INT,-1,-1},
+        {INT,INT,INT,-1,-1},
+        {INT,INT,INT,-1,-1},
         {-1,-1,-1,-1,-1},
         {-1,-1,-1,-1,-1}
     },

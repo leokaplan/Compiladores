@@ -52,7 +52,8 @@ void checktypes(AST_nodeType *p){
                 //with constant folding type could be checked
                 break;
             case EXP_BINOP:
-                int op = binop_key(p->node.exp.operexp.opr);
+                int opr = p->node.exp.operexp.opr;
+                int op = binop_key(opr);
                 checktype(p->node.exp.operexp.exp1.type);
                 checktype(p->node.exp.operexp.exp2.type);
                 int type1 = p->node.exp.operexp.exp1.type;
@@ -62,13 +63,25 @@ void checktypes(AST_nodeType *p){
                     ERROR("type error on arithmetic expression");
                 }
                 int rtype = op_arithm_result[op][type1][type2];
-                if(rtype != -1){
-                    if(type1 != rtype) 
-                        AST_typecast(rtype,p->node.exp.operexp.exp1);
-                    if(type2 != rtype) 
-                        AST_typecast(rtype,p->node.exp.operexp.exp2);
-                }
                 //if lit in both sizes, fold
+                if(rtype != -1){
+                    if(opr == '+' || opr == '-' || opr == '/' || opr == '*'){
+                        if(type1 != rtype) 
+                            AST_typecast(rtype,p->node.exp.operexp.exp1);
+                        if(type2 != rtype) 
+                            AST_typecast(rtype,p->node.exp.operexp.exp2);
+                    }
+                    if(opr == '%'){
+                        if(type1 != INT) 
+                            AST_typecast(INT,p->node.exp.operexp.exp1);
+                        if(type2 != INT) 
+                            AST_typecast(INT,p->node.exp.operexp.exp2);
+                    }
+                    if(opr == '<' || opr == '>'){
+                        if(type1 != type2) 
+                            ERROR("type error on comparative expression");
+                    }
+                }
                 p->node.exp.type = rtype;
                 break;
             case EXP_UNOP:
