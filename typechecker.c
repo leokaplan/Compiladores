@@ -12,6 +12,12 @@ int size(AST_nodetype* list){
 int* unpack(AST_nodetype* explist){
     int size = size(explist);
     int* ret = malloc(sizeof(int)*size);
+    int i;
+    for(i=0;list->nextElem;i++)
+    {
+        ret[i] = list->node.exp.type;
+        list = list->nextElem;
+    }
     return ret;
 }
 
@@ -51,16 +57,23 @@ void checktypes(AST_nodeType *p){
                 checktype(p->node.exp.operexp.exp2.type);
                 int type1 = p->node.exp.operexp.exp1.type;
                 int type2 = p->node.exp.operexp.exp2.type;
-                if(op_arithm_left[op] != type1 && op_arithm_right[op] != type2) 
+                if(op_arithm_left[op][type1] == 1 && op_arithm_right[op][type2] == 1) 
                 {
                     ERROR("type error on arithmetic expression");
                 }
+                int rtype = op_arithm_result[op][type1][type2];
+                if(rtype != -1){
+                    if(type1 != rtype) 
+                        AST_typecast(rtype,p->node.exp.operexp.exp1);
+                    if(type2 != rtype) 
+                        AST_typecast(rtype,p->node.exp.operexp.exp2);
+                }
                 //if lit in both sizes, fold
-                p->node.exp.type = op_arithm_result[op][type1][type2];
+                p->node.exp.type = rtype;
                 break;
             case EXP_UNOP:
                 checktype(p->node.exp.type);
-                if(op_bool_type[op] != exp1->node.exp.type) 
+                if(op_unop_type[op] != exp1->node.exp.type) 
                     ERROR("expected logic expression");
                 break;
             case EXP_NEW:
@@ -120,10 +133,8 @@ void checktypes(AST_nodeType *p){
                 break;
             case CMD_BLOCK:
                 push_scope();
-                for()
-                    typecheck(p->node.cmd.blockcmd.decl);
-                for
-                    typecheck(p->node.cmd.blockcmd.cmd);
+                typecheck(p->node.cmd.blockcmd.decl);
+                typecheck(p->node.cmd.blockcmd.cmd);
                 pop_scope();
                 break;
             case CMD_RET:

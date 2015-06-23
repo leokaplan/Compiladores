@@ -51,11 +51,131 @@ int unop_key(int op) {
         default: return -1;
     }
 }
-
-int op_bool_type[NUMUNOP] = {BOOL,BOOL};
-int op_arithm_left[NUMBOP] = {INT,INT,FLOAT,FLOAT,INT};
-int op_arithm_right[NUMBOP];
-int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES];
+//melhorar isso
+int op_unop_type[NUMUNOP][NUM_BASETYPES] = {
+    //char,int,float,void,bool
+    {0,0,0,0,1},// !
+    {1,1,1,0,0} // -
+};
+int op_arithm_left[NUMBOP][NUM_BASETYPES] = {
+    //char,int,float,void,bool
+    {1,1,1,0,0},// +
+    {1,1,1,0,0},// -
+    {1,1,1,0,0},// /
+    {1,1,1,0,0},// *
+    {1,1,1,0,0},// %
+    {1,1,1,0,0},// <
+    {1,1,1,0,0},// >
+    {0,0,0,0,1},// EQ
+    {0,0,0,0,1},// NEQ
+    {0,0,0,0,1},// LEQ
+    {0,0,0,0,1} // GEQ
+};
+int op_arithm_right[NUMBOP][NUM_BASETYPES] = {
+    //char,int,float,void,bool
+    {1,1,1,0,0},// +
+    {1,1,1,0,0},// -
+    {1,1,1,0,0},// /
+    {1,1,1,0,0},// *
+    {1,1,1,0,0},// %
+    {1,1,1,0,0},// <
+    {1,1,1,0,0},// >
+    {0,0,0,0,1},// EQ
+    {0,0,0,0,1},// NEQ
+    {0,0,0,0,1},// LEQ
+    {0,0,0,0,1} // GEQ
+};
+int op_arithm_result[NUMBOP][NUM_BASETYPES][NUM_BASETYPES] = {
+    
+    //+
+    { //vertical = left; horizontal = right;
+        {CHAR,INT,FLOAT,-1,-1},
+        {INT,INT,FLOAT,-1,-1},
+        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    //-
+    { //vertical = left; horizontal = right;
+        {CHAR,INT,FLOAT,-1,-1},
+        {INT,INT,FLOAT,-1,-1},
+        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // /
+    { //vertical = left; horizontal = right;
+        {CHAR,INT,FLOAT,-1,-1},
+        {INT,INT,FLOAT,-1,-1},
+        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // *
+    { //vertical = left; horizontal = right;
+        {CHAR,INT,FLOAT,-1,-1},
+        {INT,INT,FLOAT,-1,-1},
+        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // %
+    { //vertical = left; horizontal = right;
+        {CHAR,INT,FLOAT,-1,-1},
+        {INT,INT,FLOAT,-1,-1},
+        {FLOAT,FLOAT,FLOAT,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // <
+    { //vertical = left; horizontal = right;
+        {BOOL,BOOL,BOOL,-1,-1},
+        {BOOL,BOOL,BOOL,-1,-1},
+        {BOOL,BOOL,BOOL,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // >
+    { //vertical = left; horizontal = right;
+        {BOOL,BOOL,BOOL,-1,-1},
+        {BOOL,BOOL,BOOL,-1,-1},
+        {BOOL,BOOL,BOOL,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1}
+    },
+    // EQ
+    { //vertical = left; horizontal = right;
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,BOOL}
+    },
+    // NEQ
+    { //vertical = left; horizontal = right;
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,BOOL}
+    },
+    // LEQ
+    { //vertical = left; horizontal = right;
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,BOOL}
+    },
+    // GEQ
+    { //vertical = left; horizontal = right;
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,BOOL}
+    },
+};
 
 
 
