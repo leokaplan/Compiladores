@@ -1,12 +1,18 @@
 #include "abstractsyntaxtree.h"
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
-//retorna o tamanho da lista
+//retorna o tamanho da lista 
 int size(AST_nodetype* list){
-    return 0;
+    int i;
+    for(i=1;list->nextElem;i++)
+        list = list->nextElem;
+    return i;
 }
-//retorna um array ordenado de tipos correspondentes à lista
-int* unpack(AST_nodetype* list){
-    return 0;
+//retorna um array ordenado de tipos correspondentes à lista de expressoes
+//em caso de falta de memoria retorna NULL
+int* unpack(AST_nodetype* explist){
+    int size = size(explist);
+    int* ret = malloc(sizeof(int)*size);
+    return ret;
 }
 
 void checktypes(AST_nodeType *p){
@@ -41,6 +47,8 @@ void checktypes(AST_nodeType *p){
                 break;
             case EXP_BINOP:
                 int op = binop_key(p->node.exp.operexp.opr);
+                checktype(p->node.exp.operexp.exp1.type);
+                checktype(p->node.exp.operexp.exp2.type);
                 int type1 = p->node.exp.operexp.exp1.type;
                 int type2 = p->node.exp.operexp.exp2.type;
                 if(op_arithm_left[op] != type1 && op_arithm_right[op] != type2) 
@@ -51,11 +59,12 @@ void checktypes(AST_nodeType *p){
                 p->node.exp.type = op_arithm_result[op][type1][type2];
                 break;
             case EXP_UNOP:
-                //if(op_bool_type[op] != exp1->node.exp.type) 
-                if(BOOL != exp1->node.exp.type) 
+                checktype(p->node.exp.type);
+                if(op_bool_type[op] != exp1->node.exp.type) 
                     ERROR("expected logic expression");
                 break;
             case EXP_NEW:
+                checktype(p->node.exp.type);
                 if(p->node.exp.content.newexp.exp.type != INT){
                     ERROR("non integer size in array definition");
                 }	
@@ -71,6 +80,7 @@ void checktypes(AST_nodeType *p){
             case EXP_VAR:
                 break;
             case CMD_WHILE:
+                checktype(p->node.exp.type);
                 if(p->node.cmd.whilecmd.exp.type != BOOL){
                     ERROR("expected logic expression");
                 }
@@ -81,6 +91,7 @@ void checktypes(AST_nodeType *p){
                 }
                 break;
             case CMD_IF:
+                checktype(p->node.exp.type);
                 if(p->node.cmd.ifcmd.exp.type != BOOL){
                     ERROR("expected logic expression");
                 }
@@ -96,16 +107,23 @@ void checktypes(AST_nodeType *p){
                 }
                 break;
             case CMD_ATTR:
-                if(p->node.cmd.attrcmd.var.type != p->node.cmd.attrcmd.exp,ident){
+                typecheck(p->node.cmd.attrcmd.exp.type);
+                typecheck(p->node.cmd.attrcmd.var.type);
+                if(p->node.cmd.attrcmd.var.type != p->node.cmd.attrcmd.exp.type){
                     ERROR("conflicting types on assignment");
                 }
                 break;
-            case CMD_EXP:		
+            case CMD_EXP:
+                typecheck(p->node.cmd.expcmd.exp);
+                break;
+            case CAST:
                 break;
             case CMD_BLOCK:
                 push_scope();
-                typecheck(p->node.cmd.blockcmd.decl);
-                typecheck(p->node.cmd.blockcmd.cmd);
+                for()
+                    typecheck(p->node.cmd.blockcmd.decl);
+                for
+                    typecheck(p->node.cmd.blockcmd.cmd);
                 pop_scope();
                 break;
             case CMD_RET:

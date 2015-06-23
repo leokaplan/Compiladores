@@ -172,6 +172,7 @@ multexp: unaryexp 			{ $$ = $1; }
 unaryexp: simpleexp			{ $$ = $1; }
         | '-' simpleexp         	{ $$ = AST_exp_opr('-', $2, NULL); }
         | '!' simpleexp			{ $$ = AST_exp_opr('!', $2, NULL); }
+        | '(' tipo ')' simpleexp			{ $$ = AST_typecast($2,$4); }
         ;
 
 simpleexp : TK_LITERALINT 		    { $$ = AST_litInt($1); } 

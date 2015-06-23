@@ -36,12 +36,15 @@ struct AST_expNodeType {
     
     
         AST_nodeType * varexp;
+        AST_nodeType * cast;
         /* Literais */
         union {
             int ivalue;
             float fvalue;
             char * svalue;
         } lit;
+        
+
         
         struct {
             int opr;
@@ -129,6 +132,12 @@ struct AST_nodeType {
 	} node;
 };
 
+AST_nodeType * AST_typecast(int type, AST_nodeType * exp){
+	AST_nodeType * p;
+        MAKE_NODE(p,TYPE_EXP,CAST);
+    p->node.exp.type = type;
+    p->node.exp.content.cast = exp;
+}
 
 AST_nodeType * AST_litInt(int value) {
 	AST_nodeType * p;
