@@ -11,3 +11,9 @@ int array(int type){
 int array2basetype(int type){
     return type % NUM_BASETYPES;
 }
+/*
+ * for preety error messages
+char* type2string(int type){
+    
+}
+*/
