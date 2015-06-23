@@ -1,0 +1,4 @@
+void main()
+{
+    char[][] a = new char[1][2][3];
+}

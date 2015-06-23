@@ -1,0 +1,5 @@
+void main()
+{
+    float[] f = new float[3];
+    f[0] = new float[1];
+}

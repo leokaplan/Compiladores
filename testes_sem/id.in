@@ -1,0 +1,17 @@
+int a = 0;
+
+void main()
+{
+    float a;
+    a = 1;
+
+    {}{}
+    {{{{{ int[] a; a = new int[3]; }}}}}
+    
+    { 
+        float[] a;
+        char c;
+        int d;
+    }
+    a = 3;
+}
