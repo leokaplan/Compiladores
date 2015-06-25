@@ -18,7 +18,6 @@ void declCode(AST_nodeType * node) {
         default:
             yyerror("Erro: tipo de declaracao invalido.");
     }
-
     // listas de declarações
     if (node->nextElem != NULL) {
         declCode(node);
@@ -30,7 +29,8 @@ void declVarCode(AST_nodeType * node) {
 }
 
 void declFuncCode(AST_nodeType * node) {
-    // TODO
+    // TODO tratar id e parâmetros etc
+    cmdCode(node->node.decl.funcdecl.block);
 }
 
 void cmdCode(AST_nodeType * node) {
@@ -64,11 +64,26 @@ void cmdCode(AST_nodeType * node) {
 }
 
 void cmdIfCode(AST_nodeType * node) {
-    // TODO
+    // TODO fazer comparação e tals com
+    // node->node.cmd.ifcmd.exp
+    // jum condicional pra parte else
+    // parte then
+    cmdCode(node->node.cmd.ifcmd.cmd1);
+    // jump pro fim da parte else
+    // label da parte else
+    // parte else
+    cmdCode(node->node.cmd.ifcmd.cmd2);
+    // label do fim da parte else
 }
 
 void cmdWhileCode(AST_nodeType * node) {
-    // TODO
+    // label antes da comparação
+    // TODO fazer comparação e tals com
+    // node->node.cmd.whilecmd.exp
+    // jump condicional pro fim do loop
+    cmdCode(node->node.cmd.whilecmd.cmd);
+    // jump de volta pro label do inicio
+    // label de fim do loop
 }
 
 void cmdAttrCode(AST_nodeType * node) {
@@ -77,7 +92,14 @@ void cmdAttrCode(AST_nodeType * node) {
     varCode(node->var);
     // TODO pop %ecx; mov(?) %ecx, (%eax)
     puts("\tpop %%ecx\n");
-
+    switch(node->exp->node.exp.type) {
+        case CHAR:
+            puts("  movb    %%ecx, (%%eax)\n");
+            break;
+        default:
+            puts("  movl    %%ecx, (%%eax)\n");
+            break;
+    }
 }
 
 void cmdExpCode(AST_nodeType * node) {
@@ -93,7 +115,6 @@ void cmdRetCode(AST_nodeType * node) {
     // temos que o padrão de retorno já se encontra ou em eax ou em st(0)
     endFunction();
 }
-
 
 void expCode(AST_nodeType * node) {
     
@@ -207,7 +228,8 @@ void beginFunction(char * name) {
 }
 
 void endFunction() {
-    puts("  movl %%ebp, %%esp\n");
+    puts("  movl %%ebp, %%esp\n");i
+    puts("  pop %%ebp");
     puts("  ret\n");
 }
 
