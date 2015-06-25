@@ -10,7 +10,8 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
-// TODO fazer função para lidar com listas (de parâmetros, declarações etc.)
+// Número máximo de slots, exportado pelo semântico
+extern int maxslot;
 
 /*
  * Função que gera o arquivo .s de saída a partir da AST.
@@ -19,6 +20,11 @@
  * @param tree Árvore de sintaxe abstrata.
  */
 void ASS_generateMachineCode(AST_nodeType * tree);
+
+// Número do label corrente
+static int currentLabel = 0;
+// Número do label de string corrente
+static int currStrLabel = 0;
 
 // Funções internas do módulo
 // Declarações
@@ -65,13 +71,15 @@ static void varArrayCode(AST_nodeType * node);
 static void idCode(AST_nodeType * node);
 // será necesário ?
 static void typeCode(AST_nodeType * node);
-static void litIntCode(AST_nodeType * node);
-static void litFloatCode(AST_nodeType * node);
-static void litStringCode(AST_nodeType * node);
+static void litIntCode(int ivalue);
+static void litFloatCode(float fvalue);
+static void litStringCode(char * svalue);
 
 // Funções auxiliares de assembly
-static void beginProgram();
-// TODO adicionar funções
-static void endProgram();
+static void beginFunction(char * name);
+static void endFunction();
+
+// Imprime o label e incrementa o valor de currentLabel para o próximo
+static void printLabel();
 
 #endif
