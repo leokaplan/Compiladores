@@ -3,15 +3,11 @@
 #include <string.h>
 
 void ASS_generateMachineCode(AST_nodeType * tree) {
-
-    // TODO talvez criar alguma função auxiliar de adicionar aos labels lá de cima (.globl ou algo assim)
     declCode(node);
-    
-    endProgram();
 }
 
-
 void declCode(AST_nodeType * node) {
+    beginFunction();
     switch(node->tag) {
         case DEC_VAR:
             declVarCode(node);
@@ -30,7 +26,7 @@ void declCode(AST_nodeType * node) {
 }
 
 void declVarCode(AST_nodeType * node) {
-    // TODO
+    // TODO talvez não se faça nada, pois sabemos o spot da variável
 }
 
 void declFuncCode(AST_nodeType * node) {
@@ -77,10 +73,11 @@ void cmdWhileCode(AST_nodeType * node) {
 
 void cmdAttrCode(AST_nodeType * node) {
     expCode(node->exp);
-    // TODO push %eax
-    puts("\tpush %eax");
+    puts("\tpush %%eax\n");
     varCode(node->var);
     // TODO pop %ecx; mov(?) %ecx, (%eax)
+    puts("\tpop %%ecx\n");
+
 }
 
 void cmdExpCode(AST_nodeType * node) {
@@ -93,7 +90,8 @@ void cmdBlockCode(AST_nodeType * node) {
 }
 
 void cmdRetCode(AST_nodeType * node) {
-    // TODO
+    // temos que o padrão de retorno já se encontra ou em eax ou em st(0)
+    endFunction();
 }
 
 
@@ -116,13 +114,13 @@ void expCode(AST_nodeType * node) {
             expVarCode(node);
             break;
         case LIT_INT:
-            litIntCode(node);
+            litIntCode(node->node.exp.lit.ivalue);
             break;
         case LIT_FLOAT:
-            litFloatCode(node);
+            litFloatCode(node->node.exp.lit.fvalue);
             break;
         case LIT_STRING:
-            litStringCode(node);
+            litStringCode(node->node.exp.lit.svalue);
             break;
         default:
             yyerror("Erro: tipo de expressao invalido.");
@@ -152,9 +150,15 @@ void expCallCode(AST_nodeType * node) {
 
 void expVarCode(AST_nodeType * node) {
     varCode(node->var);
-    // TODO mov(?) (%eax), %eax
+    switch(node->node.exp.type) {
+        case CHAR:
+            puts("  movzbl  (%%eax), %%eax\n");
+            break;
+        default:
+            puts("  movl    (%%eax), %%eax\n");
+            break;
+    }
 }
-
 
 void varCode(AST_nodeType * node) {
     switch(node->tag) {
@@ -184,24 +188,26 @@ void typeCode(AST_nodeType * node) {
     // TODO
 }
 
-void litIntCode(AST_nodeType * node) {
-    // TODO
+void litIntCode(int ivalue) {
+    printf("$%d", ivalue);
 }
 
-void litFloatCode(AST_nodeType * node) {
-    // TODO
+void litFloatCode(float fvalue) {
+    printf("$%f", fvalue);
 }
 
-void litStringCode(AST_nodeType * node) {
-    // TODO
+void litStringCode(char * svalue) {
+    // Cria uma linha com a constante string junto com seu label
+    printf(".data S%d:  .string \"%s\"\n.text\n", currStrLabel++, svalue;
 }
 
-void beginProgram() {
-    // TODO ver como separar as seções, como .glodl, .data, .text etc.
+void beginFunction(char * name) {
+   printf(".text\n.globl    %s\n%s:\n", name);
+   puts("   push %%ebp\n    movl %%esp, %%ebp\n");
 }
 
-void endProgram() {
-    puts("\tmovl %ebp, %esp\n");
-    puts("\tret\n");
+void endFunction() {
+    puts("  movl %%ebp, %%esp\n");
+    puts("  ret\n");
 }
 
