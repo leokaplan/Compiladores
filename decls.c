@@ -5,11 +5,13 @@
 
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
 #define WARNING printf
+int maxslot = 0;
 //lista de declaracoes
 struct decl{
     struct decl* next;
     int type;
     AST_nodeType* id;
+    int slot;
 };
 
 typedef struct decl decl;
@@ -80,6 +82,22 @@ int check_var_decl(AST_nodeType* id){
         return type;
 }
 
+int num_var_visible(AST_nodeType* id){
+    decl* it = head;
+    int j = 0;
+    while(it->next != NULL){
+        if(it->id == id){
+            if(j>maxslot){
+                maxslot = j;
+            }
+            return j;
+        } 
+        j++;
+    }
+    return -1;
+}
+
+
 //cria uma declaracao na lista de declaracoes
 void new_var_decl(int type, AST_nodeType* id){
     decl* new = malloc(sizeof(decl));
@@ -99,6 +117,7 @@ void new_var_decl(int type, AST_nodeType* id){
         tail->next = new;
     }
     tail = new;
+    new->slot = num_var_visible(id);
 }
 
 struct _func_decl

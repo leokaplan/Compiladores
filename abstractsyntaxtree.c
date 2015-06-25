@@ -71,7 +71,7 @@ union AST_declNodeType {
 	struct {
 		int type;
 		AST_nodeType * id;
-	} vardecl;
+    } vardecl;
 	struct {
 		int type;
 		AST_nodeType * id;
