@@ -18,6 +18,8 @@ typedef struct decl decl;
 
 decl* head = NULL;//root
 decl* tail = NULL;
+decl* slothead = NULL;//root
+decl* slottail = NULL;//root
 
 struct _scope{
     decl* declaration;
@@ -87,16 +89,40 @@ int num_var_visible(AST_nodeType* id){
     int j = 0;
     while(it->next != NULL){
         if(it->id == id){
-            if(j>maxslot){
-                maxslot = j;
-            }
             return j;
         } 
         j++;
+        it = it->next;
     }
     return -1;
 }
-
+void new_slot(AST_nodeType* id){
+    decl* new = malloc(sizeof(decl));
+    new->next = NULL;
+    if(slothead==NULL){//lista vazia
+        slothead = new;
+    }
+    else{    
+        slottail->next = new;
+    }
+    slottail = new;
+    int num = num_var_visible(id); 
+    if(num > maxslot){
+        maxslot = num;
+    }
+    new->type = num; 
+    new->id = id;
+}
+int check_slot(AST_nodeType* id){
+    decl* it = slothead;
+    while(it->next != NULL){
+        if(it->id == id){
+            return it->type;
+        } 
+        it = it->next;
+    }
+    return -1;
+}
 
 //cria uma declaracao na lista de declaracoes
 void new_var_decl(int type, AST_nodeType* id){
@@ -117,7 +143,8 @@ void new_var_decl(int type, AST_nodeType* id){
         tail->next = new;
     }
     tail = new;
-    new->slot = num_var_visible(id);
+    
+    new_slot(id);
 }
 
 struct _func_decl

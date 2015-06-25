@@ -8,4 +8,5 @@ void new_func_decl(AST_nodeType* id, int ret_type, int* arg_types,int n_args);
 int check_return_type();
 void push_scope();
 void pop_scope();
+int check_slot(AST_nodeType* id);
 #ifndef
