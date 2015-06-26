@@ -6,7 +6,6 @@
 
 #ifndef ABSTRACTSYNTAXTREE_H
 #define ABSTRACTSYNTAXTREE_H
-#include "monga.tab.h"
 
 /* Tipos da linguagem */
 enum typeEnum {
@@ -81,6 +80,7 @@ typedef struct nodeType AST_nodeType;
 
 extern AST_nodeType * prog;
 
+#include "monga.tab.h"
 
 /*
  * mode = 1 print a formatted code
@@ -88,7 +88,6 @@ extern AST_nodeType * prog;
  * */
 void AST_draw(AST_nodeType *p,int mode);
 
-extern void yyerror(char *);
 
 /* Literal */
 AST_nodeType * AST_litInt(int value);

@@ -3,12 +3,12 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
-#include "monga.tab.h"
 #include "decls.h"
 #include "types.h"
+#define ERROR(...) printf(__VA_ARGS__);exit(0);
 #define MAKE_NODE(p,TYPE,TAG); \
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
-		yyerror("Falta de memoria"); \
+		ERROR("Falta de memoria"); \
 	p->nextElem = NULL; \
 	p->lastElem = p; \
 	p->type = TYPE; \
