@@ -15,21 +15,21 @@
 	p->tag = TAG; 
 
 /* Tipos */
-struct AST_typNodeType {
+struct typNodeType {
 	int size;
 };
 
 /* Identificadores */
-struct AST_idNodeType {
+struct idNodeType {
 	char * name;
 };
-struct AST_varNodeType {
+struct varNodeType {
     int type;
     AST_nodeType * id;
     AST_nodeType * index;
 };
 
-struct AST_expNodeType {
+struct expNodeType {
 /* Expressoes */
     int type;
 	union {
@@ -67,7 +67,7 @@ struct AST_expNodeType {
 };
 
 /* Declaracoes */
-union AST_declNodeType {
+union declNodeType {
 	struct {
 		int type;
 		AST_nodeType * id;
@@ -81,7 +81,7 @@ union AST_declNodeType {
 };
 
 /* Comandos */
-union AST_cmdNodeType {
+union cmdNodeType {
 	
 	struct {
 		AST_nodeType * exp;
@@ -113,7 +113,7 @@ union AST_cmdNodeType {
 	} expcmd;
 };
 
-struct AST_nodeType {
+struct nodeType {
 	AST_nodeEnum type;
 	AST_unionTag tag;
 	int line;

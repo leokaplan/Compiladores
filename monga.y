@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 #include "abstractsyntaxtree.h"
+#include "decls.h"
+#include "assembler.h"
+#include "types.h"
 
 #ifndef MODE
 #define MODE 1
@@ -217,6 +220,6 @@ int main (void) {
     }
     //checktypes mata o programa com exit(0) em caso de erro
     checktypes(prog);
-    assembler(prog);
+    ASS_generateMachineCode(prog);
     return 0;
 }

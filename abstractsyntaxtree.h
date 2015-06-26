@@ -8,11 +8,8 @@
 #define ABSTRACTSYNTAXTREE_H
 #include "monga.tab.h"
 
-
-
-
 /* Tipos da linguagem */
-enum AST_typeEnum {
+enum typeEnum {
 	CHAR,
 	INT,
 	FLOAT,
@@ -24,11 +21,8 @@ enum AST_typeEnum {
 int size_types = NUM_BASETYPES;
 void ** types;
 
-
-
-
 /* Tipos dos nos da ast */
-enum AST_nodeEnum {
+enum nodeEnum {
 	TYPE_ID,
 	TYPE_TYP,
 	TYPE_EXP,
@@ -38,7 +32,7 @@ enum AST_nodeEnum {
 };
 
 /* Marcacoes para as unions */
-enum AST_unionTag {
+enum unionTag {
 	
 	ID,
 	
@@ -68,20 +62,20 @@ enum AST_unionTag {
 
 };
 
-typedef enum AST_typeEnum AST_typeEnum;
-typedef enum AST_nodeEnum AST_nodeEnum;
-typedef enum AST_unionTag AST_unionTag;
+typedef enum typeEnum AST_typeEnum;
+typedef enum nodeEnum AST_nodeEnum;
+typedef enum unionTag AST_unionTag;
 
-typedef struct AST_typNodeType AST_typNodeType;
-typedef struct AST_idNodeType AST_idNodeType;
+typedef struct typNodeType AST_typNodeType;
+typedef struct idNodeType AST_idNodeType;
 
-typedef struct AST_expNodeType AST_expNodeType;
-typedef struct AST_varNodeType AST_varNodeType;
-typedef union AST_litNodeType AST_litNodeType;
-typedef union AST_declNodeType AST_declNodeType;
-typedef union AST_cmdNodeType AST_cmdNodeType;
+typedef struct expNodeType AST_expNodeType;
+typedef struct varNodeType AST_varNodeType;
+typedef union litNodeType AST_litNodeType;
+typedef union declNodeType AST_declNodeType;
+typedef union cmdNodeType AST_cmdNodeType;
 
-typedef struct AST_nodeType AST_nodeType;
+typedef struct nodeType AST_nodeType;
 
 extern AST_nodeType * prog;
 

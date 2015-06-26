@@ -9,4 +9,4 @@ int check_return_type();
 void push_scope();
 void pop_scope();
 int check_slot(AST_nodeType* id);
-#ifndef
+#endif
