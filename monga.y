@@ -87,8 +87,8 @@ declaracao : decvariavel 	{ $$ = $1; }
 decvariavel : tipo listanomes ';'   { $$ = AST_decl_var($1, $2); }
             ;
 
-listanomes : TK_ID 		    { $$ = AST_id($1); }
-           | listanomes ',' TK_ID   { $$ = AST_handleList($1, AST_id($3)); }
+listanomes : TK_ID 		    { $$ = AST_id($1.name); }
+           | listanomes ',' TK_ID   { $$ = AST_handleList($1, AST_id($3.name)); }
            ;
 
 tipo : tipobase 	    { $$ = $1; }
@@ -101,8 +101,8 @@ tipobase : TK_INT 	    { $$ = AST_basetype(INT); }
          | TK_BOOL 	    { $$ = AST_basetype(BOOL); } 
          ;
 
-decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	    { $$ = AST_decl_func($1, AST_id($2), $4, $6); } 
-          | TK_VOID TK_ID '(' listaparametros ')' bloco     { $$ = AST_decl_func(AST_basetype(VOID, $1), AST_id($2), $4, $6); } 
+decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	    { $$ = AST_decl_func($1, AST_id($2.name), $4, $6); } 
+          | TK_VOID TK_ID '(' listaparametros ')' bloco     { $$ = AST_decl_func(AST_basetype(VOID, $1), AST_id($2.name), $4, $6); } 
           ;
 
 listaparametros : parametros 			{ $$ = $1; }
@@ -113,7 +113,7 @@ parametros : parametro 				{ $$ = $1; }
            | parametros ',' parametro 		{ $$ = AST_handleList($1, $3); }
            ;
 
-parametro : tipo TK_ID 				{ $$ = AST_decl_var($1, AST_id($2)); }
+parametro : tipo TK_ID 				{ $$ = AST_decl_var($1, AST_id($2.name)); }
           ;
 
 bloco : '{'  decsvariaveis  comandos  '}' 	{ $$ = AST_cmd_block($2, $3); }
@@ -136,7 +136,7 @@ comando : TK_IF '(' logicexp ')' comando %prec IF_NO_ELSE   { $$ = AST_cmd_if($3
         | bloco 					{ $$ = $1; }
         ;
 
-var : TK_ID 				{ $$ = AST_var_simple(AST_id($1)); } 
+var : TK_ID 				{ $$ = AST_var_simple(AST_id($1.name)); } 
     | simpleexp '[' logicexp ']'	{ $$ = AST_var_array($1, $3); }
     ;
 
