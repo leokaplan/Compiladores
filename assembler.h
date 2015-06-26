@@ -10,6 +10,8 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
+#include "abstractsyntaxtree.h"
+
 // Número máximo de slots, exportado pelo semântico
 extern int maxslot;
 

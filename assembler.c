@@ -3,7 +3,7 @@
 #include <string.h>
 
 void ASS_generateMachineCode(AST_nodeType * tree) {
-    declCode(node);
+    declCode(tree);
 }
 
 void declCode(AST_nodeType * node) {
@@ -219,7 +219,7 @@ void litFloatCode(float fvalue) {
 
 void litStringCode(char * svalue) {
     // Cria uma linha com a constante string junto com seu label
-    printf(".data S%d:  .string \"%s\"\n.text\n", currStrLabel++, svalue;
+    printf(".data S%d:  .string \"%s\"\n.text\n", currStrLabel++, svalue);
 }
 
 void beginFunction(char * name) {
@@ -228,7 +228,7 @@ void beginFunction(char * name) {
 }
 
 void endFunction() {
-    puts("  movl %%ebp, %%esp\n");i
+    puts("  movl %%ebp, %%esp\n");
     puts("  pop %%ebp");
     puts("  ret\n");
 }
