@@ -5,7 +5,7 @@
 #include "abstractsyntaxtree.h"
 #include "monga.tab.h"
 #include "decls.h"
-#include "types.c"
+#include "types.h"
 #define MAKE_NODE(p,TYPE,TAG); \
 	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
 		yyerror("Falta de memoria"); \
