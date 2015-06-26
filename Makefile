@@ -14,4 +14,4 @@ main: lex monga abstractsyntaxtree types decls
 	    gcc -Wall -m32 -g -o main lex.yy.c monga.tab.c abstractsyntaxtree.o -I.  
 			
 clean:
-		$(RM) main lex.yy.c monga.tab.c monga.tab.h 
+		$(RM) main lex.yy.c monga.tab.c monga.tab.h decls.o types.o abstracsyntaxtree.o 

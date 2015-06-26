@@ -32,7 +32,7 @@ AST_nodeType * prog = NULL;
     float floatval;
     char * stringval;
     
-    struct {
+    struct id {
         char * name;
         int line;
     } identifier;
