@@ -1,4 +1,4 @@
-#include <string.h>
+1include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -137,6 +137,7 @@ AST_nodeType * AST_typecast(int type, AST_nodeType * exp){
         MAKE_NODE(p,TYPE_EXP,CAST);
     p->node.exp.type = type;
     p->node.exp.content.cast = exp;
+    return p;
 }
 
 AST_nodeType * AST_litInt(int value) {

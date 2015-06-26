@@ -37,6 +37,8 @@ enum unionTag {
 	ID,
 	
 	TYP,
+	
+    CAST,
 
 	
 	EXP_BINOP,
