@@ -183,12 +183,12 @@ simpleexp : TK_LITERALINT 		    { $$ = AST_litInt($1); }
           | TK_LITERALSTRING 		    { $$ = AST_litString($1); }
           | TK_LITERALBOOL                  { $$ = AST_litBool($1); }
           | var 			    { $$ = AST_exp_var($1); }
-          | '(' logicexp ')' 		    { $$ = AST_paren_exp($1, $2); }
+          | '(' logicexp ')' 		    { $$ = AST_paren_exp($2); }
           | chamada 			    { $$ = $1; }
-          | TK_NEW tipo '[' logicexp ']'    { $$ = AST_exp_new($1, $2, $3, $4); }
+          | TK_NEW tipo '[' logicexp ']'    { $$ = AST_exp_new($2, $4); }
           ;
 
-chamada : simpleexp '(' listaexp ')' 	    { $$ = AST_exp_call($1, $2, $3); }
+chamada : simpleexp '(' listaexp ')' 	    { $$ = AST_exp_call($1, $3); }
         ;
 
 listaexp : exps 	{ $$ = $1; }
@@ -208,10 +208,7 @@ void yyerror (char * s) {
 extern void ** types;
 
 int main (void) {
-    types = malloc(size_types*sizeof(void*));
     
-    //mudar isso para uma macro, talvez
-    types = {sizeof(char),sizeof(int),sizeof(float),0,sizeof(int)};
     if(!yyparse()) {
 	printf("\n\nparsing finished\n\n");
     }
