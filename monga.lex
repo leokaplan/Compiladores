@@ -113,7 +113,11 @@ UNITARY         [][{}(),;+\-*/=<>!]
 {LITERALSTRING} { yylval.stringval = escapeddupl(yytext); return TK_LITERALSTRING; }
 "true"          { yylval.intval = 1; return TK_LITERALBOOL; }
 "false"         { yylval.intval = 0; return TK_LITERALBOOL; }
-{ID}            { yylval.indentifier.name = dupl(yytext); yylval.identifier.line = currentLine; return TK_ID; }
+{ID}            { 
+                    yylval.identifier.name = dupl(yytext); 
+                    yylval.identifier.line = currentLine; 
+                    return TK_ID; 
+                }
 {UNITARY}       { yylval.intval = currentLine; return yytext[0]; } 
 .               { yyerror("invalid character sequence"); }   
 
