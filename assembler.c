@@ -6,93 +6,93 @@ void ASS_generateMachineCode(AST_nodeType * tree) {
     declCode(tree);
 }
 
-void declCode(AST_nodeType * node) {
-    beginFunction();
-    switch(node->tag) {
+void declCode(AST_nodeType * p) {
+    switch(p->tag) {
         case DEC_VAR:
-            declVarCode(node);
+            declVarCode(p);
             break;
         case DEC_FUNC:
-            declFuncCode(node);
+            declFuncCode(p);
             break;
         default:
             yyerror("Erro: tipo de declaracao invalido.");
     }
     // listas de declarações
-    if (node->nextElem != NULL) {
-        declCode(node);
+    if (p->nextElem != NULL) {
+        declCode(p);
     }
 }
 
-void declVarCode(AST_nodeType * node) {
+void declVarCode(AST_nodeType * p) {
     // TODO talvez não se faça nada, pois sabemos o spot da variável
 }
 
-void declFuncCode(AST_nodeType * node) {
+void declFuncCode(AST_nodeType * p) {
+    beginFunction(p->node.decl.funcdecl.id->node.id.name);
     // TODO tratar id e parâmetros etc
-    cmdCode(node->node.decl.funcdecl.block);
+    cmdCode(p->node.decl.funcdecl.block);
 }
 
-void cmdCode(AST_nodeType * node) {
-    switch(node->tag) {
+void cmdCode(AST_nodeType * p) {
+    switch(p->tag) {
         case CMD_IF:
-            cmdIfCode(node);
+            cmdIfCode(p);
             break;
         case CMD_WHILE:
-            cmdWhileCode(node);
+            cmdWhileCode(p);
             break;
         case CMD_ATTR:
-            cmdAttrCode(node);
+            cmdAttrCode(p);
             break;
         case CMD_EXP:
-            cmdExpCode(node);
+            cmdExpCode(p);
             break;
         case CMD_BLOCK:
-            cmdBlockCode(node);
+            cmdBlockCode(p);
             break;
         case CMD_RET:
-            cmdRetCode(node);
+            cmdRetCode(p);
             break;
         default:
             yyerror("Erro: tipo de comando invalido.");
     }
 
     // lidar com listas de comandos
-    if (node->nextElem != NULL) {
-        cmdCode(node->nextElem);
+    if (p->nextElem != NULL) {
+        cmdCode(p->nextElem);
     }
 }
 
-void cmdIfCode(AST_nodeType * node) {
+void cmdIfCode(AST_nodeType * p) {
     // TODO fazer comparação e tals com
-    // node->node.cmd.ifcmd.exp
+    // p->node.cmd.ifcmd.exp
     // jum condicional pra parte else
     // parte then
-    cmdCode(node->node.cmd.ifcmd.cmd1);
+    cmdCode(p->node.cmd.ifcmd.cmd1);
     // jump pro fim da parte else
     // label da parte else
     // parte else
-    cmdCode(node->node.cmd.ifcmd.cmd2);
+    cmdCode(p->node.cmd.ifcmd.cmd2);
     // label do fim da parte else
 }
 
-void cmdWhileCode(AST_nodeType * node) {
+void cmdWhileCode(AST_nodeType * p) {
     // label antes da comparação
     // TODO fazer comparação e tals com
-    // node->node.cmd.whilecmd.exp
+    // p->node.cmd.whilecmd.exp
     // jump condicional pro fim do loop
-    cmdCode(node->node.cmd.whilecmd.cmd);
+    cmdCode(p->node.cmd.whilecmd.cmd);
     // jump de volta pro label do inicio
     // label de fim do loop
 }
 
-void cmdAttrCode(AST_nodeType * node) {
-    expCode(node->exp);
+void cmdAttrCode(AST_nodeType * p) {
+    expCode(p->node.cmd.attrcmd.exp);
     puts("\tpush %%eax\n");
-    varCode(node->var);
+    varCode(p->node.cmd.attrcmd.var);
     // TODO pop %ecx; mov(?) %ecx, (%eax)
     puts("\tpop %%ecx\n");
-    switch(node->exp->node.exp.type) {
+    switch(p->node.cmd.attrcmd.exp->node.exp.type) {
         case CHAR:
             puts("  movb    %%ecx, (%%eax)\n");
             break;
@@ -102,76 +102,76 @@ void cmdAttrCode(AST_nodeType * node) {
     }
 }
 
-void cmdExpCode(AST_nodeType * node) {
-    expCode(node->exp);
+void cmdExpCode(AST_nodeType * p) {
+    expCode(p->node.cmd.expcmd.exp);
 }
 
-void cmdBlockCode(AST_nodeType * node) {
-    declCode(node->decl);
-    cmdCode(node->cmd);
+void cmdBlockCode(AST_nodeType * p) {
+    declCode(p->node.cmd.blockcmd.decl);
+    cmdCode(p->node.cmd.blockcmd.cmd);
 }
 
-void cmdRetCode(AST_nodeType * node) {
+void cmdRetCode(AST_nodeType * p) {
     // temos que o padrão de retorno já se encontra ou em eax ou em st(0)
     endFunction();
 }
 
-void expCode(AST_nodeType * node) {
+void expCode(AST_nodeType * p) {
     
-    switch(node->tag) {
+    switch(p->tag) {
         case EXP_BINOP:
-            expBinopCode(node);
+            expBinopCode(p);
             break;
         case EXP_UNOP:
-            expUnopCode(node);
+            expUnopCode(p);
             break;
         case EXP_NEW:
-            expNewCode(node);
+            expNewCode(p);
             break;
         case EXP_CALL:
-            expCallCode(node);
+            expCallCode(p);
             break;
         case EXP_VAR:
-            expVarCode(node);
+            expVarCode(p);
             break;
         case LIT_INT:
-            litIntCode(node->node.exp.lit.ivalue);
+            litIntCode(p->node.exp.content.lit.ivalue);
             break;
         case LIT_FLOAT:
-            litFloatCode(node->node.exp.lit.fvalue);
+            litFloatCode(p->node.exp.content.lit.fvalue);
             break;
         case LIT_STRING:
-            litStringCode(node->node.exp.lit.svalue);
+            litStringCode(p->node.exp.content.lit.svalue);
             break;
         default:
             yyerror("Erro: tipo de expressao invalido.");
     }
 
     // listas de esxpressões, somente utilizado em passagem de parâmetros de chamadas de funções
-    if (node->nextElem != NULL) {
-        expCode(node->nextElem);
+    if (p->nextElem != NULL) {
+        expCode(p->nextElem);
     }
 }
 
-void expBinopCode(AST_nodeType * node) {
+void expBinopCode(AST_nodeType * p) {
     // TODO
 }
 
-void expUnopCode(AST_nodeType * node) {
+void expUnopCode(AST_nodeType * p) {
     // TODO
 }
 
-void expNewCode(AST_nodeType * node) {
+void expNewCode(AST_nodeType * p) {
     // TODO
 }
 
-void expCallCode(AST_nodeType * node) {
+void expCallCode(AST_nodeType * p) {
     // TODO
 }
 
-void expVarCode(AST_nodeType * node) {
-    varCode(node->var);
-    switch(node->node.exp.type) {
+void expVarCode(AST_nodeType * p) {
+    varCode(p->node.exp.content.varexp);
+    switch(p->node.exp.type) {
         case CHAR:
             puts("  movzbl  (%%eax), %%eax\n");
             break;
@@ -181,31 +181,31 @@ void expVarCode(AST_nodeType * node) {
     }
 }
 
-void varCode(AST_nodeType * node) {
-    switch(node->tag) {
+void varCode(AST_nodeType * p) {
+    switch(p->tag) {
         case VAR_SIMPLE:
-            varSimpleCode(node);
+            varSimpleCode(p);
             break;
         case VAR_ARRAY:
-            varArrayCode(node);
+            varArrayCode(p);
             break;
         yyerror("Erro: tipo invalido de variavel.");
     }
 }
 
-void varSimpleCode(AST_nodeType * node) {
+void varSimpleCode(AST_nodeType * p) {
     // TODO
 }
 
-void varArrayCode(AST_nodeType * node) {
+void varArrayCode(AST_nodeType * p) {
     // TODO
 }
 
-void idCode(AST_nodeType * node) {
+void idCode(AST_nodeType * p) {
     // TODO
 }
 
-void typeCode(AST_nodeType * node) {
+void typeCode(AST_nodeType * p) {
     // TODO
 }
 
@@ -232,4 +232,3 @@ void endFunction() {
     puts("  pop %%ebp");
     puts("  ret\n");
 }
-

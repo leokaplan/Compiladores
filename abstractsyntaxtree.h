@@ -78,6 +78,124 @@ typedef union cmdNodeType AST_cmdNodeType;
 
 typedef struct nodeType AST_nodeType;
 
+/* Tipos */
+struct typNodeType {
+	int size;
+};
+
+/* Identificadores */
+struct idNodeType {
+	char * name;
+};
+struct varNodeType {
+    int type;
+    AST_nodeType * id;
+    AST_nodeType * index;
+};
+
+struct expNodeType {
+/* Expressoes */
+    int type;
+    union {
+    
+    
+        AST_nodeType * varexp;
+        AST_nodeType * cast;
+        /* Literais */
+        union {
+            int ivalue;
+            float fvalue;
+            char * svalue;
+        } lit;
+        
+
+        
+        struct {
+            int opr;
+            AST_nodeType * exp1;
+            AST_nodeType * exp2;
+        } operexp;
+
+        
+        struct {
+            AST_nodeType * exp1;
+            AST_nodeType * exp2;
+        } callexp;
+
+        /* New (para arrays) */
+        struct {
+            int type;
+            AST_nodeType * exp;
+        } newexp;
+    } content;
+};
+
+/* Declaracoes */
+union declNodeType {
+	struct {
+		int type;
+		AST_nodeType * id;
+    } vardecl;
+	struct {
+		int type;
+		AST_nodeType * id;
+		AST_nodeType * param;
+		AST_nodeType * block;
+	} funcdecl;
+};
+
+/* Comandos */
+union cmdNodeType {
+	
+	struct {
+		AST_nodeType * exp;
+		AST_nodeType * cmd1;
+		AST_nodeType * cmd2;
+	} ifcmd;
+
+	struct {
+		AST_nodeType * exp;
+		AST_nodeType * cmd;
+	} whilecmd;
+
+	struct {
+		AST_nodeType * var;
+		AST_nodeType * exp;
+	} attrcmd;
+
+	struct {
+		AST_nodeType * exp;
+	} retcmd;
+
+	struct {
+		AST_nodeType * decl;
+		AST_nodeType * cmd;
+	} blockcmd;
+	
+	struct {
+		AST_nodeType * exp;
+	} expcmd;
+};
+
+struct nodeType {
+	AST_nodeEnum type;
+	AST_unionTag tag;
+	int line;
+
+	/* Utilizados para listas */
+	AST_nodeType * nextElem;
+	AST_nodeType * lastElem;		
+
+	union {
+		AST_typNodeType typ;
+		AST_idNodeType id;
+		AST_expNodeType exp;
+		AST_varNodeType var;
+		AST_declNodeType decl;
+		AST_cmdNodeType cmd;
+	} node;
+};
+
 extern AST_nodeType * prog;
 
 #include "monga.tab.h"

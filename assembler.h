@@ -30,49 +30,49 @@ static int currStrLabel = 0;
 
 // Funções internas do módulo
 // Declarações
-static void declCode(AST_nodeType * node);
+static void declCode(AST_nodeType * p);
 // Subdivisões de declarações
-static void declVarCode(AST_nodeType * node);
-static void declFuncCode(AST_nodeType * node);
+static void declVarCode(AST_nodeType * p);
+static void declFuncCode(AST_nodeType * p);
 
 // TODO Será necessário para tipos? A ver.
 
 // Comandos
-static void cmdCode(AST_nodeType * node);
+static void cmdCode(AST_nodeType * p);
 // Subdivisões de comandos
-static void cmdIfCode(AST_nodeType * node);
-static void cmdWhileCode(AST_nodeType * node);
-static void cmdAttrCode(AST_nodeType * node);
-static void cmdRetCode(AST_nodeType * node);
-static void cmdExpCode(AST_nodeType * node);
-static void cmdBlockCode(AST_nodeType * node);
+static void cmdIfCode(AST_nodeType * p);
+static void cmdWhileCode(AST_nodeType * p);
+static void cmdAttrCode(AST_nodeType * p);
+static void cmdRetCode(AST_nodeType * p);
+static void cmdExpCode(AST_nodeType * p);
+static void cmdBlockCode(AST_nodeType * p);
 
 // Subsubdivisões de comandos
 // TODO
 
 // Expressões
-static void expCode(AST_nodeType * node);
+static void expCode(AST_nodeType * p);
 // Subdivisões de expressões
-static void expBinopCode(AST_nodeType * node);
-static void expUnopCode(AST_nodeType * node);
-static void expLitCode(AST_nodeType * node);
-static void expVarCode(AST_nodeType * node);
-static void expParenCode(AST_nodeType * node);
-static void expCallCode(AST_nodeType * node);
-static void expNewCode(AST_nodeType * node);
+static void expBinopCode(AST_nodeType * p);
+static void expUnopCode(AST_nodeType * p);
+static void expLitCode(AST_nodeType * p);
+static void expVarCode(AST_nodeType * p);
+static void expParenCode(AST_nodeType * p);
+static void expCallCode(AST_nodeType * p);
+static void expNewCode(AST_nodeType * p);
 
 // Subsubdivisões de expressões
 // TODO
 
 // Variáveis
-static void varCode(AST_nodeType * node);
+static void varCode(AST_nodeType * p);
 // Subdivisões de variáveis
-static void varSimpleCode(AST_nodeType * node);
-static void varArrayCode(AST_nodeType * node);
+static void varSimpleCode(AST_nodeType * p);
+static void varArrayCode(AST_nodeType * p);
 
-static void idCode(AST_nodeType * node);
+static void idCode(AST_nodeType * p);
 // será necesário ?
-static void typeCode(AST_nodeType * node);
+static void typeCode(AST_nodeType * p);
 static void litIntCode(int ivalue);
 static void litFloatCode(float fvalue);
 static void litStringCode(char * svalue);
