@@ -30,6 +30,14 @@ AST_nodeType * AST_litInt(int value) {
 	return p;
 }
 
+AST_nodeType * AST_litBool(int value) {
+	AST_nodeType * p;
+        MAKE_NODE(p,TYPE_EXP,LIT_BOOL);
+	p->node.exp.content.lit.ivalue = value;
+	p->node.exp.type = BOOL;
+	return p;
+}
+
 AST_nodeType * AST_litFloat(float value) {
 	AST_nodeType * p;
         MAKE_NODE(p,TYPE_EXP,LIT_FLOAT);

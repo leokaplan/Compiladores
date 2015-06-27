@@ -46,6 +46,7 @@ enum unionTag {
 	EXP_CALL,
 	EXP_VAR,
 	LIT_INT,
+	LIT_BOOL,
 	LIT_FLOAT,
 	LIT_STRING,
 	VAR_SIMPLE,

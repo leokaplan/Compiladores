@@ -92,17 +92,17 @@ listanomes : TK_ID 		    { $$ = AST_id($1.name); }
            ;
 
 tipo : tipobase 	    { $$ = $1; }
-     | tipo '[' ']' 	    { $$ = AST_array($1); }
+     | tipo '[' ']' 	    { $$ = array($1); }
      ;
 
-tipobase : TK_INT 	    { $$ = AST_basetype(INT); }
-         | TK_FLOAT 	    { $$ = AST_basetype(FLOAT); }
-         | TK_CHAR 	    { $$ = AST_basetype(CHAR); } 
-         | TK_BOOL 	    { $$ = AST_basetype(BOOL); } 
+tipobase : TK_INT 	    { $$ = basetype(INT); }
+         | TK_FLOAT 	    { $$ = basetype(FLOAT); }
+         | TK_CHAR 	    { $$ = basetype(CHAR); } 
+         | TK_BOOL 	    { $$ = basetype(BOOL); } 
          ;
 
 decfuncao : tipo TK_ID '(' listaparametros ')' bloco 	    { $$ = AST_decl_func($1, AST_id($2.name), $4, $6); } 
-          | TK_VOID TK_ID '(' listaparametros ')' bloco     { $$ = AST_decl_func(AST_basetype(VOID, $1), AST_id($2.name), $4, $6); } 
+          | TK_VOID TK_ID '(' listaparametros ')' bloco     { $$ = AST_decl_func(basetype(VOID), AST_id($2.name), $4, $6); } 
           ;
 
 listaparametros : parametros 			{ $$ = $1; }
