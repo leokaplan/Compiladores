@@ -223,7 +223,7 @@ void litStringCode(char * svalue) {
 }
 
 void beginFunction(char * name) {
-   printf(".text\n.globl    %s\n%s:\n", name);
+   printf(".text\n.globl    %s\n%s:\n", name, name);
    puts("   push %%ebp\n    movl %%esp, %%ebp\n");
 }
 
