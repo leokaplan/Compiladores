@@ -11,13 +11,15 @@ abstractsyntaxtree: abstractsyntaxtree.c
 		gcc $(FLAGS) -c abstractsyntaxtree.c 
 types: types.c
 		gcc  $(FLAGS) -c types.c 
+typecheck: typechecker.c
+		gcc  $(FLAGS) -c typechecker.c 
 decls: decls.c
 		gcc  $(FLAGS) -c decls.c 
 assembler: assembler.c
 		gcc  $(FLAGS) -c assembler.c
 
-main: lex monga abstractsyntaxtree types decls assembler 
-	    gcc $(FLAGS) -o main lex.yy.c monga.tab.c abstractsyntaxtree.o types.o decls.o assembler.o  
+main: lex monga abstractsyntaxtree types decls assembler typecheck
+	    gcc $(FLAGS) -o main lex.yy.c monga.tab.c abstractsyntaxtree.o types.o decls.o assembler.o typecheck.o 
 			
 clean:
 		$(RM) main lex.yy.c monga.tab.c monga.tab.h decls.o types.o abstractsyntaxtree.o assembler.o

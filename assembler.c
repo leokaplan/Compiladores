@@ -169,7 +169,7 @@ void expNewCode(AST_nodeType * p) {
 void expCallCode(AST_nodeType * p) {
     int amountPushed = 0;
     // TODO ir dando push nos parâmetros recursivamente
-    printf("    call    %s\n", p->node.exp.content.callexp./* TODO colocar o nome aqui */);
+    //printf("    call    %s\n", p->node.exp.content.callexp./* TODO colocar o nome aqui */);
     printf("    subl    $%d, %%esp\n", amountPushed);
 }
 
