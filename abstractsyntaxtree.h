@@ -217,7 +217,7 @@ AST_nodeType * AST_litString(char * value);
 AST_nodeType * AST_id(char * name);
 
 /* Tipo da linguagem */
-AST_nodeType * AST_type(AST_typeEnum type, int indirections);
+AST_nodeType * AST_typecast(int type, AST_nodeType* exp);
 
 /* Expressão */
 AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
