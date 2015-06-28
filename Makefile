@@ -17,7 +17,7 @@ assembler: assembler.c
 		gcc  $(FLAGS) -c assembler.c
 
 main: lex monga abstractsyntaxtree types decls assembler 
-	    gcc $(FLAGS) -o main lex.yy.c monga.tab.c abstractsyntaxtree.o types.o decls.o assembler.o -I. 
+	    gcc $(FLAGS) -o main lex.yy.c monga.tab.c abstractsyntaxtree.o types.o decls.o assembler.o 
 			
 clean:
 		$(RM) main lex.yy.c monga.tab.c monga.tab.h decls.o types.o abstractsyntaxtree.o assembler.o
