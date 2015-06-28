@@ -10,6 +10,7 @@
 #include "decls.h"
 #include "assembler.h"
 #include "types.h"
+#include "typechecker.h"
 
 #ifndef MODE
 #define MODE 1

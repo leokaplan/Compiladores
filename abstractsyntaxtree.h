@@ -17,7 +17,7 @@ enum typeEnum {
     NUM_BASETYPES 
 };
 
-int size_types = NUM_BASETYPES;
+//int size_types = NUM_BASETYPES;
 void ** types;
 
 /* Tipos dos nos da ast */
