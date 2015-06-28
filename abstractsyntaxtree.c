@@ -109,6 +109,12 @@ AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2){
 
 
 }
+AST_nodeType * AST_exp_paren(AST_nodeType * exp) {
+    AST_nodeType * p;
+    MAKE_NODE(p,TYPE_EXP,EXP_PAREN);
+    p->node.exp.content.parenexp = exp;
+    return p;
+}
 AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2){
 	AST_nodeType * p;
 

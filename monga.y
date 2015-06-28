@@ -184,7 +184,7 @@ simpleexp : TK_LITERALINT 		    { $$ = AST_litInt($1); }
           | TK_LITERALSTRING 		    { $$ = AST_litString($1); }
           | TK_LITERALBOOL                  { $$ = AST_litBool($1); }
           | var 			    { $$ = AST_exp_var($1); }
-          | '(' logicexp ')' 		    { $$ = AST_paren_exp($2); }
+          | '(' logicexp ')' 		    { $$ = AST_exp_paren($2); }
           | chamada 			    { $$ = $1; }
           | TK_NEW tipo '[' logicexp ']'    { $$ = AST_exp_new($2, $4); }
           ;

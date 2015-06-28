@@ -33,35 +33,34 @@ enum nodeEnum {
 /* Marcacoes para as unions */
 enum unionTag {
 	
-	ID,
-	
-	TYP,
-	
+    ID,
+    TYP,
     CAST,
 
-	
-	EXP_BINOP,
-	EXP_UNOP,
-	EXP_NEW,
-	EXP_CALL,
-	EXP_VAR,
-	LIT_INT,
-	LIT_BOOL,
-	LIT_FLOAT,
-	LIT_STRING,
-	VAR_SIMPLE,
-	VAR_ARRAY,
-	
-	DEC_VAR,
-	DEC_FUNC,
+    EXP_BINOP,
+    EXP_UNOP,
+    EXP_NEW,
+    EXP_CALL,
+    EXP_VAR,
+    EXP_PAREN,
 
-	CMD_IF,
-	CMD_WHILE,
-	CMD_ATTR,
-	CMD_EXP,
-	CMD_BLOCK,
-	CMD_RET
+    LIT_INT,
+    LIT_BOOL,
+    LIT_FLOAT,
+    LIT_STRING,
+	
+    VAR_SIMPLE,
+    VAR_ARRAY,
+    
+    DEC_VAR,
+    DEC_FUNC,
 
+    CMD_IF,
+    CMD_WHILE,
+    CMD_ATTR,
+    CMD_EXP,
+    CMD_BLOCK,
+    CMD_RET
 };
 
 typedef enum typeEnum AST_typeEnum;
@@ -102,6 +101,7 @@ struct expNodeType {
     
         AST_nodeType * varexp;
         AST_nodeType * cast;
+        AST_nodeType * parenexp;
         /* Literais */
         union {
             int ivalue;
@@ -224,6 +224,7 @@ AST_nodeType * AST_exp_opr(int oper, AST_nodeType * exp1, AST_nodeType * exp2);
 AST_nodeType * AST_exp_new(int type, AST_nodeType * exp);
 AST_nodeType * AST_exp_var(AST_nodeType * var);
 AST_nodeType * AST_exp_call(AST_nodeType * exp1, AST_nodeType * exp2);
+AST_nodeType * AST_exp_paren(AST_nodeType * exp);
 
 /* Var */
 AST_nodeType * AST_var_array(AST_nodeType * exp1, AST_nodeType * exp2);
