@@ -24,13 +24,14 @@ void declCode(AST_nodeType * p) {
 }
 
 void declVarCode(AST_nodeType * p) {
-    // TODO talvez não se faça nada, pois sabemos o spot da variável
+    // TODO algo relacionado ao spot da variável
 }
 
 void declFuncCode(AST_nodeType * p) {
     beginFunction(p->node.decl.funcdecl.id->node.id.name);
     // TODO tratar id e parâmetros etc
     cmdCode(p->node.decl.funcdecl.block);
+    endFunction();
 }
 
 void cmdCode(AST_nodeType * p) {
@@ -166,7 +167,10 @@ void expNewCode(AST_nodeType * p) {
 }
 
 void expCallCode(AST_nodeType * p) {
-    // TODO
+    int amountPushed = 0;
+    // TODO ir dando push nos parâmetros recursivamente
+    printf("    call    %s\n", p->node.exp.content.callexp./* TODO colocar o nome aqui */);
+    printf("    subl    $%d, %%esp\n", amountPushed);
 }
 
 void expVarCode(AST_nodeType * p) {
@@ -229,6 +233,6 @@ void beginFunction(char * name) {
 
 void endFunction() {
     puts("  movl %%ebp, %%esp\n");
-    puts("  pop %%ebp");
+    puts("  pop %%ebp\n");
     puts("  ret\n");
 }
