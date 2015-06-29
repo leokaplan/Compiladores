@@ -216,8 +216,12 @@ int main (void) {
     else {
 	printf("\n\nparsing error\n\n");
     }
-    //checktypes mata o programa com exit(0) em caso de erro
+    // checktypes mata o programa com exit(0) em caso de erro
+    // puts("Comecando a checagem de tipos...\n");
     checktypes(prog);
+    // puts("Checagem de tipos terminada com sucesso!\n");
+    // puts("Comecando a geracao de codigo...\n");
     ASS_generateMachineCode(prog);
+    // puts("Geracao de codigo concluida!\n");
     return 0;
 }

@@ -7,9 +7,9 @@ do
     filename="${filename%.*}"
     echo "=== testando $filename"
     ./main < testes_sem/$filename.in > testes_sem/$filename.out
-    diff testes_sem/$filename.out testes_sem/$filename.in
+    diff testes_sem/$filename.out testes_sem/$filename.gab
     echo "=== acabou   $filename"
 
 done
-rm testes_sem/*.out
+
 make clean

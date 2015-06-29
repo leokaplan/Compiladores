@@ -31,7 +31,6 @@ void declFuncCode(AST_nodeType * p) {
     beginFunction(p->node.decl.funcdecl.id->node.id.name);
     // TODO tratar id e parâmetros etc
     cmdCode(p->node.decl.funcdecl.block);
-    endFunction();
 }
 
 void cmdCode(AST_nodeType * p) {
@@ -89,10 +88,10 @@ void cmdWhileCode(AST_nodeType * p) {
 
 void cmdAttrCode(AST_nodeType * p) {
     expCode(p->node.cmd.attrcmd.exp);
-    puts("\tpush %%eax\n");
+    puts("  push    %%eax\n");
     varCode(p->node.cmd.attrcmd.var);
     // TODO pop %ecx; mov(?) %ecx, (%eax)
-    puts("\tpop %%ecx\n");
+    puts("  pop     %%ecx\n");
     switch(p->node.cmd.attrcmd.exp->node.exp.type) {
         case CHAR:
             puts("  movb    %%ecx, (%%eax)\n");
@@ -169,7 +168,7 @@ void expNewCode(AST_nodeType * p) {
 void expCallCode(AST_nodeType * p) {
     int amountPushed = 0;
     // TODO ir dando push nos parâmetros recursivamente
-    //printf("    call    %s\n", p->node.exp.content.callexp./* TODO colocar o nome aqui */);
+    printf("    call    %s\n", p->node.exp.content.callexp.exp1->node.exp.content.varexp->node.var.id->node.id.name);
     printf("    subl    $%d, %%esp\n", amountPushed);
 }
 
@@ -227,8 +226,8 @@ void litStringCode(char * svalue) {
 }
 
 void beginFunction(char * name) {
-   printf(".text\n.globl    %s\n%s:\n", name, name);
-   puts("   push %%ebp\n    movl %%esp, %%ebp\n");
+    printf(".text\n.globl    %s\n%s:\n", name, name);
+    puts("   push %%ebp\n    movl %%esp, %%ebp\n");
 }
 
 void endFunction() {
