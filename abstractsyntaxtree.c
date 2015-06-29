@@ -7,8 +7,8 @@
 #include "types.h"
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
 #define MAKE_NODE(p,TYPE,TAG); \
-	if ((p = (AST_nodeType *) malloc(sizeof(AST_nodeType))) == NULL) \
-		ERROR("Falta de memoria"); \
+	if ((p = (AST_nodeType *)malloc(sizeof(AST_nodeType))) == NULL){ \
+		ERROR("Falta de memoria");} \
 	p->nextElem = NULL; \
 	p->lastElem = p; \
 	p->type = TYPE; \
@@ -55,7 +55,7 @@ AST_nodeType * AST_litString(char * value) {
 }
 
 AST_nodeType * AST_id(char * name) {
-	AST_nodeType * p;
+    AST_nodeType * p;
     MAKE_NODE(p,TYPE_ID,ID);
 	p->node.id.name = strdup(name);
 	return p;
