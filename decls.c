@@ -61,6 +61,7 @@ decl* get_scope(){
 //retorna o tipo se achar, -1 se nao achar 
 int check_var_decl_scope(AST_nodeType* id){
     decl* it = get_scope();
+    if(it == NULL) return -1;
     while(it->next != NULL){
         if(it->id == id){
             return it->type;
@@ -72,6 +73,7 @@ int check_var_decl_scope(AST_nodeType* id){
 
 int check_var_decl_global(AST_nodeType* id){
     decl* it = head;
+    if(it == NULL) return -1;
     while(it->next != NULL){
         if(it->id == id){
             return it->type;

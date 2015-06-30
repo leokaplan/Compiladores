@@ -3,7 +3,7 @@
 #include "abstractsyntaxtree.h"
 #include "types.h"
 #include "decls.h"
-#define ERROR(...) printf(__VA_ARGS__);exit(0);
+#define ERROR(...) printf(__VA_ARGS__);printf("\n\n");exit(0);
 //retorna o tamanho da lista 
 int size(AST_nodeType* list){
     if(list == NULL) return 0;

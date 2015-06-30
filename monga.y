@@ -12,10 +12,6 @@
 #include "types.h"
 #include "typechecker.h"
 
-#ifndef MODE
-#define MODE 1
-#endif
-
 void yyerror(char *);
 int yylex(void);
 int sym[26];
