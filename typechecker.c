@@ -37,6 +37,7 @@ void checktypes(AST_nodeType *p){
             case DEC_VAR:
                 type = p->node.decl.vardecl.type;
                 id = p->node.decl.vardecl.id;
+                printf("i---->%s\n",id->node.id.name);
                 new_var_decl(type,id);
                 break;
             case DEC_FUNC:
