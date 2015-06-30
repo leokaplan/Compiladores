@@ -211,10 +211,10 @@ extern void ** types;
 int main (void) {
     
     if(!yyparse()) {
-	    yyerror("\n\nparsing finished\n\n");
+	    //yyerror("\n\nparsing finished\n\n");
     }
     else {
-	    yyerror("\n\nparsing error\n\n");
+	    //yyerror("\n\nparsing error\n\n");
     }
     // checktypes mata o programa com exit(0) em caso de erro
     // puts("Comecando a checagem de tipos...\n");
