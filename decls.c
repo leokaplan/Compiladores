@@ -37,16 +37,21 @@ void push_scope(){
 }
 
 void pop_scope(){
-    Scope* temp = scope->last;
-    decl* it = temp->declaration;
-    decl* it_temp;
-    while(it->next != NULL){
-        it_temp = it->next;
-        free(it);
-        it = it_temp;
+    if(scope->last != NULL){
+        Scope* temp = scope->last;
+        decl* it = temp->declaration;
+        decl* it_temp;
+        while(it != NULL && it->next != NULL){
+            it_temp = it->next;
+            free(it);
+            it = it_temp;
+        }
+        free(scope);
+        scope = temp;
     }
-    free(scope);
-    scope = temp;
+    else{
+        free(scope);
+    }
 }
 
 decl* get_scope(){
@@ -174,15 +179,15 @@ int check_call(AST_nodeType* id,int* args, int n_args){
     func_decl* it = func_head;
     while(it->next != NULL){
         if(it->id == id){
-            int flag = 0;
+            int found_type_error = 0;
             int i;
             if(it->n_args == n_args){
                 for(i=0;i<n_args;i++){
                     if(args[i] != it->arg_types[i]) 
-                        flag = 1;
+                        found_type_error = 1;
                 }
             }
-            if(!flag)
+            if(!found_type_error)
                 return it->ret_type;
         } 
         it = it->next;

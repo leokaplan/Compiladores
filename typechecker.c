@@ -6,6 +6,7 @@
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
 //retorna o tamanho da lista 
 int size(AST_nodeType* list){
+    if(list == NULL) return 0;
     int i;
     for(i=1;list->nextElem;i++)
         list = list->nextElem;
@@ -14,6 +15,7 @@ int size(AST_nodeType* list){
 //retorna um array ordenado de tipos correspondentes à lista de expressoes
 //em caso de falta de memoria retorna NULL
 int* unpack(AST_nodeType* list){
+    if(list == NULL) return NULL;
     int s = size(list);
     int* ret = malloc(sizeof(int)*s);
     int i;
@@ -44,7 +46,9 @@ void checktypes(AST_nodeType *p){
                 //tem um push scope embutido
                 new_func_decl(id,type,unpack(param),size(param));
                 //declara as variaveis do cabeçalho como locais na função
+                push_scope();
                 checktypes(param);
+                
                 checktypes(p->node.decl.funcdecl.block);
 
                 pop_scope();
