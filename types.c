@@ -18,7 +18,11 @@ int type2size(int type){
 
 /*
  * for preety error messages
-char* type2string(int type){
-    
-}
 */
+char* type2string(int type){
+    if(type == INT)   return "int";    
+    if(type == FLOAT) return "float";    
+    if(type == BOOL)  return "bool";    
+    if(type == VOID)  return "void";    
+    if(type == -1)    return "error";
+}

@@ -6,15 +6,15 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "abstractsyntaxtree.h"
 #include "decls.h"
 #include "assembler.h"
 #include "types.h"
 #include "typechecker.h"
 
-void yyerror(char *);
+void yyerror(const char *);
 int yylex(void);
-int sym[26];
 extern int currentLine;
 extern char yytext[];
 
@@ -198,11 +198,10 @@ exps : logicexp 		{ $$ = $1; }
 
 %%
 
-void yyerror (char * s) {
+void yyerror (const char * s) {
     fprintf(stderr, "line %d: %s \n", currentLine, s);
 }
 
-extern void ** types;
 
 int main (void) {
     

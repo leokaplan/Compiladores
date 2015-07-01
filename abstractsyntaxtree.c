@@ -94,7 +94,7 @@ AST_nodeType * AST_exp_var(AST_nodeType * var){
 
     MAKE_NODE(p,TYPE_EXP,EXP_VAR);
 	p->node.exp.content.varexp = var;
-	p->node.exp.type = var->node.var.type;
+	p->node.exp.type = -1;
 
 	return p;
 
@@ -180,6 +180,7 @@ AST_nodeType * AST_cmd_attr(AST_nodeType * var, AST_nodeType * exp) {
     MAKE_NODE(p,TYPE_CMD,CMD_ATTR);
     p->node.cmd.attrcmd.var = var;
 	p->node.cmd.attrcmd.exp = exp;
+	p->node.cmd.attrcmd.exp->type = -1;
 
 	return p;
 }

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "decls.h"
 #define ERROR(...) printf(__VA_ARGS__);printf("\n\n");exit(0);
+#define DEBUG(...) printf(__VA_ARGS__);
 //retorna o tamanho da lista 
 int size(AST_nodeType* list){
     if(list == NULL) return 0;
@@ -56,6 +57,7 @@ void checktypes(AST_nodeType *p){
                 break;
             case VAR_SIMPLE:
             case VAR_ARRAY:
+                DEBUG("var\n");
                 type = check_var_decl(p->node.var.id);
                 if(type == -1){
                     ERROR("undeclared variable");
@@ -104,8 +106,9 @@ void checktypes(AST_nodeType *p){
                         ERROR("type error on logic expression");
                     }
                 }
-                
+                DEBUG("binop r: %d\n",rtype); 
                 p->node.exp.type = rtype;
+                DEBUG("&exp_binop %p\n",p);
                 
                 break;
             case EXP_UNOP:
@@ -145,6 +148,13 @@ void checktypes(AST_nodeType *p){
                 }
                 break;
             case EXP_VAR:
+                type = check_var_decl(p->node.exp.content.varexp->node.var.id);
+                DEBUG("exp_var: %s,%d\n",p->node.exp.content.varexp->node.var.id->node.id.name,type);
+                if(type == -1){
+                    ERROR("undeclared variable");
+                }
+                p->node.exp.type = type;
+                DEBUG("&exp_var %p\n",p);
                 break;
             case CMD_WHILE:
                 checktypes(p->node.cmd.whilecmd.exp);
@@ -174,16 +184,26 @@ void checktypes(AST_nodeType *p){
                 }
                 break;
             case CMD_ATTR:
+                DEBUG("attr: before %d\n",p->node.cmd.attrcmd.exp->type);
+                DEBUG("&exp %p\n",p->node.cmd.attrcmd.exp);
                 checktypes(p->node.cmd.attrcmd.exp);
-                checktypes(p->node.cmd.attrcmd.var);
-                if(p->node.cmd.attrcmd.var->type != p->node.cmd.attrcmd.exp->type){
-                    ERROR("conflicting types on assignment");
+                DEBUG("attr: after %d\n",p->node.cmd.attrcmd.exp->node.exp.type);
+                //checktypes(p->node.cmd.attrcmd.var);
+                type = check_var_decl(p->node.cmd.attrcmd.var->node.var.id);
+                if(type == -1){
+                    ERROR("undeclared variable");
+                }
+
+                if(type != p->node.cmd.attrcmd.exp->node.exp.type){
+                    ERROR("conflicting types on assignment:\n\t(%s) = (%s)",type2string(type),type2string(p->node.cmd.attrcmd.exp->node.exp.type));
                 }
                 break;
             case CMD_EXP:
+                DEBUG("cmd_exp\n");
                 checktypes(p->node.cmd.expcmd.exp);
                 break;
             case CAST:
+                DEBUG("cast %s\n",type2string(p->node.exp.type));
                 break;
             case CMD_BLOCK:
                 push_scope();

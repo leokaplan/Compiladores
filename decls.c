@@ -1,9 +1,12 @@
 
 #include "abstractsyntaxtree.h"
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
+//#define DEBUG(...) printf(__VA_ARGS__);
+#define DEBUG(...)
 #define WARNING printf
 int maxslot = 0;
 //lista de declaracoes
@@ -34,6 +37,7 @@ void push_scope(){
    new->last = scope;
    new->declaration = tail;
    scope = new;
+    DEBUG("push scope\n");
 }
 
 void pop_scope(){
@@ -52,6 +56,7 @@ void pop_scope(){
     else{
         free(scope);
     }
+    DEBUG("pop scope\n");
 }
 
 decl* get_scope(){
@@ -60,14 +65,21 @@ decl* get_scope(){
 
 //retorna o tipo se achar, -1 se nao achar 
 int check_var_decl_scope(AST_nodeType* id){
+    DEBUG("checking var %s\t",id->node.id.name);
     decl* it = get_scope();
+    DEBUG("in scope %p\n",it);
     if(it == NULL) return -1;
-    while(it->next != NULL){
-        if(it->id == id){
+    do{
+        DEBUG("comparing with %s,%d\n",it->id->node.id.name,it->type);
+        
+        if(strcmp(it->id->node.id.name,id->node.id.name) == 0 ){
+            DEBUG("returning %s,%d\n",it->id->node.id.name,it->type);
             return it->type;
-        } 
-        it = it->next;
+        }
+        if(it->next != NULL)
+            it = it->next;
     }
+    while(it->next != NULL);
     return -1;
 }
 
@@ -85,10 +97,12 @@ int check_var_decl_global(AST_nodeType* id){
 
 int check_var_decl(AST_nodeType* id){
     int type = check_var_decl_scope(id);
-    if ( type == -1)
-        return check_var_decl_global(id);
-    else
-        return type;
+    DEBUG("checked scope: %s\t%d\n",id->node.id.name,type);
+    if ( type == -1){
+        type = check_var_decl_global(id);
+        DEBUG("checked global: %s\t%d\n",id->node.id.name,type);
+    }
+    return type;
 }
 
 int num_var_visible(AST_nodeType* id){
@@ -139,6 +153,7 @@ void new_var_decl(int type, AST_nodeType* id){
     new->next = NULL;
     if(head==NULL){//lista vazia
         head = new;
+        scope->declaration = new;
     }
     else{
         if(check_var_decl_scope(id)!=-1){
@@ -149,8 +164,9 @@ void new_var_decl(int type, AST_nodeType* id){
         }
         tail->next = new;
     }
-    tail = new;
     
+    tail = new;
+    DEBUG("new var: %s,%d\n",new->id->node.id.name,new->type);
     new_slot(id);
 }
 
