@@ -35,6 +35,12 @@ void checktypes(AST_nodeType *p){
     AST_nodeType* param;
     if (p != NULL) {
         switch(p->tag){
+            case LIT_INT:
+            case LIT_BOOL:
+            case LIT_FLOAT:
+            case LIT_STRING:
+                DEBUG("lit: %s\n",type2string(p->node.exp.type));
+                break;
             case DEC_VAR:
                 type = p->node.decl.vardecl.type;
                 id = p->node.decl.vardecl.id;
@@ -71,8 +77,9 @@ void checktypes(AST_nodeType *p){
                 opr = p->node.exp.content.operexp.opr;
                 checktypes(p->node.exp.content.operexp.exp1);
                 checktypes(p->node.exp.content.operexp.exp2);
-                type1 = p->node.exp.content.operexp.exp1->type;
-                type2 = p->node.exp.content.operexp.exp2->type;
+                type1 = p->node.exp.content.operexp.exp1->node.exp.type;
+                type2 = p->node.exp.content.operexp.exp2->node.exp.type;
+                DEBUG("binop before: %s %s\n",type2string(type1),type2string(type2));
                 int rtype = -1;
                 if(opr == '+' || opr == '-' || opr == '/' || opr == '*' || opr == '%'){
                     if(type1 == type2 && (type1 == INT || type1 == FLOAT)){
