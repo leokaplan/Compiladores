@@ -37,7 +37,6 @@ void checktypes(AST_nodeType *p){
             case DEC_VAR:
                 type = p->node.decl.vardecl.type;
                 id = p->node.decl.vardecl.id;
-                printf("i---->%s\n",id->node.id.name);
                 new_var_decl(type,id);
                 break;
             case DEC_FUNC:
@@ -68,43 +67,68 @@ void checktypes(AST_nodeType *p){
                 break;
             case EXP_BINOP:
                 opr = p->node.exp.content.operexp.opr;
-                op = binop_key(opr);
                 checktypes(p->node.exp.content.operexp.exp1);
                 checktypes(p->node.exp.content.operexp.exp2);
                 type1 = p->node.exp.content.operexp.exp1->type;
                 type2 = p->node.exp.content.operexp.exp2->type;
-                if(op_arithm_left[op][type1] == 1 && op_arithm_right[op][type2] == 1) 
-                {
-                    ERROR("type error on arithmetic expression");
-                }
-                int rtype = op_arithm_result[op][type1][type2];
-                //if lit in both sizes, fold
-                if(rtype != -1){
-                    if(opr == '+' || opr == '-' || opr == '/' || opr == '*'){
-                        if(type1 != rtype) 
-                            AST_typecast(rtype,p->node.exp.content.operexp.exp1);
-                        if(type2 != rtype) 
-                            AST_typecast(rtype,p->node.exp.content.operexp.exp2);
+                int rtype = -1;
+                if(opr == '+' || opr == '-' || opr == '/' || opr == '*' || opr == '%'){
+                    if(type1 == type2 && (type1 == INT || type1 == FLOAT)){
+                        rtype = type1;
                     }
-                    if(opr == '%'){
-                        if(type1 != INT) 
-                            AST_typecast(INT,p->node.exp.content.operexp.exp1);
-                        if(type2 != INT) 
-                            AST_typecast(INT,p->node.exp.content.operexp.exp2);
+                    else if(type1 == FLOAT && type2 == INT){
+                        AST_typecast(FLOAT,p->node.exp.content.operexp.exp2);
+                        rtype = FLOAT;
+                    } 
+                    else if(type2 == FLOAT && type1 == INT){
+                        AST_typecast(FLOAT,p->node.exp.content.operexp.exp1);
+                        rtype = FLOAT;
                     }
-                    if(opr == '<' || opr == '>'){
-                        if(type1 != type2) 
-                            ERROR("type error on comparative expression");
+                    else{
+                        ERROR("type error on arithmetic expression");
                     }
                 }
+                else if(opr == '<' || opr == '>' || opr == TK_EQ || opr == TK_NEQ || opr == TK_LEQ || opr == TK_GEQ){
+                    if(type1 == type2){ 
+                        rtype = BOOL;
+                    }
+                    else{
+                        ERROR("type error on comparative expression");
+                    }
+                }
+                else if(opr == TK_AND || opr == TK_OR){
+                    if(type1 == type2 && type1 != BOOL){
+                        rtype = BOOL;
+                    }
+                    else{
+                        ERROR("type error on logic expression");
+                    }
+                }
+                
                 p->node.exp.type = rtype;
+                
                 break;
             case EXP_UNOP:
                 opr = p->node.exp.content.operexp.opr;
-                op = unop_key(opr);
                 checktypes(p->node.exp.content.operexp.exp1);
-                if(op_unop_type[op][p->node.exp.content.operexp.exp1->type] != 1) 
-                    ERROR("type error on unary operation");
+                int type = p->node.exp.content.operexp.exp1->type;
+                if(opr == '!'){
+                    if(type == BOOL){
+                        p->node.exp.type = type;
+                    }
+                    else{
+                        ERROR("type error on unary negation");
+                    }
+                }
+                else if(opr == '-'){
+                    if(type == INT || type == FLOAT){
+                        p->node.exp.type = type;
+                    }
+                    else{
+                        ERROR("type error on unary minus");
+                    }
+                }
+                
                 break;
             case EXP_NEW:
                 checktypes(p->node.exp.content.newexp.exp);
