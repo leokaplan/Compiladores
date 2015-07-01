@@ -12,6 +12,9 @@ int array(int type){
 int array2basetype(int type){
     return type % NUM_BASETYPES;
 }
+int array2indirections(int type){
+    return type / NUM_BASETYPES;
+}
 int type2size(int type){
     return 4;    
 }
@@ -25,4 +28,14 @@ char* type2string(int type){
     if(type == BOOL)  return "bool";    
     if(type == VOID)  return "void";    
     if(type == -1)    return "error";
+    else{
+/*        char* base = type2string(array2basetype(type));
+        int n = array2indirections(type);
+        int i;
+        for(i = 0; i < n;i++){
+            //base = concat(base,"[]");
+        }
+  */
+        return "array";
+    }
 }

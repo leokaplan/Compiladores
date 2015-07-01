@@ -158,15 +158,16 @@ void checktypes(AST_nodeType *p){
                 type = check_var_decl(p->node.exp.content.varexp->node.var.id);
                 DEBUG("exp_var: %s,%d\n",p->node.exp.content.varexp->node.var.id->node.id.name,type);
                 if(type == -1){
-                    ERROR("undeclared variable");
+                    ERROR("undeclared variable: %s",p->node.exp.content.varexp->node.var.id->node.id.name);
                 }
                 p->node.exp.type = type;
                 DEBUG("&exp_var %p\n",p);
                 break;
             case CMD_WHILE:
                 checktypes(p->node.cmd.whilecmd.exp);
-                if(p->node.cmd.whilecmd.exp->type != BOOL){
-                    ERROR("expected logic expression");
+                type = p->node.cmd.whilecmd.exp->node.exp.type;
+                if( type != BOOL){
+                    ERROR("expected logic (bool) expression, got (%s)",type2string(type));
                 }
                 else{
                     push_scope();
@@ -176,8 +177,9 @@ void checktypes(AST_nodeType *p){
                 break;
             case CMD_IF:
                 checktypes(p->node.cmd.ifcmd.exp);
-                if(p->node.cmd.ifcmd.exp->type != BOOL){
-                    ERROR("expected logic expression");
+                type = p->node.cmd.ifcmd.exp->node.exp.type; 
+                if(type != BOOL){
+                    ERROR("expected logic (bool) expression, got (%s)",type2string(type));
                 }
                 else{
                     push_scope();
@@ -220,8 +222,10 @@ void checktypes(AST_nodeType *p){
                 break;
             case CMD_RET:
                 if(p->node.cmd.retcmd.exp != NULL){
-                    if(p->node.cmd.retcmd.exp->type != check_return_type() )
-                        ERROR("return type is not correct");
+                    type1 = p->node.cmd.retcmd.exp->node.exp.type;
+                    type2 = check_return_type(); 
+                    if(type1 != type2)
+                        ERROR("return type is not correct:\n\t expected (%s), got (%s)",type2string(type2),type2string(type1));
                 }
                 break;
         }
