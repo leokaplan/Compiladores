@@ -115,18 +115,18 @@ void cmdRetCode(AST_nodeType * p) {
     AST_nodeType * expression = p->node.cmd.retcmd.exp;
     if ((expression->node.exp.type == INT) || (expression->node.exp.type == BOOL)) {
         if (expression->tag == VAR_SIMPLE) {
-            printf("    movl    -%d(%%ebp), %%eax", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
+            printf("    movl    -%d(%%ebp), %%eax\n", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
         }
         else /* Constante */ {
-            printf("    movl    $%d, %%eax", expression->node.exp.content.lit.ivalue);
+            printf("    movl    $%d, %%eax\n", expression->node.exp.content.lit.ivalue);
         }
     }
     else if (expression->node.exp.type == FLOAT) {
         if (expression->tag == VAR_SIMPLE) {
-            printf("    fstpl   -%d(%%ebp)", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
+            printf("    fstpl   -%d(%%ebp)\n", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
         }
         else /* Constante */ {
-            printf("    fstpl   $%f", expression->node.exp.content.lit.fvalue);
+            printf("    fstpl   $%f\n", expression->node.exp.content.lit.fvalue);
         }
     }
     endFunction();
@@ -171,18 +171,18 @@ void expCode(AST_nodeType * p) {
 
 void expBinopCode(AST_nodeType * p) {
     expCode(p->node.exp.content.operexp.exp1);
-    puts("  movl    %%eax, %%ecx");
+    puts("  movl    %%eax, %%ecx\n");
     expCode(p->node.exp.content.operexp.exp2);
     switch(p->node.exp.content.operexp.opr) {
         case '+':
-            puts("  addl    %%ecx, %%eax");
+            puts("  addl    %%ecx, %%eax\n");
             break;
         case '-':
-            puts("  subl    %%eax, %%ecx");
-            puts("  movl    %%ecx, %%eax");
+            puts("  subl    %%eax, %%ecx\n");
+            puts("  movl    %%ecx, %%eax\n");
             break;
         case '*':
-            puts("  imul    %%ecx, %%eax");
+            puts("  imul    %%ecx, %%eax\n");
             break;
         defaul:
             yyerror("Casos não tratados.");
@@ -191,7 +191,17 @@ void expBinopCode(AST_nodeType * p) {
 }
 
 void expUnopCode(AST_nodeType * p) {
-    // TODO
+    expCode(p->node.exp.content.operexp.exp1);
+    switch(p->node.exp.content.operexp.opr) {
+        case '-':
+            // -eax == eax - 2*eax
+            puts("  movl    %%eax, %%ecx\n");
+            puts("  shll    $1, %%ecx\n");
+            puts("  subl    %%ecx, %%eax\n");
+            break;
+        default:
+            yyerror("Casos não tratados.");
+    }
 }
 
 void expNewCode(AST_nodeType * p) {
@@ -246,16 +256,18 @@ void typeCode(AST_nodeType * p) {
 }
 
 void litIntCode(int ivalue) {
-    printf("$%d", ivalue);
+    printf("    movl    $%d, %%eax\n", ivalue);
 }
 
 void litFloatCode(float fvalue) {
-    printf("$%f", fvalue);
+    printf("    movl    $%f, %%eax\n", fvalue);
 }
 
 void litStringCode(char * svalue) {
     // Cria uma linha com a constante string junto com seu label
-    printf(".data S%d:  .string \"%s\"\n.text\n", currStrLabel++, svalue);
+    printf(".data S%d:  .string \"%s\"\n.text\n", currStrLabel, svalue);
+    printf("  movl  S%d, %%eax\n", currStrLabel);
+    currStrLabel++;
 }
 
 void beginFunction(char * name) {
@@ -264,8 +276,8 @@ void beginFunction(char * name) {
     puts("  movl %%esp, %%ebp\n");
     // aloca as variáveis locais
     printf("    movl    $%d, %%eax\n", maxslot);
-    puts("  shll    $2, %%eax");
-    puts("  subl    %%eax, %%esp");
+    puts("  shll    $2, %%eax\n");
+    puts("  subl    %%eax, %%esp\n");
 }
 
 void endFunction() {
