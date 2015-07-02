@@ -4,7 +4,8 @@
 #include "types.h"
 #include "decls.h"
 #define ERROR(...) printf(__VA_ARGS__);printf("\n\n");exit(0);
-#define DEBUG(...) printf(__VA_ARGS__);
+//#define DEBUG(...) printf(__VA_ARGS__);
+#define DEBUG(...) 
 //retorna o tamanho da lista 
 int size(AST_nodeType* list){
     if(list == NULL) return 0;
@@ -19,8 +20,8 @@ int* unpack(AST_nodeType* list){
     if(list == NULL) return NULL;
     int s = size(list);
     int* ret = malloc(sizeof(int)*s);
-    int i;
-    for(i=0;list->nextElem;i++)
+    int i = 0;
+    for(;list!= NULL;i++)
     {
         ret[i] = list->node.exp.type;
         list = list->nextElem;
@@ -34,6 +35,7 @@ void checktypes(AST_nodeType *p){
     AST_nodeType* args;
     AST_nodeType* param;
     if (p != NULL) {
+        DEBUG("tag: %d %p\n",p->tag,p->nextElem);
         switch(p->tag){
             case LIT_INT:
             case LIT_BOOL:
@@ -44,12 +46,21 @@ void checktypes(AST_nodeType *p){
             case DEC_VAR:
                 type = p->node.decl.vardecl.type;
                 id = p->node.decl.vardecl.id;
+                DEBUG("dec var %s %s\n",type2string(type),id->node.id.name);
                 new_var_decl(type,id);
                 break;
             case DEC_FUNC:
                 type = p->node.decl.funcdecl.type;
                 id = p->node.decl.funcdecl.id;
                 param = p->node.decl.funcdecl.param;
+                DEBUG("decl func: %s (",id->node.id.name);
+                int* a = unpack(param);
+                int b = size(param);
+                int i = 0;
+                for(;i<b;i++){
+                    DEBUG("%s,",type2string(a[i]));
+                }
+                DEBUG(")->(%s)\n",type2string(type));
                 //tem um push scope embutido
                 new_func_decl(id,type,unpack(param),size(param));
                 //declara as variaveis do cabeçalho como locais na função
@@ -57,9 +68,9 @@ void checktypes(AST_nodeType *p){
                 checktypes(param);
                 
                 checktypes(p->node.decl.funcdecl.block);
+                DEBUG("pos decfunc: %p \n",p->nextElem);
 
                 pop_scope();
-
                 break;
             case VAR_SIMPLE:
             case VAR_ARRAY:
@@ -71,7 +82,6 @@ void checktypes(AST_nodeType *p){
                 else{
                     p->node.var.type = type; 
                 }
-                //with constant folding type could be checked
                 break;
             case EXP_BINOP:
                 opr = p->node.exp.content.operexp.opr;
@@ -164,6 +174,7 @@ void checktypes(AST_nodeType *p){
                 DEBUG("&exp_var %p\n",p);
                 break;
             case CMD_WHILE:
+                DEBUG("while\n");
                 checktypes(p->node.cmd.whilecmd.exp);
                 type = p->node.cmd.whilecmd.exp->node.exp.type;
                 if( type != BOOL){
@@ -176,6 +187,7 @@ void checktypes(AST_nodeType *p){
                 }
                 break;
             case CMD_IF:
+                DEBUG("if\n");
                 checktypes(p->node.cmd.ifcmd.exp);
                 type = p->node.cmd.ifcmd.exp->node.exp.type; 
                 if(type != BOOL){
@@ -194,11 +206,12 @@ void checktypes(AST_nodeType *p){
                 break;
             case CMD_ATTR:
                 DEBUG("attr: before %d\n",p->node.cmd.attrcmd.exp->type);
-                DEBUG("&exp %p\n",p->node.cmd.attrcmd.exp);
+                //DEBUG("&exp %p\n",p->node.cmd.attrcmd.exp);
                 checktypes(p->node.cmd.attrcmd.exp);
                 DEBUG("attr: after %d\n",p->node.cmd.attrcmd.exp->node.exp.type);
                 //checktypes(p->node.cmd.attrcmd.var);
                 type = check_var_decl(p->node.cmd.attrcmd.var->node.var.id);
+                DEBUG("attr: var %s\n",type2string(type));
                 if(type == -1){
                     ERROR("undeclared variable");
                 }
@@ -215,21 +228,35 @@ void checktypes(AST_nodeType *p){
                 DEBUG("cast %s\n",type2string(p->node.exp.type));
                 break;
             case CMD_BLOCK:
+                DEBUG("{\n");
                 push_scope();
                 checktypes(p->node.cmd.blockcmd.decl);
                 checktypes(p->node.cmd.blockcmd.cmd);
+                DEBUG("breno\n");
                 pop_scope();
+                DEBUG("}\n");
                 break;
             case CMD_RET:
+                type2 = check_return_type();
+                DEBUG("ret: expected (%s)\n",type2string(type2));
                 if(p->node.cmd.retcmd.exp != NULL){
                     type1 = p->node.cmd.retcmd.exp->node.exp.type;
-                    type2 = check_return_type(); 
+                    DEBUG("ret: got (%s)\n",type2string(type1));
                     if(type1 != type2)
                         ERROR("return type is not correct:\n\t expected (%s), got (%s)",type2string(type2),type2string(type1));
                 }
+                else{
+                    DEBUG("ret: got nil\n");
+                    if(type2 != VOID)
+                        ERROR("return type is not correct:\n\t expected (void), got (%s)",type2string(type2));
+                }
+                break;
+            default:
+                ERROR("erro...\n");
                 break;
         }
         if(p->nextElem != NULL){
+            DEBUG("proximo...\n\n");
             checktypes(p->nextElem);
         }
     }

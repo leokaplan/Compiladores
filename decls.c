@@ -6,7 +6,7 @@
 
 #define ERROR(...) printf(__VA_ARGS__);exit(0);
 //#define DEBUG(...) printf(__VA_ARGS__);
-#define DEBUG(...)
+#define DEBUG(...) 
 #define WARNING printf
 int maxslot = 0;
 //lista de declaracoes
@@ -60,7 +60,7 @@ void pop_scope(){
 }
 
 decl* get_scope(){
-    return scope->declaration;    
+    return scope->declaration->next;    
 }
 
 //retorna o tipo se achar, -1 se nao achar 
@@ -84,10 +84,13 @@ int check_var_decl_scope(AST_nodeType* id){
 }
 
 int check_var_decl_global(AST_nodeType* id){
+    DEBUG("checking var %s\t",id->node.id.name);
     decl* it = head;
     if(it == NULL) return -1;
+    DEBUG("in global scope %p\n",it);
     while(it->next != NULL){
-        if(it->id == id){
+        DEBUG("comparing with %s,%d\n",it->id->node.id.name,it->type);
+        if(strcmp(it->id->node.id.name,id->node.id.name) == 0 ){
             return it->type;
         } 
         it = it->next;
