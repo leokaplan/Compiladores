@@ -115,7 +115,7 @@ void cmdRetCode(AST_nodeType * p) {
     AST_nodeType * expression = p->node.cmd.retcmd.exp;
     if ((expression->node.exp.type == INT) || (expression->node.exp.type == BOOL)) {
         if (expression->tag == VAR_SIMPLE) {
-            printf("    movl    -%d(%%ebp), %%eax", 4*check_slot(expression->node.exp.content.varexp->id));
+            printf("    movl    -%d(%%ebp), %%eax", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
         }
         else /* Constante */ {
             printf("    movl    $%d, %%eax", expression->node.exp.content.lit.ivalue);
@@ -123,7 +123,7 @@ void cmdRetCode(AST_nodeType * p) {
     }
     else if (expression->node.exp.type == FLOAT) {
         if (expression->tag == VAR_SIMPLE) {
-            printf("    fstpl   -%d(%%ebp)", 4*check_slot(expression->node.exp.content.varexp->id));
+            printf("    fstpl   -%d(%%ebp)", 4*check_slot(expression->node.exp.content.varexp->node.var.id));
         }
         else /* Constante */ {
             printf("    fstpl   $%f", expression->node.exp.content.lit.fvalue);
@@ -170,9 +170,9 @@ void expCode(AST_nodeType * p) {
 }
 
 void expBinopCode(AST_nodeType * p) {
-    expCode(p->node.exp.content.binopexp.exp1);
+    expCode(p->node.exp.content.operexp.exp1);
     puts("  movl    %%eax, %%ecx");
-    expCode(p->node.exp.content.binopexp.exp2);
+    expCode(p->node.exp.content.operexp.exp2);
     switch(p->node.exp.content.operexp.opr) {
         case '+':
             puts("  addl    %%ecx, %%eax");
