@@ -1,13 +1,13 @@
 #! /bin/bash
 make
 echo "===== testando AST"
-for i in testes_sem/*.in
+for i in testes_sin/*.in
 do
     filename=$(basename "$i")
     filename="${filename%.*}"
     echo "=== testando $filename"
-    ./main < testes_sem/$filename.in > testes_sem/$filename.out
-    diff testes_sem/$filename.out testes_sem/$filename.gab
+    ./main < testes_sin/$filename.in > testes_sin/$filename.out
+    diff testes_sin/$filename.out testes_sin/$filename.gab
     echo "=== acabou   $filename"
 
 done

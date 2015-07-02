@@ -37,6 +37,7 @@ são \t, \n e \"; os outros, portanto, gerarão erro.
   Permitimos sobrecarga de funções.
   Temos shadowing de variáveis.
   Não aceitamos declarações de variáveis com atribuições, devem ser comandos separados.
+  A priori, somente aceitamos retorno em variáveis simples ou de constantes.
   Para a geração de código, supomos arquitetura IA-32.
 
 Observações:

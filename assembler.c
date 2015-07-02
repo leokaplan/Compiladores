@@ -1,4 +1,5 @@
 #include "assembler.h"
+#include "decls.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -90,7 +91,6 @@ void cmdAttrCode(AST_nodeType * p) {
     expCode(p->node.cmd.attrcmd.exp);
     puts("  push    %%eax\n");
     varCode(p->node.cmd.attrcmd.var);
-    // TODO pop %ecx; mov(?) %ecx, (%eax)
     puts("  pop     %%ecx\n");
     switch(p->node.cmd.attrcmd.exp->node.exp.type) {
         case CHAR:
@@ -112,7 +112,23 @@ void cmdBlockCode(AST_nodeType * p) {
 }
 
 void cmdRetCode(AST_nodeType * p) {
-    // temos que o padrão de retorno já se encontra ou em eax ou em st(0)
+    AST_nodeType * expression = p->node.cmd.retcmd.exp;
+    if ((expression->node.exp.type == INT) || (expression->node.exp.type == BOOL)) {
+        if (expression->tag == VAR_SIMPLE) {
+            printf("    movl    -%d(%%ebp), %%eax", 4*check_slot(expression->node.exp.content.varexp->id));
+        }
+        else /* Constante */ {
+            printf("    movl    $%d, %%eax", expression->node.exp.content.lit.ivalue);
+        }
+    }
+    else if (expression->node.exp.type == FLOAT) {
+        if (expression->tag == VAR_SIMPLE) {
+            printf("    fstpl   -%d(%%ebp)", 4*check_slot(expression->node.exp.content.varexp->id));
+        }
+        else /* Constante */ {
+            printf("    fstpl   $%f", expression->node.exp.content.lit.fvalue);
+        }
+    }
     endFunction();
 }
 
@@ -227,7 +243,12 @@ void litStringCode(char * svalue) {
 
 void beginFunction(char * name) {
     printf(".text\n.globl    %s\n%s:\n", name, name);
-    puts("   push %%ebp\n    movl %%esp, %%ebp\n");
+    puts("  push %%ebp\n");
+    puts("  movl %%esp, %%ebp\n");
+    // aloca as variáveis locais
+    printf("    movl    $%d, %%eax\n", maxslot);
+    puts("  shll    $2, %%eax");
+    puts("  subl    %%eax, %%esp");
 }
 
 void endFunction() {
