@@ -170,7 +170,24 @@ void expCode(AST_nodeType * p) {
 }
 
 void expBinopCode(AST_nodeType * p) {
-    // TODO
+    expCode(p->node.exp.content.binopexp.exp1);
+    puts("  movl    %%eax, %%ecx");
+    expCode(p->node.exp.content.binopexp.exp2);
+    switch(p->node.exp.content.operexp.opr) {
+        case '+':
+            puts("  addl    %%ecx, %%eax");
+            break;
+        case '-':
+            puts("  subl    %%eax, %%ecx");
+            puts("  movl    %%ecx, %%eax");
+            break;
+        case '*':
+            puts("  imul    %%ecx, %%eax");
+            break;
+        defaul:
+            yyerror("Casos não tratados.");
+
+    }
 }
 
 void expUnopCode(AST_nodeType * p) {

@@ -31,8 +31,7 @@ enum nodeEnum {
 };
 
 /* Marcacoes para as unions */
-enum unionTag {
-	
+enum unionTag {	
     ID,
     TYP,
     CAST,
@@ -97,8 +96,7 @@ struct expNodeType {
 /* Expressoes */
     int type;
     union {
-    
-    
+        
         AST_nodeType * varexp;
         AST_nodeType * cast;
         AST_nodeType * parenexp;
@@ -108,16 +106,13 @@ struct expNodeType {
             float fvalue;
             char * svalue;
         } lit;
-        
-
-        
+     
         struct {
             int opr;
             AST_nodeType * exp1;
             AST_nodeType * exp2;
         } operexp;
 
-        
         struct {
             AST_nodeType * exp1;
             AST_nodeType * exp2;
