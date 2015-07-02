@@ -25,7 +25,9 @@ void declCode(AST_nodeType * p) {
 }
 
 void declVarCode(AST_nodeType * p) {
-    // TODO algo relacionado ao spot da variável
+    // declaração de variável não precisa de código.
+    // o acesso ao espaço alocado por ela é dado pela check_slot
+    // que fica em decls.h
 }
 
 void declFuncCode(AST_nodeType * p) {
@@ -65,7 +67,7 @@ void cmdCode(AST_nodeType * p) {
 }
 
 void cmdIfCode(AST_nodeType * p) {
-    // TODO fazer comparação e tals com
+    // TODO fazer comparação com
     // p->node.cmd.ifcmd.exp
     // jum condicional pra parte else
     // parte then
@@ -79,7 +81,7 @@ void cmdIfCode(AST_nodeType * p) {
 
 void cmdWhileCode(AST_nodeType * p) {
     // label antes da comparação
-    // TODO fazer comparação e tals com
+    // TODO fazer comparação com
     // p->node.cmd.whilecmd.exp
     // jump condicional pro fim do loop
     cmdCode(p->node.cmd.whilecmd.cmd);
@@ -163,7 +165,7 @@ void expCode(AST_nodeType * p) {
             yyerror("Erro: tipo de expressao invalido.");
     }
 
-    // listas de esxpressões, somente utilizado em passagem de parâmetros de chamadas de funções
+    // listas de expressões, somente utilizado em passagem de parâmetros de chamadas de funções
     if (p->nextElem != NULL) {
         expCode(p->nextElem);
     }
