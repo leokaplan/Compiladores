@@ -205,6 +205,7 @@ void AST_draw(AST_nodeType *p,int mode);
 
 /* Literal */
 AST_nodeType * AST_litInt(int value);
+AST_nodeType * AST_litBool(int value);
 AST_nodeType * AST_litFloat(float value);
 AST_nodeType * AST_litString(char * value);
 
