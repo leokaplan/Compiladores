@@ -67,26 +67,37 @@ void cmdCode(AST_nodeType * p) {
 }
 
 void cmdIfCode(AST_nodeType * p) {
-    // TODO fazer comparação com
-    // p->node.cmd.ifcmd.exp
-    // jum condicional pra parte else
-    // parte then
+    int labelEndThen = currentLabel++,
+        labelEndElse = currentLabel++;
+
+    expCode(p->node.cmd.ifcmd.exp);
+    printf("    cmp $0, %%eax");
+    printf("    je  L%d\n", labelEndThen);
+    
     cmdCode(p->node.cmd.ifcmd.cmd1);
-    // jump pro fim da parte else
-    // label da parte else
-    // parte else
+
+    printf("    jmp L%d\n", labelEndElse);
+    printf("L%d:\n", labelEndThen);
+
     cmdCode(p->node.cmd.ifcmd.cmd2);
-    // label do fim da parte else
+    
+    printf("L%d:\n", labelEndElse);
 }
 
 void cmdWhileCode(AST_nodeType * p) {
-    // label antes da comparação
-    // TODO fazer comparação com
-    // p->node.cmd.whilecmd.exp
-    // jump condicional pro fim do loop
+    int labelBeginWhile = currentLabel++,
+        labelEndWhile = currentLabel++;
+
+    printf("L%d:\n", labelBeginWhile);
+    
+    expCode(p->node.cmd.whilecmd.exp);
+    printf("    cmp $0, %%eax");
+    printf("    je L%d\n", labelEndWhile);
+
     cmdCode(p->node.cmd.whilecmd.cmd);
-    // jump de volta pro label do inicio
-    // label de fim do loop
+
+    printf("    jmp L%d\n", labelBeginWhile);
+    printf("L%d:\n", labelEndWhile);
 }
 
 void cmdAttrCode(AST_nodeType * p) {
